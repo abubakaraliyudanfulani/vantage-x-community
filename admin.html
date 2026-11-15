@@ -623,7 +623,9 @@ loadCommunityStatistics();
   const status = document.getElementById("memberDirectoryStatus");
 
   if (!tableBody || !searchInput || !status) return;
-
+status.textContent = "Directory script started. Checking administrator access...";
+console.log("VANTAGE X: Member directory script started.");
+  
   try {
     // Verify administrator access first.
     const access = await verifyCommunityAdmin();
