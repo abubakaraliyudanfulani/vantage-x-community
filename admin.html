@@ -629,7 +629,7 @@ console.log("VANTAGE X: Member directory script started.");
   try {
     // Verify administrator access first.
     const access = await verifyCommunityAdmin();
-
+console.log("VANTAGE X: Admin verification result:", access);
     if (!access.authorized) {
       throw new Error("Administrator access could not be verified.");
     }
