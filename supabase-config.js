@@ -16,7 +16,7 @@ if (
 
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY,
+  sb_publishable_xR8TdlRI5ruMKQJ6TtEsMQ_054sQjoS,
   {
     auth: {
       persistSession: true,
