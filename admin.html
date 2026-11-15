@@ -675,7 +675,19 @@ console.log("VANTAGE X: Admin verification result:", access);
         const nameCell = document.createElement("td");
         const usernameCell = document.createElement("td");
         const dateCell = document.createElement("td");
+const actionCell = document.createElement("td");
 
+const viewButton = document.createElement("button");
+viewButton.textContent = "View Profile";
+viewButton.style.cssText =
+  "background:#10223b;color:white;border:0;padding:8px 12px;border-radius:6px;font-size:11px;";
+
+viewButton.addEventListener("click", () => {
+  openMemberProfile(member);
+});
+
+actionCell.appendChild(viewButton);
+        
         nameCell.textContent = member.full_name || "Unnamed member";
         usernameCell.textContent = member.username
           ? "@" + member.username
