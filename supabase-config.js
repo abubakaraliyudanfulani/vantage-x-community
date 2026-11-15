@@ -3,7 +3,7 @@
 
 const SUPABASE_URL = "https://urjxoewsgmfasnyygjuz.supabase.co";
 
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_xR8TdlRI5ruMKQJ6TtEsMQ_054sQjoS";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Cn4id_fYfIYkV5EUDKvWMA_yplZfC3A";
 
 if (!window.supabase) {
   throw new Error("Supabase library failed to load.");
@@ -25,3 +25,4 @@ const supabaseClient = window.supabase.createClient(
     }
   }
 );
+
