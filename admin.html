@@ -644,7 +644,21 @@ console.log("VANTAGE X: Admin verification result:", access);
     if (error) throw error;
 
     const members = data || [];
-
+function openMemberProfile(member) {
+  alert(
+    "MEMBER PROFILE\n\n" +
+    "Name: " + (member.full_name || "Not provided") + "\n" +
+    "Username: " + (member.username || "Not provided") + "\n" +
+    "Bio: " + (member.bio || "No bio available") + "\n" +
+    "Joined: " + (
+      member.created_at
+        ? new Date(member.created_at).toLocaleDateString()
+        : "Unknown"
+    ) + "\n" +
+    "Profile picture: " + (member.avatar_url || "Not uploaded")
+  );
+}
+    
     function renderMembers(query = "") {
       tableBody.replaceChildren();
 
