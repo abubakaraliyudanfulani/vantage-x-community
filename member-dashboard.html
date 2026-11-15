@@ -1558,7 +1558,25 @@ function getCommunityClient() {
   return supabaseClient;
 }
 
+/* =========================================
+   OPEN MY MEMBER PROFILE
+========================================= */
 
+function openMyProfile() {
+
+  if (!currentUser || !currentUser.id) {
+
+    alert("Your account is still loading. Please try again.");
+
+    return;
+
+  }
+
+  window.location.href =
+    "profile.html?id=" +
+    encodeURIComponent(currentUser.id);
+
+}
 /* =========================================
    LOAD CURRENT MEMBER
 ========================================= */
