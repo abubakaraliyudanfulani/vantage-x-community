@@ -637,7 +637,7 @@ console.log("VANTAGE X: Admin verification result:", access);
     // Retrieve member profiles from Supabase.
     const { data, error } = await supabaseClient
       .from("profiles")
-      .select("full_name, username, created_at")
+      .select("id, full_name, username, bio, avatar_url, created_at")
       .select("id, full_name, username, bio, avatar_url, created_at")
       .order("created_at", { ascending: false });
 
