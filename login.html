@@ -1,12 +1,18 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#081426">
+
   <title>Log In | VANTAGE X COMMUNITY</title>
+
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -17,6 +23,7 @@
       color: #f7f5ef;
       font-family: Arial, sans-serif;
     }
+
     .card {
       width: 100%;
       max-width: 430px;
@@ -25,6 +32,7 @@
       border: 1px solid rgba(215,173,85,.3);
       border-radius: 12px;
     }
+
     .brand {
       color: #d7ad55;
       font-weight: 800;
@@ -32,9 +40,24 @@
       text-align: center;
       margin-bottom: 28px;
     }
-    h1 { text-align: center; font-size: 28px; }
-    .intro { text-align: center; color: #b8c2d1; margin-bottom: 28px; }
-    label { display: block; margin: 17px 0 7px; font-size: 14px; }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+    }
+
+    .intro {
+      text-align: center;
+      color: #b8c2d1;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      margin: 17px 0 7px;
+      font-size: 14px;
+    }
+
     input {
       width: 100%;
       padding: 13px;
@@ -44,7 +67,12 @@
       color: white;
       font-size: 15px;
     }
-    input:focus { outline: 2px solid #d7ad55; border-color: transparent; }
+
+    input:focus {
+      outline: 2px solid #d7ad55;
+      border-color: transparent;
+    }
+
     button {
       width: 100%;
       padding: 14px;
@@ -57,144 +85,251 @@
       font-weight: bold;
       cursor: pointer;
     }
-    button:disabled { opacity: .6; cursor: wait; }
-    .forgot { display: block; text-align: right; margin-top: 12px; font-size: 13px; }
-    #message { margin-top: 17px; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
-    .links { text-align: center; margin-top: 23px; color: #b8c2d1; font-size: 14px; }
-    a { color: #d7ad55; }
-    .back { display: block; text-align: center; margin-top: 22px; }
-    @media(max-width: 450px) { .card { padding: 26px 20px; } }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .forgot {
+      display: block;
+      text-align: right;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+
+    #message {
+      margin-top: 17px;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 23px;
+      color: #b8c2d1;
+      font-size: 14px;
+    }
+
+    a {
+      color: #d7ad55;
+    }
+
+    .back {
+      display: block;
+      text-align: center;
+      margin-top: 22px;
+    }
+
+    @media(max-width: 450px) {
+      .card {
+        padding: 26px 20px;
+      }
+    }
   </style>
 </head>
+
 <body>
+
   <main class="card">
+
     <div class="brand">VANTAGE X COMMUNITY</div>
+
     <h1>Welcome back</h1>
-    <p class="intro">Log in to continue your community journey.</p>
+
+    <p class="intro">
+      Log in to continue your community journey.
+    </p>
 
     <form id="loginForm">
+
       <label for="email">Email address</label>
-      <input id="email" type="email" autocomplete="email"
-             maxlength="254" required>
+
+      <input
+        id="email"
+        type="email"
+        autocomplete="email"
+        maxlength="254"
+        required
+      >
 
       <label for="password">Password</label>
-      <input id="password" type="password"
-             autocomplete="current-password" required>
 
-      <a class="forgot" href="#" id="forgotPassword">Forgot password?</a>
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        required
+      >
 
-      <button id="loginButton" type="submit">Log In</button>
+      <a class="forgot" href="#" id="forgotPassword">
+        Forgot password?
+      </a>
+
+      <button id="loginButton" type="submit">
+        Log In
+      </button>
+
       <p id="message" role="status" aria-live="polite"></p>
+
     </form>
 
     <div class="links">
-      Don't have an account? <a href="signup.html">Create one</a>
+      Don't have an account?
+      <a href="signup.html">Create one</a>
     </div>
-    <a class="back" href="index.html">Back to homepage</a>
+
+    <a class="back" href="index.html">
+      Back to homepage
+    </a>
+
   </main>
 
+  <!-- SUPABASE AND AUTHENTICATION FILES -->
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
-<script src="auth.js"></script>
-<script src="admin-auth.js"></script>
-<script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
+  <script src="admin-auth.js"></script>
+
+  <script>
+
+    // LOGIN ELEMENTS
+
     const form = document.getElementById("loginForm");
     const message = document.getElementById("message");
     const button = document.getElementById("loginButton");
 
+
+    // LOGIN PROCESS
+
     form.addEventListener("submit", async function(event) {
+
       event.preventDefault();
+
       message.textContent = "";
 
-      if (typeof loginCommunityUser !== "function" ||
-          typeof supabaseClient === "undefined") {
-        message.textContent = "Account service is not configured yet.";
+      if (
+        typeof loginCommunityUser !== "function" ||
+        typeof verifyCommunityAdmin !== "function" ||
+        typeof supabaseClient === "undefined"
+      ) {
+        message.textContent =
+          "Account service is not configured correctly. Please try again later.";
         return;
       }
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value;
 
       button.disabled = true;
       button.textContent = "Logging in...";
 
       try {
+
         const result = await loginCommunityUser(email, password);
 
         if (result.error) {
+
           message.textContent = result.error.message;
-        } else {
-  message.textContent = "Login successful. Checking your account...";
 
-const adminResult = await verifyCommunityAdmin();
-
-if (adminResult.authorized) {
-  window.location.replace("admin.html");
-} else if (adminResult.reason === "not_an_admin") {
-  window.location.replace("dashboard.html");
-} else {
-  message.textContent =
-    "Login succeeded, but account permissions could not be verified. Please try again.";
-}
-
-  message.textContent = "Login successful. Checking your account...";
-
-const adminResult = await verifyCommunityAdmin();
-
-if (adminResult.authorized) {
-  window.location.replace("admin.html");
-} else if (adminResult.reason === "not_an_admin") {
-  window.location.replace("dashboard.html");
-} else {
-  message.textContent =
-    "Login succeeded, but account permissions could not be verified. Please try again.";
-}
-
-  if (adminResult.authorized) {
-    window.location.href = "admin.html";
-  } else {
-    window.location.href = "dashboard.html";
-  }
-
-  return;
+          return;
         }
+
+        message.textContent =
+          "Login successful. Checking your account...";
+
+        const adminResult = await verifyCommunityAdmin();
+
+        if (adminResult.authorized) {
+
+          message.textContent =
+            "Administrator verified. Opening Admin Dashboard...";
+
+          window.location.replace("admin.html");
+
+        } else if (adminResult.reason === "not_an_admin") {
+
+          message.textContent =
+            "Opening your Community Dashboard...";
+
+          window.location.replace("dashboard.html");
+
+        } else {
+
+          message.textContent =
+            "Login succeeded, but account permissions could not be verified. Please try again.";
+
+        }
+
       } catch (error) {
-        message.textContent = "Unable to log in right now. Please try again.";
+
+        console.error("Community login error:", error);
+
+        message.textContent =
+          error.message || "Unable to log in. Please try again.";
+
       } finally {
+
         button.disabled = false;
         button.textContent = "Log In";
+
       }
+
     });
 
-    document.getElementById("forgotPassword").addEventListener("click", async function(event) {
-      event.preventDefault();
 
-      const email = document.getElementById("email").value.trim();
+    // FORGOT PASSWORD
 
-      if (!email) {
-        message.textContent = "Enter your email address first.";
-        return;
-      }
+    document.getElementById("forgotPassword")
+      .addEventListener("click", async function(event) {
 
-      if (typeof supabaseClient === "undefined") {
-        message.textContent = "Account service is not configured yet.";
-        return;
-      }
+        event.preventDefault();
 
-      try {
-        const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+        const email =
+          document.getElementById("email").value.trim();
 
-        message.textContent = error
-          ? error.message
-          : "If an account exists for this email, password reset instructions will be sent.";
-      } catch (error) {
-        message.textContent = "Unable to process your request right now.";
-      }
-    });
-  <<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
-<script src="auth.js"></script>
-<script src="admin-auth.js"></script>
-<script>
+        if (!email) {
+
+          message.textContent =
+            "Enter your email address first.";
+
+          return;
+        }
+
+        if (typeof supabaseClient === "undefined") {
+
+          message.textContent =
+            "Account service is not configured yet.";
+
+          return;
+        }
+
+        try {
+
+          const { error } =
+            await supabaseClient.auth.resetPasswordForEmail(email);
+
+          message.textContent = error
+            ? error.message
+            : "If an account exists for this email, password reset instructions will be sent.";
+
+        } catch (error) {
+
+          console.error("Password reset error:", error);
+
+          message.textContent =
+            "Unable to process your request right now.";
+
+        }
+
+      });
+
+  </script>
+
 </body>
 </html>
