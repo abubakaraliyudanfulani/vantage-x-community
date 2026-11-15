@@ -1,0 +1,2678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#091426">
+
+<title>VANTAGE X COMMUNITY | Member Dashboard</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy: #091426;
+  --navy2: #10223b;
+  --navy3: #172f4e;
+  --gold: #d9ad55;
+  --gold-light: #f0d69a;
+  --white: #ffffff;
+  --background: #f4f6fa;
+  --text: #17243a;
+  --muted: #7d899b;
+  --border: #e8ecf2;
+  --green: #1a9b68;
+  --red: #dc5353;
+  --shadow: 0 8px 30px rgba(9,20,38,.07);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--background);
+  color: var(--text);
+}
+
+button, input, textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.topbar {
+  height: 72px;
+  background: var(--navy);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0,0,0,.12);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  width: 43px;
+  height: 43px;
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  font-weight: 800;
+  font-family: Manrope, sans-serif;
+  font-size: 17px;
+}
+
+.brand-name {
+  font-family: Manrope, sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 1.2px;
+}
+
+.brand-subtitle {
+  font-size: 9px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-top: 3px;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+}
+
+.top-icon {
+  background: transparent;
+  color: white;
+  border: none;
+  font-size: 20px;
+  position: relative;
+}
+
+.notification-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  top: 0;
+  right: -3px;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,var(--gold),#fff0c6);
+  color: var(--navy);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  overflow: hidden;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 245px minmax(0,1fr) 290px;
+  gap: 22px;
+  max-width: 1500px;
+  margin: auto;
+  padding: 25px 22px;
+}
+
+.sidebar {
+  background: white;
+  border-radius: 17px;
+  padding: 20px 14px;
+  box-shadow: var(--shadow);
+  height: fit-content;
+  position: sticky;
+  top: 95px;
+}
+
+.sidebar-heading {
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  padding: 10px 12px;
+  text-transform: uppercase;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 12px;
+  border-radius: 10px;
+  color: #66748a;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: #f5f0e5;
+  color: var(--navy);
+}
+
+.nav-link.active {
+  border-left: 3px solid var(--gold);
+}
+
+.nav-icon {
+  width: 22px;
+  text-align: center;
+  font-size: 17px;
+}
+
+.sidebar-divider {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 15px 5px;
+}
+
+.sidebar-promo {
+  background: linear-gradient(145deg,var(--navy),var(--navy3));
+  color: white;
+  border-radius: 13px;
+  padding: 17px;
+  margin-top: 20px;
+}
+
+.sidebar-promo h4 {
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+.sidebar-promo p {
+  font-size: 11px;
+  color: #c4ccda;
+  line-height: 1.6;
+}
+
+.main-content {
+  min-width: 0;
+}
+
+.page-heading {
+  margin-bottom: 20px;
+}
+
+.page-heading h1 {
+  font-family: Manrope, sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.page-heading p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.panel {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+
+.panel-title {
+  font-family: Manrope, sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.right-sidebar {
+  min-width: 0;
+}
+
+.gold-button {
+  background: var(--gold);
+  color: var(--navy);
+  border: none;
+  border-radius: 9px;
+  padding: 10px 16px;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.gold-button:hover {
+  background: var(--gold-light);
+}
+
+@media(max-width:1100px) {
+  .dashboard-layout {
+    grid-template-columns: 210px minmax(0,1fr);
+  }
+
+  .right-sidebar {
+    display: none;
+  }
+}
+
+@media(max-width:700px) {
+  .topbar {
+    height: 62px;
+    padding: 0 15px;
+  }
+
+  .brand-name {
+    font-size: 12px;
+  }
+
+  .brand-logo {
+    width: 37px;
+    height: 37px;
+  }
+
+  .dashboard-layout {
+    display: block;
+    padding: 15px 12px 85px;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .page-heading h1 {
+    font-size: 20px;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <a href="index.html" class="brand">
+    <div class="brand-logo">VX</div>
+    <div>
+      <div class="brand-name">VANTAGE X</div>
+      <div class="brand-subtitle">COMMUNITY</div>
+    </div>
+  </a>
+
+  <div class="top-actions">
+    <button class="top-icon" title="Notifications"
+      onclick="showSection('notifications')">
+      ♧
+      <span class="notification-dot" id="notificationDot"></span>
+    </button>
+
+    <button class="top-icon" title="Messages"
+      onclick="showSection('messages')">✉</button>
+
+    <a href="profile.html" class="user-avatar" id="topAvatar">
+      VX
+    </a>
+  </div>
+
+</header>
+
+<div class="dashboard-layout">
+
+  <aside class="sidebar">
+
+    <div class="sidebar-heading">MAIN MENU</div>
+
+    <button class="nav-link active"
+      onclick="showSection('home',this)">
+      <span class="nav-icon">⌂</span> My Dashboard
+    </button>
+
+    <button class="nav-link"
+      onclick="showSection('feed',this)">
+      <span class="nav-icon">▤</span> Community Feed
+    </button>
+
+    <button class="nav-link"
+      onclick="showSection('discover',this)">
+      <span class="nav-icon">⌕</span> Discover
+    </button>
+
+    <button class="nav-link"
+      onclick="showSection('notifications',this)">
+      <span class="nav-icon">♧</span> Notifications
+    </button>
+
+    <button class="nav-link"
+      onclick="showSection('messages',this)">
+      <span class="nav-icon">✉</span> Messages
+    </button>
+
+    <hr class="sidebar-divider">
+
+    <div class="sidebar-heading">MY COMMUNITY</div>
+
+    <button class="nav-link"
+      onclick="showSection('profile',this)">
+      <span class="nav-icon">◉</span> My Profile
+    </button>
+
+    <button class="nav-link"
+      onclick="showSection('connections',this)">
+      <span class="nav-icon">♙</span> Connections
+    </button>
+
+    <button class="nav-link"
+      onclick="showSection('groups',this)">
+      <span class="nav-icon">♧</span> Groups
+    </button>
+
+    <button class="nav-link"
+      onclick="showSection('saved',this)">
+      <span class="nav-icon">☆</span> Saved Posts
+    </button>
+
+    <hr class="sidebar-divider">
+
+    <div class="sidebar-heading">EXPLORE</div>
+
+    <button class="nav-link"
+      onclick="showSection('videos',this)">
+      <span class="nav-icon">▷</span> Videos
+    </button>
+
+    <button class="nav-link"
+      onclick="showSection('business',this)">
+      <span class="nav-icon">▣</span> Business
+    </button>
+
+    <button class="nav-link"
+      onclick="showSection('events',this)">
+      <span class="nav-icon">▦</span> Events
+    </button>
+
+    <button class="nav-link"
+      onclick="showSection('marketplace',this)">
+      <span class="nav-icon">◇</span> Marketplace
+    </button>
+
+    <hr class="sidebar-divider">
+
+    <button class="nav-link" onclick="logoutUser()">
+      <span class="nav-icon">↪</span> Sign Out
+    </button>
+
+    <div class="sidebar-promo">
+      <h4>Build Value. Share Ideas.</h4>
+      <p>Connect with people, exchange knowledge and discover opportunities.</p>
+    </div>
+
+  </aside>
+
+  <main class="main-content">
+
+    <div class="page-heading">
+      <h1 id="pageTitle">My Dashboard</h1>
+      <p id="pageSubtitle">Welcome to your VANTAGE X COMMUNITY space.</p>
+    </div>
+
+        <!-- DASHBOARD HOME -->
+    <section id="section-home" class="dashboard-section">
+
+      <div class="panel" style="
+        background:linear-gradient(120deg,#091426,#193657);
+        color:white;padding:27px;overflow:hidden;">
+
+        <div style="max-width:600px;">
+          <div style="color:#d9ad55;font-size:10px;
+            font-weight:800;letter-spacing:2px;">
+            YOUR COMMUNITY SPACE
+          </div>
+
+          <h2 id="welcomeName" style="
+            font-family:Manrope,sans-serif;
+            font-size:25px;margin:12px 0;">
+            Welcome to VANTAGE X
+          </h2>
+
+          <p style="color:#d5deea;font-size:13px;
+            line-height:1.8;">
+            Connect with people, share valuable ideas,
+            discover opportunities and grow together.
+          </p>
+
+          <button class="gold-button"
+            style="margin-top:18px;"
+            onclick="showSection('feed')">
+            Explore Community →
+          </button>
+        </div>
+      </div>
+
+      <!-- STATISTICS -->
+      <div style="
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:13px;margin-bottom:18px;">
+
+        <div class="panel">
+          <div class="muted">My Posts</div>
+          <div id="myPostCount" style="
+            font-size:27px;font-weight:800;
+            color:#10223b;margin-top:8px;">0</div>
+          <div class="muted">Published posts</div>
+        </div>
+
+        <div class="panel">
+          <div class="muted">Notifications</div>
+          <div id="myNotificationCount" style="
+            font-size:27px;font-weight:800;
+            color:#10223b;margin-top:8px;">0</div>
+          <div class="muted">Unread updates</div>
+        </div>
+
+        <div class="panel">
+          <div class="muted">Account Type</div>
+          <div id="accountType" style="
+            font-size:18px;font-weight:800;
+            color:#10223b;margin-top:12px;">Member</div>
+          <div class="muted">Community account</div>
+        </div>
+
+        <div class="panel">
+          <div class="muted">Membership</div>
+          <div style="
+            font-size:18px;font-weight:800;
+            color:#1a9b68;margin-top:12px;">Active</div>
+          <div class="muted">Signed-in account</div>
+        </div>
+
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="panel">
+        <h3 class="panel-title">Quick Actions</h3>
+
+        <div style="
+          display:grid;
+          grid-template-columns:repeat(2,minmax(0,1fr));
+          gap:10px;margin-top:16px;">
+
+          <button class="gold-button"
+            onclick="showSection('feed')">
+            ✚ Create a Post
+          </button>
+
+          <button class="gold-button"
+            onclick="showSection('profile')">
+            ◉ View My Profile
+          </button>
+
+          <button class="gold-button"
+            onclick="showSection('discover')">
+            ⌕ Discover People
+          </button>
+
+          <button class="gold-button"
+            onclick="showSection('notifications')">
+            ♧ Notifications
+          </button>
+
+        </div>
+      </div>
+
+      <!-- RECENT COMMUNITY POSTS -->
+      <div class="panel">
+        <div style="
+          display:flex;justify-content:space-between;
+          align-items:center;gap:10px;">
+
+          <h3 class="panel-title">Community Feed</h3>
+
+          <button onclick="showSection('feed')"
+            style="border:0;background:none;
+            color:#a47a2e;font-size:12px;
+            font-weight:800;">
+            View All →
+          </button>
+
+        </div>
+
+        <div id="homeFeed" style="margin-top:15px;">
+          <p class="muted">Loading community posts...</p>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- COMMUNITY FEED -->
+    <section id="section-feed"
+      class="dashboard-section" hidden>
+
+      <div class="panel">
+
+        <h3 class="panel-title">Share Something Valuable</h3>
+
+        <p class="muted" style="margin-top:6px;">
+          Share your knowledge, ideas and experiences
+          with the community.
+        </p>
+
+        <textarea id="postContent"
+          maxlength="5000"
+          placeholder="What would you like to share today?"
+          style="
+            width:100%;min-height:120px;
+            margin-top:17px;padding:15px;
+            border:1px solid #e5e9ef;
+            border-radius:12px;outline:none;
+            resize:vertical;font-size:13px;
+            background:#fafbfd;">
+        </textarea>
+
+        <div style="
+          display:flex;justify-content:space-between;
+          align-items:center;gap:10px;
+          flex-wrap:wrap;margin-top:13px;">
+
+          <span class="muted">
+            🌍 Public community post
+          </span>
+
+          <button class="gold-button"
+            id="publishPostButton"
+            onclick="publishPost()">
+            Publish Post
+          </button>
+
+        </div>
+
+        <p id="publishStatus"
+          class="muted" style="margin-top:12px;">
+        </p>
+
+      </div>
+
+      <!-- FEED FILTERS -->
+      <div class="panel">
+
+        <div style="
+          display:flex;justify-content:space-between;
+          align-items:center;gap:10px;">
+
+          <h3 class="panel-title">Latest Posts</h3>
+
+          <button onclick="loadCommunityFeed()"
+            style="background:none;border:0;
+            color:#a47a2e;font-weight:800;
+            font-size:12px;">
+            ↻ Refresh
+          </button>
+
+        </div>
+
+        <div id="communityFeed"
+          style="margin-top:17px;">
+
+          <p class="muted">
+            Loading community feed...
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- DISCOVER -->
+    <section id="section-discover"
+      class="dashboard-section" hidden>
+
+      <div class="panel">
+
+        <h3 class="panel-title">Discover VANTAGE X</h3>
+
+        <p class="muted" style="margin-top:8px;">
+          Explore different interests and opportunities
+          across our community.
+        </p>
+
+        <div style="
+          display:grid;
+          grid-template-columns:repeat(2,minmax(0,1fr));
+          gap:12px;margin-top:20px;">
+
+          <div style="background:#f5f0e5;
+            padding:18px;border-radius:12px;">
+            <div style="font-size:25px;">💼</div>
+            <h4 style="margin-top:8px;">Business</h4>
+            <p class="muted">Ideas and entrepreneurship</p>
+          </div>
+
+          <div style="background:#f1f4fa;
+            padding:18px;border-radius:12px;">
+            <div style="font-size:25px;">🎓</div>
+            <h4 style="margin-top:8px;">Education</h4>
+            <p class="muted">Learning and knowledge</p>
+          </div>
+
+          <div style="background:#f1f4fa;
+            padding:18px;border-radius:12px;">
+            <div style="font-size:25px;">💻</div>
+            <h4 style="margin-top:8px;">Technology</h4>
+            <p class="muted">Innovation and digital skills</p>
+          </div>
+
+          <div style="background:#f5f0e5;
+            padding:18px;border-radius:12px;">
+            <div style="font-size:25px;">⚽</div>
+            <h4 style="margin-top:8px;">Sports</h4>
+            <p class="muted">Sports and entertainment</p>
+          </div>
+
+          <div style="background:#f5f0e5;
+            padding:18px;border-radius:12px;">
+            <div style="font-size:25px;">🚀</div>
+            <h4 style="margin-top:8px;">Motivation</h4>
+            <p class="muted">Personal growth and inspiration</p>
+          </div>
+
+          <div style="background:#f1f4fa;
+            padding:18px;border-radius:12px;">
+            <div style="font-size:25px;">🎨</div>
+            <h4 style="margin-top:8px;">Creativity</h4>
+            <p class="muted">Creative ideas and talents</p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+        <!-- MY PROFILE -->
+    <section id="section-profile"
+      class="dashboard-section" hidden>
+
+      <div class="panel">
+
+        <div style="
+          height:145px;
+          background:linear-gradient(120deg,#091426,#294b70);
+          border-radius:12px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          color:#d9ad55;
+          font-size:35px;
+          font-weight:800;">
+          VANTAGE X
+        </div>
+
+        <div style="
+          display:flex;align-items:center;
+          gap:15px;margin-top:-28px;
+          padding:0 15px;">
+
+          <div id="profileAvatar"
+            style="
+              width:85px;height:85px;
+              border-radius:50%;
+              border:5px solid white;
+              background:#d9ad55;
+              display:grid;place-items:center;
+              font-size:25px;font-weight:800;
+              color:#091426;overflow:hidden;">
+            VX
+          </div>
+
+          <div style="padding-top:30px;">
+            <h3 id="profileName"
+              class="panel-title">Your Name</h3>
+
+            <p id="profileUsername"
+              class="muted">@username</p>
+          </div>
+
+        </div>
+
+        <p id="profileBio"
+          class="muted"
+          style="margin:20px 15px;">
+          Welcome to your VANTAGE X profile.
+        </p>
+
+        <div style="padding:0 15px 10px;">
+          <a href="profile.html"
+            class="gold-button"
+            style="display:inline-block;">
+            View Full Profile →
+          </a>
+        </div>
+
+      </div>
+
+      <div class="panel">
+        <h3 class="panel-title">Profile Information</h3>
+
+        <p class="muted" style="margin-top:10px;">
+          Your profile is created automatically when you
+          register. You can expand your profile with a
+          biography, profile picture and other details.
+        </p>
+
+        <div style="margin-top:17px;">
+          <label class="muted">Full Name</label>
+          <input id="editFullName"
+            type="text"
+            maxlength="100"
+            placeholder="Enter your full name"
+            style="
+              width:100%;padding:12px;
+              border:1px solid #e5e9ef;
+              border-radius:9px;margin:7px 0 15px;">
+
+          <label class="muted">Username</label>
+          <input id="editUsername"
+            type="text"
+            maxlength="30"
+            placeholder="Choose a username"
+            style="
+              width:100%;padding:12px;
+              border:1px solid #e5e9ef;
+              border-radius:9px;margin:7px 0 15px;">
+
+          <label class="muted">Biography</label>
+          <textarea id="editBio"
+            maxlength="500"
+            placeholder="Tell the community about yourself..."
+            style="
+              width:100%;min-height:100px;
+              padding:12px;border:1px solid #e5e9ef;
+              border-radius:9px;margin:7px 0 15px;
+              resize:vertical;"></textarea>
+
+          <button class="gold-button"
+            id="saveProfileButton"
+            onclick="saveProfile()">
+            Save Profile Changes
+          </button>
+
+          <p id="profileStatus"
+            class="muted" style="margin-top:12px;"></p>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- NOTIFICATIONS -->
+    <section id="section-notifications"
+      class="dashboard-section" hidden>
+
+      <div class="panel">
+
+        <div style="
+          display:flex;justify-content:space-between;
+          align-items:center;gap:10px;">
+
+          <div>
+            <h3 class="panel-title">Notifications</h3>
+            <p class="muted" style="margin-top:5px;">
+              Stay updated with your community activities.
+            </p>
+          </div>
+
+          <button class="gold-button"
+            onclick="markAllNotificationsRead()">
+            Mark All Read
+          </button>
+
+        </div>
+
+        <div id="notificationList"
+          style="margin-top:20px;">
+
+          <p class="muted">
+            Loading notifications...
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- CONNECTIONS -->
+    <section id="section-connections"
+      class="dashboard-section" hidden>
+
+      <div class="panel">
+
+        <h3 class="panel-title">My Connections</h3>
+
+        <p class="muted" style="margin-top:8px;">
+          Build meaningful connections with other
+          members of VANTAGE X COMMUNITY.
+        </p>
+
+        <div style="
+          margin-top:22px;text-align:center;
+          padding:25px 10px;">
+
+          <div style="font-size:40px;">♙</div>
+
+          <h3 style="margin:12px 0;color:#10223b;">
+            Grow Your Network
+          </h3>
+
+          <p class="muted">
+            Discover members and connect with people
+            who share your interests.
+          </p>
+
+          <button class="gold-button"
+            style="margin-top:16px;"
+            onclick="showSection('discover')">
+            Discover Members
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- GROUPS -->
+    <section id="section-groups"
+      class="dashboard-section" hidden>
+
+      <div class="panel">
+
+        <h3 class="panel-title">Community Groups</h3>
+
+        <p class="muted" style="margin-top:8px;">
+          Groups will bring members together around
+          shared interests, goals and discussions.
+        </p>
+
+        <div style="
+          margin-top:20px;padding:22px;
+          background:#f5f0e5;border-radius:12px;
+          text-align:center;">
+
+          <div style="font-size:35px;">👥</div>
+
+          <h3 style="margin:10px 0;">
+            Groups Coming Soon
+          </h3>
+
+          <p class="muted">
+            Group creation, membership and discussions
+            will be introduced in a future development stage.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- SAVED POSTS -->
+    <section id="section-saved"
+      class="dashboard-section" hidden>
+
+      <div class="panel">
+
+        <h3 class="panel-title">Saved Posts</h3>
+
+        <p class="muted" style="margin-top:8px;">
+          Keep valuable content for easy access later.
+        </p>
+
+        <div style="
+          padding:25px 10px;text-align:center;
+          margin-top:15px;">
+
+          <div style="font-size:35px;">☆</div>
+
+          <h3 style="margin:10px 0;">
+            Saved Posts Coming Soon
+          </h3>
+
+          <p class="muted">
+            The bookmarking and saved-content system
+            will be added in a later development stage.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+        <!-- VIDEOS -->
+    <section id="section-videos"
+      class="dashboard-section" hidden>
+
+      <div class="panel">
+
+        <h3 class="panel-title">VANTAGE X Videos</h3>
+
+        <p class="muted" style="margin-top:8px;">
+          Discover short videos, educational content,
+          creativity and community highlights.
+        </p>
+
+        <div style="
+          margin-top:20px;
+          padding:30px 15px;
+          text-align:center;
+          background:#f3f5f9;
+          border-radius:12px;">
+
+          <div style="font-size:42px;">▶</div>
+
+          <h3 style="margin:12px 0;">
+            Video Experience Coming Soon
+          </h3>
+
+          <p class="muted">
+            Short videos, creator profiles, video uploads
+            and personalized recommendations will be
+            introduced as the platform develops.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- BUSINESS -->
+    <section id="section-business"
+      class="dashboard-section" hidden>
+
+      <div class="panel">
+
+        <h3 class="panel-title">Business Community</h3>
+
+        <p class="muted" style="margin-top:8px;">
+          Explore entrepreneurship, professional ideas,
+          business knowledge and opportunities.
+        </p>
+
+        <div style="
+          display:grid;
+          grid-template-columns:repeat(2,minmax(0,1fr));
+          gap:12px;margin-top:20px;">
+
+          <div style="
+            background:#f5f0e5;
+            padding:18px;border-radius:12px;">
+            <div style="font-size:27px;">💼</div>
+            <h4 style="margin-top:10px;">Entrepreneurs</h4>
+            <p class="muted">Business ideas and growth.</p>
+          </div>
+
+          <div style="
+            background:#f1f4fa;
+            padding:18px;border-radius:12px;">
+            <div style="font-size:27px;">🤝</div>
+            <h4 style="margin-top:10px;">Partnerships</h4>
+            <p class="muted">Professional collaboration.</p>
+          </div>
+
+          <div style="
+            background:#f1f4fa;
+            padding:18px;border-radius:12px;">
+            <div style="font-size:27px;">📈</div>
+            <h4 style="margin-top:10px;">Investments</h4>
+            <p class="muted">Investment education.</p>
+          </div>
+
+          <div style="
+            background:#f5f0e5;
+            padding:18px;border-radius:12px;">
+            <div style="font-size:27px;">🏢</div>
+            <h4 style="margin-top:10px;">Companies</h4>
+            <p class="muted">Business development.</p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- EVENTS -->
+    <section id="section-events"
+      class="dashboard-section" hidden>
+
+      <div class="panel">
+
+        <h3 class="panel-title">Community Events</h3>
+
+        <p class="muted" style="margin-top:8px;">
+          Discover upcoming community activities,
+          learning sessions and networking events.
+        </p>
+
+        <div style="
+          padding:30px 15px;
+          text-align:center;
+          margin-top:18px;
+          background:#f3f5f9;
+          border-radius:12px;">
+
+          <div style="font-size:40px;">📅</div>
+
+          <h3 style="margin:12px 0;">
+            Events Coming Soon
+          </h3>
+
+          <p class="muted">
+            Event creation, registration, attendance
+            and community announcements will be
+            developed in a future stage.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- MARKETPLACE -->
+    <section id="section-marketplace"
+      class="dashboard-section" hidden>
+
+      <div class="panel">
+
+        <h3 class="panel-title">VANTAGE X Marketplace</h3>
+
+        <p class="muted" style="margin-top:8px;">
+          A future space for discovering products,
+          services and business opportunities.
+        </p>
+
+        <div style="
+          padding:30px 15px;
+          text-align:center;
+          margin-top:18px;
+          background:#f5f0e5;
+          border-radius:12px;">
+
+          <div style="font-size:42px;">◇</div>
+
+          <h3 style="margin:12px 0;">
+            Marketplace Coming Soon
+          </h3>
+
+          <p class="muted">
+            Product listings, seller profiles,
+            categories and marketplace interactions
+            will be introduced in a later stage.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- MESSAGES -->
+    <section id="section-messages"
+      class="dashboard-section" hidden>
+
+      <div class="panel">
+
+        <h3 class="panel-title">Messages</h3>
+
+        <p class="muted" style="margin-top:8px;">
+          Your private communication space.
+        </p>
+
+        <div style="
+          padding:30px 15px;
+          text-align:center;
+          margin-top:18px;
+          background:#f3f5f9;
+          border-radius:12px;">
+
+          <div style="font-size:40px;">✉</div>
+
+          <h3 style="margin:12px 0;">
+            Messaging Coming Soon
+          </h3>
+
+          <p class="muted">
+            Private conversations, message requests,
+            attachments and real-time messaging
+            will be developed separately.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- MOBILE NAVIGATION -->
+    <nav id="mobileNavigation"
+      style="
+        display:none;
+        position:fixed;
+        bottom:0;
+        left:0;
+        right:0;
+        z-index:1000;
+        background:white;
+        border-top:1px solid #e8ecf2;
+        padding:10px 5px;
+        justify-content:space-around;
+        box-shadow:0 -5px 20px rgba(9,20,38,.07);">
+
+      <button onclick="showSection('home')"
+        style="border:0;background:none;color:#10223b;">
+        <div style="font-size:20px;">⌂</div>
+        <small>Home</small>
+      </button>
+
+      <button onclick="showSection('feed')"
+        style="border:0;background:none;color:#10223b;">
+        <div style="font-size:20px;">▤</div>
+        <small>Feed</small>
+      </button>
+
+      <button onclick="showSection('discover')"
+        style="border:0;background:none;color:#10223b;">
+        <div style="font-size:20px;">⌕</div>
+        <small>Discover</small>
+      </button>
+
+      <button onclick="showSection('notifications')"
+        style="border:0;background:none;color:#10223b;">
+        <div style="font-size:20px;">♧</div>
+        <small>Alerts</small>
+      </button>
+
+      <button onclick="showSection('profile')"
+        style="border:0;background:none;color:#10223b;">
+        <div style="font-size:20px;">◉</div>
+        <small>Profile</small>
+      </button>
+
+    </nav>
+
+    <style>
+      @media(max-width:700px) {
+        #mobileNavigation {
+          display:flex !important;
+        }
+      }
+    </style>
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="right-sidebar">
+
+    <div class="panel">
+      <h3 class="panel-title">Your Account</h3>
+
+      <div style="
+        display:flex;align-items:center;
+        gap:12px;margin-top:17px;">
+
+        <div class="user-avatar" id="rightAvatar">VX</div>
+
+        <div>
+          <strong id="rightName"
+            style="font-size:13px;">Community Member</strong>
+
+          <p id="rightUsername"
+            class="muted">@member</p>
+        </div>
+
+      </div>
+
+      <a href="profile.html"
+        style="
+          display:block;text-align:center;
+          margin-top:16px;padding:10px;
+          background:#f5f0e5;border-radius:9px;
+          color:#10223b;font-weight:800;
+          font-size:12px;">
+        View My Profile →
+      </a>
+    </div>
+
+
+    <div class="panel">
+      <h3 class="panel-title">Community Guidelines</h3>
+
+      <div style="margin-top:15px;">
+
+        <p class="muted" style="margin-bottom:12px;">
+          ✓ Respect every community member.
+        </p>
+
+        <p class="muted" style="margin-bottom:12px;">
+          ✓ Share useful and constructive content.
+        </p>
+
+        <p class="muted" style="margin-bottom:12px;">
+          ✓ Avoid harassment and misinformation.
+        </p>
+
+        <p class="muted">
+          ✓ Help make the community valuable.
+        </p>
+
+      </div>
+    </div>
+
+
+    <div class="panel">
+      <h3 class="panel-title">Explore Interests</h3>
+
+      <div style="margin-top:15px;display:flex;flex-wrap:wrap;gap:8px;">
+
+        <span style="background:#f5f0e5;padding:8px 10px;
+          border-radius:20px;font-size:11px;">Business</span>
+
+        <span style="background:#f1f4fa;padding:8px 10px;
+          border-radius:20px;font-size:11px;">Education</span>
+
+        <span style="background:#f5f0e5;padding:8px 10px;
+          border-radius:20px;font-size:11px;">Technology</span>
+
+        <span style="background:#f1f4fa;padding:8px 10px;
+          border-radius:20px;font-size:11px;">Sports</span>
+
+        <span style="background:#f5f0e5;padding:8px 10px;
+          border-radius:20px;font-size:11px;">Creativity</span>
+
+        <span style="background:#f1f4fa;padding:8px 10px;
+          border-radius:20px;font-size:11px;">Motivation</span>
+
+      </div>
+    </div>
+
+
+    <div class="panel" style="
+      background:#091426;color:white;">
+
+      <div style="color:#d9ad55;font-size:10px;
+        font-weight:800;letter-spacing:1.5px;">
+        VANTAGE X COMMUNITY
+      </div>
+
+      <h3 style="margin-top:12px;font-size:16px;">
+        Build Value. Share Ideas.
+      </h3>
+
+      <p style="color:#c4ccda;font-size:11px;
+        line-height:1.7;margin-top:8px;">
+        A community for ideas, knowledge,
+        relationships and opportunities.
+      </p>
+
+    </div>
+
+  </aside>
+
+</div>
+
+
+<footer style="
+  text-align:center;
+  padding:25px 15px;
+  color:#8994a5;
+  font-size:11px;">
+
+  <strong style="color:#10223b;">
+    VANTAGE X COMMUNITY
+  </strong>
+
+  <p style="margin-top:6px;">
+    Building Value • Sharing Ideas • Creating Opportunities
+  </p>
+
+  <p style="margin-top:6px;">
+    © 2026 VANTAGE X GROUP LTD. All rights reserved.
+  </p>
+
+</footer>
+
+
+<!-- SUPABASE LIBRARY -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- EXISTING COMMUNITY CONFIGURATION -->
+<script src="supabase-config.js"></script>
+
+
+<script>
+/* =========================================
+   VANTAGE X COMMUNITY
+   MEMBER DASHBOARD APPLICATION
+========================================= */
+
+let currentUser = null;
+let currentProfile = null;
+
+const dashboardSections = [
+  "home",
+  "feed",
+  "discover",
+  "profile",
+  "notifications",
+  "connections",
+  "groups",
+  "saved",
+  "videos",
+  "business",
+  "events",
+  "marketplace",
+  "messages"
+];
+
+
+/* =========================================
+   SAFE HTML DISPLAY
+========================================= */
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, function(char) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[char];
+  });
+}
+
+
+function getInitials(name) {
+  const words = String(name || "VX").trim().split(/\s+/);
+
+  return words.slice(0, 2)
+    .map(word => word.charAt(0))
+    .join("")
+    .toUpperCase();
+}
+
+
+function showStatus(elementId, message, isError = false) {
+  const element = document.getElementById(elementId);
+
+  if (!element) return;
+
+  element.textContent = message;
+  element.style.color = isError ? "#dc5353" : "#1a9b68";
+}
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+function showSection(sectionName, clickedButton) {
+
+  if (!dashboardSections.includes(sectionName)) {
+    return;
+  }
+
+  document.querySelectorAll(".dashboard-section")
+    .forEach(section => {
+      section.hidden = true;
+    });
+
+  const target = document.getElementById(
+    "section-" + sectionName
+  );
+
+  if (target) {
+    target.hidden = false;
+  }
+
+  document.querySelectorAll(".nav-link")
+    .forEach(link => link.classList.remove("active"));
+
+  if (clickedButton) {
+    clickedButton.classList.add("active");
+  } else {
+    document.querySelectorAll(".nav-link").forEach(link => {
+      if (
+        link.getAttribute("onclick") &&
+        link.getAttribute("onclick").includes(
+          "'" + sectionName + "'"
+        )
+      ) {
+        link.classList.add("active");
+      }
+    });
+  }
+
+  const titles = {
+    home: ["My Dashboard", "Welcome to your community space."],
+    feed: ["Community Feed", "Share ideas and connect with members."],
+    discover: ["Discover", "Explore interests and opportunities."],
+    profile: ["My Profile", "Manage your community identity."],
+    notifications: ["Notifications", "Your latest community updates."],
+    connections: ["My Connections", "Build your community network."],
+    groups: ["Groups", "Find people with shared interests."],
+    saved: ["Saved Posts", "Your saved community content."],
+    videos: ["Videos", "Explore community video content."],
+    business: ["Business", "Explore business and professional ideas."],
+    events: ["Events", "Community events and activities."],
+    marketplace: ["Marketplace", "Discover products and services."],
+    messages: ["Messages", "Your private communication space."]
+  };
+
+  const details = titles[sectionName];
+
+  document.getElementById("pageTitle").textContent = details[0];
+  document.getElementById("pageSubtitle").textContent = details[1];
+
+  if (sectionName === "feed") {
+    loadCommunityFeed();
+  }
+
+  if (sectionName === "notifications") {
+    loadNotifications();
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+
+/* =========================================
+   CHECK SUPABASE CONNECTION
+========================================= */
+
+function getCommunityClient() {
+
+  if (typeof supabaseClient === "undefined" || !supabaseClient) {
+    throw new Error(
+      "Supabase connection not found. Check supabase-config.js."
+    );
+  }
+
+  return supabaseClient;
+}
+
+
+/* =========================================
+   LOAD CURRENT MEMBER
+========================================= */
+
+async function initializeMemberDashboard() {
+
+  try {
+
+    const client = getCommunityClient();
+
+    const { data: authData, error: authError } =
+      await client.auth.getUser();
+
+    if (authError) throw authError;
+
+    currentUser = authData.user;
+
+    if (!currentUser) {
+      window.location.replace("login.html");
+      return;
+    }
+
+    await loadMyProfile();
+    await loadMyStatistics();
+    await loadCommunityFeed();
+    await loadNotifications();
+
+  } catch (error) {
+
+    console.error("Dashboard initialization:", error);
+
+    alert(
+      error.message ||
+      "Unable to load your dashboard. Please try again."
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   LOAD MEMBER PROFILE
+========================================= */
+
+async function loadMyProfile() {
+
+  const client = getCommunityClient();
+
+  const { data, error } = await client
+    .from("profiles")
+    .select("id, full_name, username, bio, avatar_url, created_at")
+    .eq("id", currentUser.id)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  if (!data) {
+    throw new Error(
+      "Your community profile was not found."
+    );
+  }
+
+  currentProfile = data;
+
+  const fullName = data.full_name || "Community Member";
+  const username = data.username || "member";
+  const initials = getInitials(fullName);
+
+  document.getElementById("welcomeName").textContent =
+    "Welcome, " + fullName.split(" ")[0] + "!";
+
+  document.getElementById("profileName").textContent = fullName;
+
+  document.getElementById("profileUsername").textContent =
+    "@" + username;
+
+  document.getElementById("profileBio").textContent =
+    data.bio || "Welcome to VANTAGE X COMMUNITY.";
+
+  document.getElementById("rightName").textContent = fullName;
+
+  document.getElementById("rightUsername").textContent =
+    "@" + username;
+
+  document.getElementById("editFullName").value =
+    data.full_name || "";
+
+  document.getElementById("editUsername").value =
+    data.username || "";
+
+  document.getElementById("editBio").value =
+    data.bio || "";
+
+  const avatarElements = [
+    document.getElementById("topAvatar"),
+    document.getElementById("rightAvatar"),
+    document.getElementById("profileAvatar")
+  ];
+
+  avatarElements.forEach(element => {
+
+    if (!element) return;
+
+    if (data.avatar_url) {
+
+      element.innerHTML =
+        '<img src="' + escapeHTML(data.avatar_url) +
+        '" alt="Profile picture">';
+
+    } else {
+
+      element.textContent = initials;
+
+    }
+
+  });
+
+}
+
+
+/* =========================================
+   LOAD MEMBER STATISTICS
+========================================= */
+
+async function loadMyStatistics() {
+
+  const client = getCommunityClient();
+
+  const { count, error } = await client
+    .from("posts")
+    .select("id", { count: "exact", head: true })
+    .eq("author_id", currentUser.id);
+
+  if (error) {
+    console.error("Post count:", error);
+  } else {
+    document.getElementById("myPostCount").textContent =
+      count || 0;
+  }
+
+  const { count: unreadCount, error: notificationError } =
+    await client
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("recipient_id", currentUser.id)
+      .eq("is_read", false);
+
+  if (notificationError) {
+    console.error("Notification count:", notificationError);
+  } else {
+    document.getElementById("myNotificationCount").textContent =
+      unreadCount || 0;
+  }
+
+}
+
+
+/* =========================================
+   SIGN OUT
+========================================= */
+
+async function logoutUser() {
+
+  const confirmed = confirm(
+    "Are you sure you want to sign out?"
+  );
+
+  if (!confirmed) return;
+
+  try {
+
+    const client = getCommunityClient();
+
+    const { error } = await client.auth.signOut();
+
+    if (error) throw error;
+
+    window.location.replace("login.html");
+
+  } catch (error) {
+
+    alert("Unable to sign out: " + error.message);
+
+  }
+
+}
+</script>
+
+  <script>
+/* =========================================
+   PUBLISH COMMUNITY POSTS
+========================================= */
+
+async function publishPost() {
+
+  const client = getCommunityClient();
+
+  const content = document
+    .getElementById("postContent")
+    .value.trim();
+
+  if (!content) {
+    showStatus("publishStatus", "Write something before publishing.", true);
+    return;
+  }
+
+  const button = document.getElementById("publishPostButton");
+
+  button.disabled = true;
+  button.textContent = "Publishing...";
+
+  try {
+
+    const { error } = await client
+      .from("posts")
+      .insert({
+        author_id: currentUser.id,
+        content: content,
+        media_type: "text",
+        visibility: "public",
+        status: "published"
+      });
+
+    if (error) throw error;
+
+    document.getElementById("postContent").value = "";
+
+    showStatus("publishStatus", "Your post has been published successfully!");
+
+    await loadCommunityFeed();
+    await loadMyStatistics();
+
+  } catch (error) {
+
+    console.error("Publish post:", error);
+
+    showStatus("publishStatus", error.message, true);
+
+  } finally {
+
+    button.disabled = false;
+    button.textContent = "Publish Post";
+
+  }
+
+}
+
+
+/* =========================================
+   LOAD COMMUNITY FEED
+========================================= */
+
+async function loadCommunityFeed() {
+
+  const client = getCommunityClient();
+
+  const containers = [
+    document.getElementById("communityFeed"),
+    document.getElementById("homeFeed")
+  ];
+
+  containers.forEach(container => {
+    if (container) {
+      container.innerHTML =
+        '<p class="muted">Loading posts...</p>';
+    }
+  });
+
+  try {
+
+    const { data, error } = await client
+      .from("posts")
+      .select(`
+        id,
+        author_id,
+        content,
+        media_url,
+        media_type,
+        created_at,
+        profiles (
+          full_name,
+          username,
+          avatar_url
+        )
+      `)
+      .eq("status", "published")
+      .eq("visibility", "public")
+      .order("created_at", { ascending: false })
+      .limit(30);
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+
+      containers.forEach(container => {
+        if (container) {
+          container.innerHTML = `
+            <div style="text-align:center;padding:25px;">
+              <div style="font-size:35px;">▤</div>
+              <h3 style="margin:10px 0;">No Posts Yet</h3>
+              <p class="muted">
+                Be among the first to share something valuable.
+              </p>
+            </div>
+          `;
+        }
+      });
+
+      return;
+    }
+
+    const postHTML = data.map(post => {
+
+      const profile = post.profiles || {};
+
+      const name = profile.full_name || "Community Member";
+      const username = profile.username || "member";
+      const initials = getInitials(name);
+
+      const avatar = profile.avatar_url
+        ? `<img src="${escapeHTML(profile.avatar_url)}"
+             alt="Profile"
+             style="width:100%;height:100%;object-fit:cover;">`
+        : escapeHTML(initials);
+
+      const media = renderPostMedia(post);
+
+      return `
+        <article class="community-post"
+          data-post-id="${escapeHTML(post.id)}"
+          style="
+            border:1px solid #edf0f4;
+            border-radius:13px;
+            padding:16px;
+            margin-bottom:15px;
+            background:white;">
+
+          <div style="
+            display:flex;
+            align-items:center;
+            gap:11px;">
+
+            <div style="
+              width:43px;height:43px;
+              flex-shrink:0;
+              border-radius:50%;
+              background:#f5f0e5;
+              color:#10223b;
+              display:grid;
+              place-items:center;
+              overflow:hidden;
+              font-weight:800;">
+
+              ${avatar}
+
+            </div>
+
+            <div style="min-width:0;">
+              <strong style="font-size:13px;">
+                ${escapeHTML(name)}
+              </strong>
+
+              <p class="muted">
+                @${escapeHTML(username)}
+                · ${formatPostDate(post.created_at)}
+              </p>
+            </div>
+
+            <span style="
+              margin-left:auto;
+              color:#b28b43;
+              font-size:10px;
+              font-weight:800;">
+              PUBLIC
+            </span>
+
+          </div>
+
+          <div style="
+            margin-top:15px;
+            font-size:13px;
+            line-height:1.8;
+            white-space:pre-wrap;
+            overflow-wrap:anywhere;">
+            ${escapeHTML(post.content || "")}
+          </div>
+
+          ${media}
+
+          <div style="
+            display:flex;
+            gap:17px;
+            flex-wrap:wrap;
+            border-top:1px solid #edf0f4;
+            margin-top:15px;
+            padding-top:13px;">
+
+            <button onclick="toggleReaction('${escapeHTML(post.id)}')"
+              style="border:0;background:none;color:#526078;font-size:12px;">
+              ♡ Like
+            </button>
+
+            <button onclick="openComments('${escapeHTML(post.id)}')"
+              style="border:0;background:none;color:#526078;font-size:12px;">
+              ◯ Comment
+            </button>
+
+            <button onclick="sharePost('${escapeHTML(post.id)}')"
+              style="border:0;background:none;color:#526078;font-size:12px;">
+              ↗ Share
+            </button>
+
+            ${post.author_id === currentUser.id
+              ? `<button onclick="deletePost('${escapeHTML(post.id)}')"
+                   style="border:0;background:none;color:#dc5353;font-size:12px;">
+                   Delete
+                 </button>`
+              : ""
+            }
+
+          </div>
+
+          <div id="comments-${escapeHTML(post.id)}"
+            style="display:none;margin-top:15px;">
+          </div>
+
+        </article>
+      `;
+
+    }).join("");
+
+    containers.forEach(container => {
+      if (container) {
+        container.innerHTML = postHTML;
+      }
+    });
+
+  } catch (error) {
+
+    console.error("Community feed:", error);
+
+    containers.forEach(container => {
+      if (container) {
+        container.innerHTML = `
+          <p style="color:#dc5353;font-size:12px;">
+            Unable to load posts: ${escapeHTML(error.message)}
+          </p>
+        `;
+      }
+    });
+
+  }
+
+}
+
+
+/* =========================================
+   DISPLAY POST MEDIA
+========================================= */
+
+function renderPostMedia(post) {
+
+  if (!post.media_url) return "";
+
+  const url = escapeHTML(post.media_url);
+
+  if (post.media_type === "image") {
+
+    return `
+      <img src="${url}"
+        alt="Community post image"
+        loading="lazy"
+        style="
+          width:100%;
+          max-height:420px;
+          object-fit:contain;
+          background:#f3f5f9;
+          border-radius:11px;
+          margin-top:13px;">
+    `;
+
+  }
+
+  if (post.media_type === "video") {
+
+    return `
+      <video controls
+        playsinline
+        preload="metadata"
+        style="
+          width:100%;
+          max-height:420px;
+          background:#091426;
+          border-radius:11px;
+          margin-top:13px;">
+        <source src="${url}">
+        Your browser does not support video playback.
+      </video>
+    `;
+
+  }
+
+  return "";
+
+}
+
+
+/* =========================================
+   POST DATE
+========================================= */
+
+function formatPostDate(dateValue) {
+
+  const date = new Date(dateValue);
+
+  if (isNaN(date.getTime())) return "";
+
+  return date.toLocaleString([], {
+    dateStyle: "medium",
+    timeStyle: "short"
+  });
+
+}
+
+
+/* =========================================
+   LIKE / UNLIKE POSTS
+========================================= */
+
+async function toggleReaction(postId) {
+
+  const client = getCommunityClient();
+
+  try {
+
+    const { data: existing, error: searchError } =
+      await client
+        .from("post_reactions")
+        .select("id")
+        .eq("post_id", postId)
+        .eq("user_id", currentUser.id)
+        .maybeSingle();
+
+    if (searchError) throw searchError;
+
+    if (existing) {
+
+      const { error } = await client
+        .from("post_reactions")
+        .delete()
+        .eq("id", existing.id)
+        .eq("user_id", currentUser.id);
+
+      if (error) throw error;
+
+    } else {
+
+      const { error } = await client
+        .from("post_reactions")
+        .insert({
+          post_id: postId,
+          user_id: currentUser.id,
+          reaction_type: "like"
+        });
+
+      if (error) throw error;
+
+    }
+
+    await loadCommunityFeed();
+
+  } catch (error) {
+
+    console.error("Reaction error:", error);
+
+    alert("Unable to update reaction: " + error.message);
+
+  }
+
+}
+
+
+/* =========================================
+   SHARE POST
+========================================= */
+
+async function sharePost(postId) {
+
+  const shareURL = new URL(
+    "index.html",
+    window.location.href
+  );
+
+  shareURL.searchParams.set("post", postId);
+
+  try {
+
+    if (navigator.share) {
+
+      await navigator.share({
+        title: "VANTAGE X COMMUNITY",
+        text: "Check out this community post.",
+        url: shareURL.href
+      });
+
+    } else if (navigator.clipboard) {
+
+      await navigator.clipboard.writeText(shareURL.href);
+
+      alert("Post link copied.");
+
+    } else {
+
+      prompt("Copy this post link:", shareURL.href);
+
+    }
+
+  } catch (error) {
+
+    if (error.name !== "AbortError") {
+      alert("Unable to share this post.");
+    }
+
+  }
+
+}
+
+
+/* =========================================
+   DELETE OWN POST
+========================================= */
+
+async function deletePost(postId) {
+
+  if (!confirm("Are you sure you want to delete this post?")) {
+    return;
+  }
+
+  try {
+
+    const client = getCommunityClient();
+
+    const { error } = await client
+      .from("posts")
+      .delete()
+      .eq("id", postId)
+      .eq("author_id", currentUser.id);
+
+    if (error) throw error;
+
+    await loadCommunityFeed();
+    await loadMyStatistics();
+
+  } catch (error) {
+
+    alert("Unable to delete post: " + error.message);
+
+  }
+
+}
+
+
+/* =========================================
+   LOAD POST COMMENTS
+========================================= */
+
+async function openComments(postId) {
+
+  const container = document.getElementById(
+    "comments-" + postId
+  );
+
+  if (!container) return;
+
+  const isOpen = container.style.display !== "none";
+
+  if (isOpen) {
+    container.style.display = "none";
+    return;
+  }
+
+  container.style.display = "block";
+
+  container.innerHTML =
+    '<p class="muted">Loading comments...</p>';
+
+  try {
+
+    const client = getCommunityClient();
+
+    const { data, error } = await client
+      .from("post_comments")
+      .select(`
+        id,
+        content,
+        created_at,
+        user_id,
+        profiles (
+          full_name,
+          username
+        )
+      `)
+      .eq("post_id", postId)
+      .order("created_at", { ascending: true })
+      .limit(50);
+
+    if (error) throw error;
+
+    const commentsHTML = (data || []).map(comment => {
+
+      const profile = comment.profiles || {};
+
+      return `
+        <div style="
+          background:#f5f7fa;
+          border-radius:9px;
+          padding:11px;
+          margin-bottom:9px;">
+
+          <strong style="font-size:12px;">
+            ${escapeHTML(profile.full_name || "Member")}
+          </strong>
+
+          <p class="muted">
+            @${escapeHTML(profile.username || "member")}
+          </p>
+
+          <p style="
+            font-size:12px;
+            line-height:1.6;
+            margin-top:7px;
+            white-space:pre-wrap;">
+            ${escapeHTML(comment.content)}
+          </p>
+
+        </div>
+      `;
+
+    }).join("");
+
+    container.innerHTML = `
+      <div style="margin-bottom:12px;">
+        ${commentsHTML || '<p class="muted">No comments yet.</p>'}
+      </div>
+
+      <textarea id="commentInput-${escapeHTML(postId)}"
+        maxlength="5000"
+        placeholder="Write a comment..."
+        style="
+          width:100%;
+          min-height:65px;
+          padding:11px;
+          border:1px solid #e5e9ef;
+          border-radius:9px;
+          resize:vertical;">
+      </textarea>
+
+      <button class="gold-button"
+        style="margin-top:9px;"
+        onclick="submitComment('${escapeHTML(postId)}')">
+        Send Comment
+      </button>
+
+      <p id="commentStatus-${escapeHTML(postId)}"
+        class="muted" style="margin-top:8px;">
+      </p>
+    `;
+
+  } catch (error) {
+
+    container.innerHTML = `
+      <p style="color:#dc5353;font-size:12px;">
+        Unable to load comments: ${escapeHTML(error.message)}
+      </p>
+    `;
+
+  }
+
+}
+
+
+/* =========================================
+   SUBMIT COMMENT
+========================================= */
+
+async function submitComment(postId) {
+
+  const input = document.getElementById(
+    "commentInput-" + postId
+  );
+
+  const content = input.value.trim();
+
+  if (!content) {
+    showStatus(
+      "commentStatus-" + postId,
+      "Write a comment first.",
+      true
+    );
+    return;
+  }
+
+  try {
+
+    const client = getCommunityClient();
+
+    const { error } = await client
+      .from("post_comments")
+      .insert({
+        post_id: postId,
+        user_id: currentUser.id,
+        content: content
+      });
+
+    if (error) throw error;
+
+    await openComments(postId);
+
+    const container = document.getElementById(
+      "comments-" + postId
+    );
+
+    if (container) {
+      container.style.display = "block";
+    }
+
+  } catch (error) {
+
+    showStatus(
+      "commentStatus-" + postId,
+      error.message,
+      true
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   SAVE PROFILE CHANGES
+========================================= */
+
+async function saveProfile() {
+
+  const client = getCommunityClient();
+
+  const fullName = document
+    .getElementById("editFullName")
+    .value.trim();
+
+  const username = document
+    .getElementById("editUsername")
+    .value.trim()
+    .toLowerCase();
+
+  const bio = document
+    .getElementById("editBio")
+    .value.trim();
+
+  if (!fullName || !username) {
+
+    showStatus(
+      "profileStatus",
+      "Full name and username are required.",
+      true
+    );
+
+    return;
+
+  }
+
+  if (!/^[a-z0-9_]{3,30}$/.test(username)) {
+
+    showStatus(
+      "profileStatus",
+      "Username must contain 3–30 letters, numbers or underscores.",
+      true
+    );
+
+    return;
+
+  }
+
+  const button = document.getElementById("saveProfileButton");
+
+  button.disabled = true;
+  button.textContent = "Saving...";
+
+  try {
+
+    const { error } = await client
+      .from("profiles")
+      .update({
+        full_name: fullName,
+        username: username,
+        bio: bio
+      })
+      .eq("id", currentUser.id);
+
+    if (error) throw error;
+
+    await loadMyProfile();
+
+    showStatus(
+      "profileStatus",
+      "Your profile has been updated."
+    );
+
+  } catch (error) {
+
+    showStatus(
+      "profileStatus",
+      error.message,
+      true
+    );
+
+  } finally {
+
+    button.disabled = false;
+    button.textContent = "Save Profile Changes";
+
+  }
+
+}
+
+
+/* =========================================
+   LOAD NOTIFICATIONS
+========================================= */
+
+async function loadNotifications() {
+
+  const client = getCommunityClient();
+
+  const container = document.getElementById(
+    "notificationList"
+  );
+
+  try {
+
+    const { data, error } = await client
+      .from("notifications")
+      .select(`
+        id,
+        type,
+        message,
+        reference_id,
+        is_read,
+        created_at
+      `)
+      .eq("recipient_id", currentUser.id)
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+
+    const unread = (data || []).filter(
+      notification => !notification.is_read
+    ).length;
+
+    document.getElementById(
+      "myNotificationCount"
+    ).textContent = unread;
+
+    document.getElementById(
+      "notificationDot"
+    ).style.display = unread > 0 ? "block" : "none";
+
+    if (!data || data.length === 0) {
+
+      container.innerHTML = `
+        <div style="text-align:center;padding:25px;">
+          <div style="font-size:35px;">♧</div>
+          <h3 style="margin:10px 0;">All Caught Up</h3>
+          <p class="muted">You have no notifications yet.</p>
+        </div>
+      `;
+
+      return;
+
+    }
+
+    container.innerHTML = data.map(notification => `
+
+      <div style="
+        padding:14px;
+        border-radius:11px;
+        margin-bottom:10px;
+        background:${notification.is_read ? "#ffffff" : "#f5f0e5"};
+        border:1px solid #edf0f4;">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          gap:10px;">
+
+          <strong style="font-size:12px;">
+            ${escapeHTML(notification.type.replaceAll("_", " "))}
+          </strong>
+
+          ${notification.is_read
+            ? '<span class="muted">Read</span>'
+            : '<span style="color:#a47a2e;font-size:10px;font-weight:800;">NEW</span>'
+          }
+
+        </div>
+
+        <p style="
+          font-size:12px;
+          line-height:1.6;
+          margin-top:8px;">
+          ${escapeHTML(notification.message)}
+        </p>
+
+        <p class="muted" style="margin-top:7px;">
+          ${formatPostDate(notification.created_at)}
+        </p>
+
+        ${!notification.is_read
+          ? `<button class="gold-button"
+               style="margin-top:10px;"
+               onclick="markNotificationRead('${escapeHTML(notification.id)}')">
+               Mark as Read
+             </button>`
+          : ""
+        }
+
+      </div>
+
+    `).join("");
+
+  } catch (error) {
+
+    console.error("Notifications:", error);
+
+    container.innerHTML = `
+      <p style="color:#dc5353;font-size:12px;">
+        Unable to load notifications: ${escapeHTML(error.message)}
+      </p>
+    `;
+
+  }
+
+}
+
+
+/* =========================================
+   MARK ONE NOTIFICATION AS READ
+========================================= */
+
+async function markNotificationRead(notificationId) {
+
+  try {
+
+    const client = getCommunityClient();
+
+    const { error } = await client.rpc(
+      "mark_notification_read",
+      { notification_id: notificationId }
+    );
+
+    if (error) throw error;
+
+    await loadNotifications();
+
+  } catch (error) {
+
+    alert("Unable to update notification: " + error.message);
+
+  }
+
+}
+
+
+/* =========================================
+   MARK ALL NOTIFICATIONS AS READ
+========================================= */
+
+async function markAllNotificationsRead() {
+
+  try {
+
+    const client = getCommunityClient();
+
+    const { error } = await client.rpc(
+      "mark_all_notifications_read"
+    );
+
+    if (error) throw error;
+
+    await loadNotifications();
+    await loadMyStatistics();
+
+  } catch (error) {
+
+    alert("Unable to update notifications: " + error.message);
+
+  }
+
+}
+
+
+/* =========================================
+   START DASHBOARD
+========================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  initializeMemberDashboard
+);
+
+</script>
+
+</body>
+</html>
