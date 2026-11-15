@@ -12,7 +12,7 @@ if (!window.supabase) {
 
 if (
   !SUPABASE_PUBLISHABLE_KEY ||
-  SUPABASE_PUBLISHABLE_KEY === "PASTE_YOUR_NEW_PUBLISHABLE_KEY_HERE"
+  SUPABASE_PUBLISHABLE_KEY === "sb_publishable_xR8TdlRI5ruMKQJ6TtEsMQ_054sQjoS"
 ) {
   throw new Error("Supabase publishable key has not been configured.");
 }
