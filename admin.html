@@ -403,7 +403,27 @@ h1{font-size:27px;letter-spacing:-.7px;color:#142239}
 
   </div>
 </section>
-  
+
+  <!-- MEMBER PROFILE VIEWER -->
+<div id="memberProfileModal"
+     style="display:none;position:fixed;inset:0;background:rgba(5,15,30,.75);z-index:9999;padding:20px;overflow-y:auto;">
+
+  <div style="background:white;max-width:600px;margin:40px auto;padding:25px;border-radius:14px;">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h2 style="color:#10223b;">Member Profile</h2>
+      <button onclick="closeMemberProfile()"
+        style="border:0;background:#eee;padding:9px 13px;border-radius:6px;">
+        Close
+      </button>
+    </div>
+
+    <div id="memberProfileContent" style="margin-top:20px;">
+      Loading profile...
+    </div>
+
+  </div>
+</div>
 
 <section class="page-section" id="content">
   <h1>Content Moderation</h1>
