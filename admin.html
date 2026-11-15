@@ -498,7 +498,23 @@ function toggleMenu() {
   sidebar.classList.toggle("open");
   overlay.classList.toggle("show");
 }
+// Connect Quick Management Access cards
+window.showPage = showPage;
 
+const quickTargets = [
+  "members",
+  "content",
+  "reports",
+  "creators",
+  "analytics",
+  "security"
+];
+
+document.querySelectorAll(".quick-card").forEach((card, index) => {
+  card.addEventListener("click", () => {
+    showPage(quickTargets[index]);
+  });
+});
 navButtons.forEach(button => {
   button.addEventListener("click", () => {
     showPage(button.dataset.page);
