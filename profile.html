@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Member Profile | VANTAGE X COMMUNITY</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#f3f5f9;color:#17243a;
+ font-family:Arial,sans-serif
+}
+header{
+ background:#10223b;color:white;padding:17px 6%;
+ display:flex;justify-content:space-between;align-items:center;
+}
+.brand{font-weight:800;letter-spacing:1px}
+.brand span{color:#d5ad55}
+header a{color:white;text-decoration:none}
+.container{max-width:850px;margin:30px auto;padding:0 15px}
+.card{
+ background:white;border-radius:15px;margin-bottom:20px;
+ overflow:hidden;box-shadow:0 3px 15px #14243a0d
+}
+.cover{
+ height:170px;
+ background:linear-gradient(120deg,#10223b,#294766,#c19b4b)
+}
+.profile-info{padding:0 25px 25px}
+.avatar{
+ width:112px;height:112px;border-radius:50%;
+ border:5px solid white;background:#e8edf4;
+ object-fit:cover;margin-top:-55px;
+}
+.name{font-size:25px;font-weight:800;margin:12px 0 5px}
+.username{color:#78869a}
+.bio{line-height:1.6;color:#526176;margin-top:15px}
+.stats{display:flex;gap:28px;margin-top:20px}
+.stat strong{display:block;font-size:19px;color:#10223b}
+.stat small{color:#8290a3}
+.posts-title{padding:20px 22px;font-weight:800}
+.post{padding:20px 22px;border-top:1px solid #edf0f5}
+.post p{line-height:1.7;white-space:pre-wrap}
+.post-date{font-size:12px;color:#8793a4}
+.status{padding:35px;text-align:center;color:#738198}
+button{
+ background:#10223b;color:white;border:0;padding:11px 18px;
+ border-radius:8px;cursor:pointer
+}
+@media(max-width:600px){
+ .cover{height:125px}
+ .profile-info{padding:0 18px 22px}
+ .stats{gap:17px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+ <div class="brand">VANTAGE <span>X</span> COMMUNITY</div>
+ <a href="dashboard.html">Dashboard</a>
+</header>
+
+<main class="container">
+
+ <section class="card">
+  <div class="cover"></div>
+  <div class="profile-info">
+   <img id="avatar" class="avatar"
+    src="https://placehold.co/120x120?text=VX"
+    alt="Member profile picture">
+
+   <div class="name" id="fullName">Loading profile...</div>
+   <div class="username" id="username"></div>
+   <div class="bio" id="bio"></div>
+
+   <div class="stats">
+    <div class="stat">
+     <strong id="postCount">0</strong>
+     <small>Posts</small>
+    </div>
+    <div class="stat">
+     <strong>—</strong>
+     <small>Followers</small>
+    </div>
+    <div class="stat">
+     <strong>—</strong>
+     <small>Following</small>
+    </div>
+   </div>
+  </div>
+ </section>
+
+ <section class="card">
+  <div class="posts-title">Member's Posts</div>
+  <div id="posts">
+   <div class="status">Loading posts...</div>
+  </div>
+ </section>
+
+ <div id="message" class="status"></div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
+<script>
+(async function loadMemberProfile(){
+
+ const message = document.getElementById("message");
+ const postsBox = document.getElementById("posts");
+
+ try {
+  const {data:{user},error:authError} =
+   await supabaseClient.auth.getUser();
+
+  if(authError || !user){
+   window.location.replace("login.html");
+   return;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const profileId = params.get("id");
+
+  if(!profileId){
+   message.textContent =
+    "No member profile was selected.";
+   return;
+  }
+
+  const {data:profile,error:profileError} =
+   await supabaseClient
+    .from("profiles")
+    .select("id,full_name,username,bio,avatar_url,created_at")
+    .eq("id",profileId)
+    .maybeSingle();
+
+  if(profileError) throw profileError;
+
+  if(!profile){
+   message.textContent =
+    "Profile unavailable or private.";
+   return;
+  }
+
+  document.getElementById("fullName").textContent =
+   profile.full_name || "Community Member";
+
+  document.getElementById("username").textContent =
+   "@" + (profile.username || "member");
+
+  document.getElementById("bio").textContent =
+   profile.bio || "Welcome to my VANTAGE X COMMUNITY profile.";
+
+  if(profile.avatar_url){
+   document.getElementById("avatar").src =
+    profile.avatar_url;
+  }
+
+  // Record a profile visit for another member.
+  if(user.id !== profile.id){
+   const {error:viewError} =
+    await supabaseClient.rpc("record_profile_view",{
+     target_profile_id:profile.id
+    });
+
+   if(viewError){
+    console.warn("Profile visit was not recorded:",viewError.message);
+   }
+  }
+
+  // Load this member's public posts.
+  const {data:posts,error:postsError} =
+   await supabaseClient
+    .from("posts")
+    .select("id,content,media_url,media_type,created_at")
+    .eq("author_id",profile.id)
+    .eq("status","published")
+    .eq("visibility","public")
+    .order("created_at",{ascending:false});
+
+  if(postsError) throw postsError;
+
+  document.getElementById("postCount").textContent =
+   posts.length;
+
+  if(!posts.length){
+   postsBox.innerHTML =
+    '<div class="status">This member has not published any posts yet.</div>';
+   return;
+  }
+
+  postsBox.innerHTML = "";
+
+  posts.forEach(post=>{
+
+   const article = document.createElement("article");
+   article.className = "post";
+
+   const content = document.createElement("p");
+   content.textContent = post.content || "";
+
+   article.appendChild(content);
+
+   if(post.media_url){
+    if(post.media_type === "image"){
+     const img = document.createElement("img");
+     img.src = post.media_url;
+     img.alt = "Post image";
+     img.style.cssText =
+      "width:100%;max-height:450px;object-fit:cover;border-radius:10px";
+     article.appendChild(img);
+    }
+
+    if(post.media_type === "video"){
+     const video = document.createElement("video");
+     video.src = post.media_url;
+     video.controls = true;
+     video.style.cssText = "width:100%;border-radius:10px";
+     article.appendChild(video);
+    }
+   }
+
+   const date = document.createElement("div");
+   date.className = "post-date";
+   date.textContent =
+    new Date(post.created_at).toLocaleString();
+
+   article.appendChild(date);
+   postsBox.appendChild(article);
+  });
+
+ } catch(error){
+  console.error("Profile error:",error);
+  message.textContent =
+   error.message || "Unable to load this profile.";
+ }
+
+})();
+</script>
+
+</body>
+</html>
