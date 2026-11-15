@@ -616,5 +616,109 @@ async function loadCommunityStatistics() {
 loadCommunityStatistics();
   </script>
   
+<script>
+(async function loadMemberDirectory() {
+  const tableBody = document.getElementById("membersTableBody");
+  const searchInput = document.getElementById("memberSearch");
+  const status = document.getElementById("memberDirectoryStatus");
+
+  if (!tableBody || !searchInput || !status) return;
+
+  try {
+    // Verify administrator access first.
+    const access = await verifyCommunityAdmin();
+
+    if (!access.authorized) {
+      throw new Error("Administrator access could not be verified.");
+    }
+
+    // Retrieve member profiles from Supabase.
+    const { data, error } = await supabaseClient
+      .from("profiles")
+      .select("full_name, username, created_at")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const members = data || [];
+
+    function renderMembers(query = "") {
+      tableBody.replaceChildren();
+
+      const filtered = members.filter(member => {
+        const name = (member.full_name || "").toLowerCase();
+        const username = (member.username || "").toLowerCase();
+
+        return name.includes(query) || username.includes(query);
+      });
+
+      if (filtered.length === 0) {
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+
+        cell.colSpan = 3;
+        cell.textContent = "No matching members found.";
+        cell.style.cssText = "padding:20px;text-align:center;color:#929dad;";
+
+        row.appendChild(cell);
+        tableBody.appendChild(row);
+        return;
+      }
+
+      filtered.forEach(member => {
+        const row = document.createElement("tr");
+        row.style.borderBottom = "1px solid #e7ebf1";
+
+        const nameCell = document.createElement("td");
+        const usernameCell = document.createElement("td");
+        const dateCell = document.createElement("td");
+
+        nameCell.textContent = member.full_name || "Unnamed member";
+        usernameCell.textContent = member.username
+          ? "@" + member.username
+          : "Not set";
+
+        dateCell.textContent = member.created_at
+          ? new Date(member.created_at).toLocaleDateString()
+          : "Unknown";
+
+        [nameCell, usernameCell, dateCell].forEach(cell => {
+          cell.style.cssText = "padding:14px;font-size:12px;";
+          row.appendChild(cell);
+        });
+
+        tableBody.appendChild(row);
+      });
+    }
+
+    renderMembers();
+
+    searchInput.addEventListener("input", () => {
+      renderMembers(searchInput.value.trim().toLowerCase());
+    });
+
+    status.textContent =
+      members.length + " registered member(s) loaded successfully.";
+
+  } catch (error) {
+    console.error("Member directory error:", error);
+
+    tableBody.replaceChildren();
+
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+
+    cell.colSpan = 3;
+    cell.textContent = "Unable to load members. Check administrator permissions.";
+    cell.style.padding = "20px";
+
+    row.appendChild(cell);
+    tableBody.appendChild(row);
+
+    status.textContent = "Member directory connection failed.";
+  }
+})();
+</script>
+  
 </body>
 </html>
