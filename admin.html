@@ -462,63 +462,46 @@ h1{font-size:27px;letter-spacing:-.7px;color:#142239}
 <script>
 const navButtons = document.querySelectorAll(".nav-btn");
 const sections = document.querySelectorAll(".page-section");
-const sidebar = document.querySelector(".sidebar");
-const overlay = document.querySelector(".mobile-overlay");
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+const breadcrumb = document.getElementById("crumb");
 
-function showSection(sectionId, button) {
+function showPage(pageId) {
+  const target = document.getElementById(pageId);
+
+  if (!target) return;
+
   sections.forEach(section => {
-    section.classList.toggle("active", section.id === sectionId);
+    section.classList.toggle("active", section.id === pageId);
   });
 
-  navButtons.forEach(nav => nav.classList.remove("active"));
-  if (button) button.classList.add("active");
+  navButtons.forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.page === pageId
+    );
+  });
 
-  const title = document.getElementById("current-page-title");
-  if (title && button) {
-    title.textContent = button.dataset.title || button.textContent.trim();
+  const activeButton = document.querySelector(
+    `.nav-btn[data-page="${pageId}"]`
+  );
+
+  if (breadcrumb && activeButton) {
+    breadcrumb.textContent = activeButton.textContent.trim();
   }
 
-  sidebar?.classList.remove("open");
-  overlay?.classList.remove("show");
+  sidebar.classList.remove("open");
+  overlay.classList.remove("show");
+}
+
+function toggleMenu() {
+  sidebar.classList.toggle("open");
+  overlay.classList.toggle("show");
 }
 
 navButtons.forEach(button => {
   button.addEventListener("click", () => {
-    showSection(button.dataset.section, button);
-  });
-});
-
-document.querySelectorAll("[data-open-section]").forEach(button => {
-  button.addEventListener("click", () => {
-    const target = button.dataset.openSection;
-    const matchingButton = document.querySelector(
-      `.nav-btn[data-section="${target}"]`
-    );
-    showSection(target, matchingButton);
-  });
-});
-
-document.querySelector(".menu-toggle")?.addEventListener("click", () => {
-  sidebar?.classList.toggle("open");
-  overlay?.classList.toggle("show");
-});
-
-overlay?.addEventListener("click", () => {
-  sidebar?.classList.remove("open");
-  overlay?.classList.remove("show");
-});
-
-document.getElementById("admin-logout")?.addEventListener("click", () => {
-  alert("Admin logout will be connected to secure authentication.");
-});
-
-document.getElementById("admin-search")?.addEventListener("input", event => {
-  const query = event.target.value.trim().toLowerCase();
-
-  navButtons.forEach(button => {
-    button.style.display = button.textContent.toLowerCase().includes(query)
-      ? "flex"
-      : "none";
+    showPage(button.dataset.page);
   });
 });
 </script>
