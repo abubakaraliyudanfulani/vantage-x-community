@@ -4,7 +4,7 @@ const SUPABASE_URL = "https://urjxoewsgmfasnyygjuz.supabase.co";
 
 // Replace this placeholder with your NEW Supabase publishable key.
 // Never put your secret or service-role key in this file.
-const SUPABASE_PUBLISHABLE_KEY = "PASTE_YOUR_NEW_PUBLISHABLE_KEY_HERE";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Cn4id_fYfIYkV5EUDKvWMA_yplZfC3A";
 
 if (!window.supabase) {
   throw new Error("Supabase library failed to load.");
