@@ -243,9 +243,9 @@ h1{font-size:27px;letter-spacing:-.7px;color:#142239}
 
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-label">Total Members</div>
-      <div class="stat-value">—</div>
-      <div class="stat-foot">Database connection pending</div>
+  <div class="stat-label">Total Members</div>
+  <div class="stat-value" id="totalMembers">Loading...</div>
+  <div class="stat-foot" id="membersStatus">Connecting to database...</div>
     </div>
 
     <div class="stat-card">
@@ -549,6 +549,30 @@ document.getElementById("admin-search")?.addEventListener("input", event => {
   console.log("Administrator verified:", result.role);
 })();
 </script>
+  <script>
+async function loadCommunityStatistics() {
+  const countElement = document.getElementById("totalMembers");
+  const statusElement = document.getElementById("membersStatus");
+
+  try {
+    const { data, error } = await supabaseClient.rpc(
+      "get_community_member_count"
+    );
+
+    if (error) throw error;
+
+    countElement.textContent = Number(data).toLocaleString();
+    statusElement.textContent = "Live database count";
+
+  } catch (error) {
+    console.error("Member count error:", error);
+    countElement.textContent = "—";
+    statusElement.textContent = "Unable to load member count";
+  }
+}
+
+loadCommunityStatistics();
+  </script>
   
 </body>
 </html>
