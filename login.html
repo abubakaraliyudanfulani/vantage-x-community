@@ -94,10 +94,10 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
-  <script src="auth.js"></script>
+<script src="supabase-config.js"></script>
+<script src="auth.js"></script>
 <script src="admin-auth.js"></script>
-  <script>
+<script>
     const form = document.getElementById("loginForm");
     const message = document.getElementById("message");
     const button = document.getElementById("loginButton");
@@ -124,7 +124,18 @@
         if (result.error) {
           message.textContent = result.error.message;
         } else {
-  message.textContent = "Login successful. Opening your dashboard...";
+  message.textContent = "Login successful. Checking your account...";
+
+const adminResult = await verifyCommunityAdmin();
+
+if (adminResult.authorized) {
+  window.location.replace("admin.html");
+} else if (adminResult.reason === "not_an_admin") {
+  window.location.replace("dashboard.html");
+} else {
+  message.textContent =
+    "Login succeeded, but account permissions could not be verified. Please try again.";
+}
 
   const adminResult = await verifyCommunityAdmin();
 
