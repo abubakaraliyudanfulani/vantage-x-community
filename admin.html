@@ -678,6 +678,55 @@ function openMemberProfile(member) {
     "Profile picture: " + (member.avatar_url || "Not uploaded")
   );
 }
+
+    function openMemberProfile(member) {
+  const modal = document.getElementById("memberProfileModal");
+  const content = document.getElementById("memberProfileContent");
+
+  const avatar = member.avatar_url
+    ? `<img src="${member.avatar_url}" alt="Profile picture"
+         style="width:90px;height:90px;border-radius:50%;object-fit:cover;">`
+    : `<div style="width:90px;height:90px;border-radius:50%;background:#10223b;color:#d5b36a;display:flex;align-items:center;justify-content:center;font-size:30px;">${(member.full_name || "M").charAt(0).toUpperCase()}</div>`;
+
+  content.innerHTML = `
+    <div style="text-align:center;margin-bottom:25px;">
+      ${avatar}
+      <h2 style="color:#10223b;margin:12px 0 5px;">
+        ${escapeHTML(member.full_name || "Name not provided")}
+      </h2>
+      <p style="color:#8993a3;">@${escapeHTML(member.username || "username-not-set")}</p>
+    </div>
+
+    <div style="background:#f5f7fa;padding:18px;border-radius:10px;">
+      <p><strong>Member ID:</strong> ${escapeHTML(member.id || "Unavailable")}</p>
+      <p><strong>Full name:</strong> ${escapeHTML(member.full_name || "Not provided")}</p>
+      <p><strong>Username:</strong> ${escapeHTML(member.username || "Not set")}</p>
+      <p><strong>Bio:</strong> ${escapeHTML(member.bio || "No bio added yet")}</p>
+      <p><strong>Date joined:</strong> ${
+        member.created_at
+          ? new Date(member.created_at).toLocaleDateString()
+          : "Unknown"
+      }</p>
+      <p><strong>Profile picture:</strong> ${member.avatar_url ? "Uploaded" : "Not uploaded"}</p>
+    </div>
+  `;
+
+  modal.style.display = "block";
+}
+
+function closeMemberProfile() {
+  document.getElementById("memberProfileModal").style.display = "none";
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
+}
     
     function renderMembers(query = "") {
       tableBody.replaceChildren();
