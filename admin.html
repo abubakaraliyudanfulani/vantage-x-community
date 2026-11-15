@@ -689,6 +689,19 @@ function openMemberProfile(member) {
         const nameCell = document.createElement("td");
         const usernameCell = document.createElement("td");
         const dateCell = document.createElement("td");
+        const actionCell = document.createElement("td");
+
+const viewButton = document.createElement("button");
+viewButton.textContent = "View Profile";
+
+viewButton.style.cssText =
+  "background:#10223b;color:white;border:0;padding:9px 13px;border-radius:6px;font-size:11px;cursor:pointer;";
+
+viewButton.addEventListener("click", () => {
+  openMemberProfile(member);
+});
+
+actionCell.appendChild(viewButton);
 const actionCell = document.createElement("td");
 
 const viewButton = document.createElement("button");
