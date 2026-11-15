@@ -1,58 +1,345 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10223b">
+
 <title>Member Profile | VANTAGE X COMMUNITY</title>
 
 <style>
-*{box-sizing:border-box}
-body{
- margin:0;background:#f3f5f9;color:#17243a;
- font-family:Arial,sans-serif
+:root {
+  --navy:#10223b;
+  --navy2:#193653;
+  --gold:#d5ad55;
+  --gold-light:#f1dfb6;
+  --background:#f3f5f9;
+  --white:#ffffff;
+  --text:#17243a;
+  --muted:#78869a;
+  --border:#e8edf3;
+  --success:#16845b;
+  --danger:#c74747;
 }
-header{
- background:#10223b;color:white;padding:17px 6%;
- display:flex;justify-content:space-between;align-items:center;
+
+* {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
-.brand{font-weight:800;letter-spacing:1px}
-.brand span{color:#d5ad55}
-header a{color:white;text-decoration:none}
-.container{max-width:850px;margin:30px auto;padding:0 15px}
-.card{
- background:white;border-radius:15px;margin-bottom:20px;
- overflow:hidden;box-shadow:0 3px 15px #14243a0d
+
+body {
+  background:var(--background);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+  min-height:100vh;
 }
-.cover{
- height:170px;
- background:linear-gradient(120deg,#10223b,#294766,#c19b4b)
+
+button,input {
+  font:inherit;
 }
-.profile-info{padding:0 25px 25px}
-.avatar{
- width:112px;height:112px;border-radius:50%;
- border:5px solid white;background:#e8edf4;
- object-fit:cover;margin-top:-55px;
+
+button {
+  cursor:pointer;
+  border:0;
 }
-.name{font-size:25px;font-weight:800;margin:12px 0 5px}
-.username{color:#78869a}
-.bio{line-height:1.6;color:#526176;margin-top:15px}
-.stats{display:flex;gap:28px;margin-top:20px}
-.stat strong{display:block;font-size:19px;color:#10223b}
-.stat small{color:#8290a3}
-.posts-title{padding:20px 22px;font-weight:800}
-.post{padding:20px 22px;border-top:1px solid #edf0f5}
-.post p{line-height:1.7;white-space:pre-wrap}
-.post-date{font-size:12px;color:#8793a4}
-.status{padding:35px;text-align:center;color:#738198}
-button{
- background:#10223b;color:white;border:0;padding:11px 18px;
- border-radius:8px;cursor:pointer
+
+header {
+  background:var(--navy);
+  color:white;
+  padding:16px 6%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
 }
-@media(max-width:600px){
- .cover{height:125px}
- .profile-info{padding:0 18px 22px}
- .stats{gap:17px}
+
+.brand {
+  font-weight:900;
+  letter-spacing:1px;
+  font-size:18px;
+}
+
+.brand span {
+  color:var(--gold);
+}
+
+.brand small {
+  display:block;
+  font-size:10px;
+  letter-spacing:3px;
+  color:#cbd4df;
+  margin-top:3px;
+}
+
+header a {
+  color:white;
+  text-decoration:none;
+  font-size:14px;
+}
+
+header a:hover {
+  color:var(--gold);
+}
+
+.container {
+  max-width:900px;
+  margin:30px auto;
+  padding:0 16px;
+}
+
+.card {
+  background:white;
+  border-radius:16px;
+  margin-bottom:22px;
+  overflow:hidden;
+  box-shadow:0 4px 20px rgba(16,34,59,.055);
+  border:1px solid rgba(16,34,59,.035);
+}
+
+.cover {
+  height:190px;
+  background:
+    linear-gradient(120deg,
+      #10223b,
+      #294766,
+      #b38d43
+    );
+  position:relative;
+}
+
+.cover::after {
+  content:"VANTAGE X";
+  position:absolute;
+  right:25px;
+  bottom:20px;
+  color:rgba(255,255,255,.18);
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:4px;
+}
+
+.profile-info {
+  padding:0 28px 28px;
+  position:relative;
+}
+
+.avatar-area {
+  position:relative;
+  width:125px;
+  margin-top:-62px;
+}
+
+.avatar {
+  width:125px;
+  height:125px;
+  border-radius:50%;
+  border:6px solid white;
+  background:#e8edf4;
+  object-fit:cover;
+  display:block;
+}
+
+.avatar-upload-button {
+  position:absolute;
+  right:4px;
+  bottom:5px;
+  width:37px;
+  height:37px;
+  border-radius:50%;
+  background:var(--gold);
+  color:var(--navy);
+  border:3px solid white;
+  font-size:18px;
+  font-weight:bold;
+}
+
+.avatar-upload-button:hover {
+  background:#efcb7d;
+}
+
+.name {
+  font-size:26px;
+  font-weight:900;
+  margin-top:15px;
+}
+
+.username {
+  color:var(--muted);
+  margin-top:5px;
+}
+
+.bio {
+  line-height:1.7;
+  color:#526176;
+  margin-top:16px;
+  white-space:pre-wrap;
+}
+
+.stats {
+  display:flex;
+  flex-wrap:wrap;
+  gap:35px;
+  margin-top:23px;
+}
+
+.stat {
+  text-align:center;
+  min-width:65px;
+}
+
+.stat strong {
+  display:block;
+  font-size:21px;
+  color:var(--navy);
+}
+
+.stat small {
+  color:var(--muted);
+  font-size:12px;
+}
+
+.profile-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:22px;
+}
+
+.primary-button {
+  background:var(--navy);
+  color:white;
+  padding:12px 22px;
+  border-radius:9px;
+  font-weight:700;
+}
+
+.primary-button:hover {
+  background:var(--navy2);
+}
+
+.gold-button {
+  background:var(--gold);
+  color:var(--navy);
+  padding:12px 22px;
+  border-radius:9px;
+  font-weight:800;
+}
+
+.gold-button:hover {
+  background:#edca7d;
+}
+
+.secondary-button {
+  background:#edf1f6;
+  color:var(--navy);
+  padding:12px 18px;
+  border-radius:9px;
+  font-weight:700;
+}
+
+.following-button {
+  background:#e8edf4;
+  color:var(--navy);
+}
+
+.posts-title {
+  padding:22px;
+  font-size:18px;
+  font-weight:900;
+  border-bottom:1px solid var(--border);
+}
+
+.post {
+  padding:22px;
+  border-bottom:1px solid var(--border);
+}
+
+.post:last-child {
+  border-bottom:0;
+}
+
+.post p {
+  line-height:1.8;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+.post img,
+.post video {
+  width:100%;
+  max-height:480px;
+  object-fit:contain;
+  margin-top:14px;
+  border-radius:12px;
+  background:#f0f2f5;
+}
+
+.post-date {
+  font-size:12px;
+  color:#8793a4;
+  margin-top:14px;
+}
+
+.status {
+  padding:30px;
+  text-align:center;
+  color:#738198;
+  line-height:1.6;
+}
+
+.hidden {
+  display:none !important;
+}
+
+@media(max-width:600px) {
+  header {
+    padding:14px 16px;
+  }
+
+  .brand {
+    font-size:15px;
+  }
+
+  .container {
+    margin:18px auto;
+    padding:0 11px;
+  }
+
+  .cover {
+    height:135px;
+  }
+
+  .profile-info {
+    padding:0 17px 23px;
+  }
+
+  .avatar-area {
+    width:105px;
+    margin-top:-52px;
+  }
+
+  .avatar {
+    width:105px;
+    height:105px;
+  }
+
+  .name {
+    font-size:22px;
+  }
+
+  .stats {
+    gap:23px;
+  }
+
+  .profile-actions {
+    gap:8px;
+  }
+
+  .profile-actions button {
+    flex:1;
+    min-width:115px;
+  }
 }
 </style>
 </head>
@@ -60,187 +347,1484 @@ button{
 <body>
 
 <header>
- <div class="brand">VANTAGE <span>X</span> COMMUNITY</div>
- <a href="dashboard.html">Dashboard</a>
+  <div class="brand">
+    VANTAGE <span>X</span>
+    <small>COMMUNITY</small>
+  </div>
+
+  <a href="member-dashboard.html">← Dashboard</a>
 </header>
 
 <main class="container">
 
- <section class="card">
+<section class="card">
+
   <div class="cover"></div>
+
   <div class="profile-info">
-   <img id="avatar" class="avatar"
-    src="https://placehold.co/120x120?text=VX"
-    alt="Member profile picture">
 
-   <div class="name" id="fullName">Loading profile...</div>
-   <div class="username" id="username"></div>
-   <div class="bio" id="bio"></div>
+    <div class="avatar-area">
 
-   <div class="stats">
-    <div class="stat">
-     <strong id="postCount">0</strong>
-     <small>Posts</small>
+      <img
+        id="avatar"
+        class="avatar"
+        src="https://placehold.co/300x300?text=VX"
+        alt="Member profile picture"
+      >
+
+      <button
+        type="button"
+        id="avatarUploadButton"
+        class="avatar-upload-button"
+        title="Change profile picture"
+        aria-label="Change profile picture"
+      >📷</button>
+
     </div>
-    <div class="stat">
-     <strong>—</strong>
-     <small>Followers</small>
+
+    <input
+      type="file"
+      id="avatarInput"
+      accept="image/jpeg,image/png,image/webp"
+      hidden
+    >
+
+    <div class="name" id="fullName">
+      Loading profile...
     </div>
-    <div class="stat">
-     <strong>—</strong>
-     <small>Following</small>
+
+    <div class="username" id="username"></div>
+
+    <div class="bio" id="bio"></div>
+
+    <div class="stats">
+
+      <div class="stat">
+        <strong id="postCount">0</strong>
+        <small>Posts</small>
+      </div>
+
+      <div class="stat">
+        <strong id="followerCount">0</strong>
+        <small>Followers</small>
+      </div>
+
+      <div class="stat">
+        <strong id="followingCount">0</strong>
+        <small>Following</small>
+      </div>
+
     </div>
-   </div>
+
+    <div class="profile-actions" id="profileActions">
+
+      <button
+        type="button"
+        id="followButton"
+        class="gold-button hidden"
+      >
+        + Follow
+      </button>
+
+      <button
+        type="button"
+        id="editProfileButton"
+        class="primary-button hidden"
+      >
+        Edit Profile
+      </button>
+
+    </div>
+
   </div>
- </section>
 
- <section class="card">
-  <div class="posts-title">Member's Posts</div>
+</section>
+
+ <!-- =====================================
+     PROFILE EDITING SECTION
+===================================== -->
+
+<section class="card hidden" id="editProfilePanel">
+
+  <div class="posts-title">
+    Edit Your Profile
+  </div>
+
+  <div style="padding:22px;">
+
+    <label for="editFullName"
+      style="display:block;font-weight:700;margin-bottom:8px;">
+      Full Name
+    </label>
+
+    <input
+      type="text"
+      id="editFullName"
+      maxlength="100"
+      placeholder="Enter your full name"
+      style="width:100%;padding:13px;border:1px solid #dce2eb;border-radius:9px;margin-bottom:18px;"
+    >
+
+    <label for="editUsername"
+      style="display:block;font-weight:700;margin-bottom:8px;">
+      Username
+    </label>
+
+    <input
+      type="text"
+      id="editUsername"
+      maxlength="30"
+      placeholder="Choose a username"
+      style="width:100%;padding:13px;border:1px solid #dce2eb;border-radius:9px;margin-bottom:18px;"
+    >
+
+    <label for="editBio"
+      style="display:block;font-weight:700;margin-bottom:8px;">
+      About You
+    </label>
+
+    <textarea
+      id="editBio"
+      maxlength="500"
+      rows="4"
+      placeholder="Tell the community about yourself..."
+      style="width:100%;padding:13px;border:1px solid #dce2eb;border-radius:9px;margin-bottom:18px;resize:vertical;"
+    ></textarea>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+      <button
+        type="button"
+        id="saveProfileButton"
+        class="gold-button"
+      >
+        Save Changes
+      </button>
+
+      <button
+        type="button"
+        id="cancelEditButton"
+        class="secondary-button"
+      >
+        Cancel
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================
+     IMAGE UPLOAD PREVIEW
+===================================== -->
+
+<div
+  id="avatarPreviewModal"
+  class="hidden"
+  style="
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:rgba(5,15,30,.82);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:18px;
+  "
+>
+
+  <div
+    style="
+      width:100%;
+      max-width:400px;
+      background:white;
+      border-radius:16px;
+      padding:25px;
+      text-align:center;
+    "
+  >
+
+    <h2 style="color:#10223b;margin-bottom:10px;">
+      Preview Profile Picture
+    </h2>
+
+    <p style="color:#78869a;font-size:13px;margin-bottom:20px;">
+      Check your picture before uploading it.
+    </p>
+
+    <img
+      id="avatarPreview"
+      src=""
+      alt="Selected profile picture preview"
+      style="
+        width:190px;
+        height:190px;
+        border-radius:50%;
+        object-fit:cover;
+        border:5px solid #e8edf4;
+        margin-bottom:20px;
+      "
+    >
+
+    <div
+      id="uploadProgress"
+      style="
+        display:none;
+        height:7px;
+        background:#edf0f5;
+        border-radius:20px;
+        overflow:hidden;
+        margin-bottom:15px;
+      "
+    >
+      <div
+        id="uploadProgressBar"
+        style="
+          width:0%;
+          height:100%;
+          background:#d5ad55;
+        "
+      ></div>
+    </div>
+
+    <div
+      id="uploadStatus"
+      style="
+        font-size:13px;
+        color:#78869a;
+        margin-bottom:18px;
+      "
+    ></div>
+
+    <div style="display:flex;gap:10px;">
+
+      <button
+        type="button"
+        id="confirmAvatarUpload"
+        class="gold-button"
+        style="flex:1;"
+      >
+        Upload Picture
+      </button>
+
+      <button
+        type="button"
+        id="cancelAvatarUpload"
+        class="secondary-button"
+        style="flex:1;"
+      >
+        Cancel
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================
+     MEMBER POSTS
+===================================== -->
+
+<section class="card">
+
+  <div class="posts-title">
+    Member's Posts
+  </div>
+
   <div id="posts">
-   <div class="status">Loading posts...</div>
-  </div>
- </section>
 
- <div id="message" class="status"></div>
+    <div class="status">
+      Loading member posts...
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================
+     FOLLOWERS AND FOLLOWING LISTS
+===================================== -->
+
+<section class="card">
+
+  <div class="posts-title">
+    Community Connections
+  </div>
+
+  <div
+    style="
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      padding:18px 22px;
+    "
+  >
+
+    <button
+      type="button"
+      id="viewFollowersButton"
+      class="secondary-button"
+    >
+      View Followers
+    </button>
+
+    <button
+      type="button"
+      id="viewFollowingButton"
+      class="secondary-button"
+    >
+      View Following
+    </button>
+
+  </div>
+
+  <div
+    id="connectionsList"
+    class="status"
+  >
+    Your community connections will appear here.
+  </div>
+
+</section>
+
+
+<!-- =====================================
+     GENERAL STATUS MESSAGE
+===================================== -->
+
+<div
+  id="message"
+  class="status"
+  role="status"
+  aria-live="polite"
+></div>
 
 </main>
+
+ <!-- =====================================
+     SUPABASE LIBRARIES
+===================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
 
 <script>
-(async function loadMemberProfile(){
+"use strict";
 
- const message = document.getElementById("message");
- const postsBox = document.getElementById("posts");
+/* ======================================
+   VANTAGE X COMMUNITY PROFILE SYSTEM
+====================================== */
 
- try {
-  const {data:{user},error:authError} =
-   await supabaseClient.auth.getUser();
+let currentUser = null;
+let currentProfile = null;
+let selectedAvatarFile = null;
+let avatarPreviewURL = null;
 
-  if(authError || !user){
-   window.location.replace("login.html");
-   return;
+
+/* ======================================
+   ELEMENT HELPERS
+====================================== */
+
+function getElement(id) {
+  return document.getElementById(id);
+}
+
+function showMessage(message, type = "info") {
+
+  const box = getElement("message");
+
+  if (!box) return;
+
+  box.textContent = message;
+
+  const colors = {
+    info: "#738198",
+    success: "#16845b",
+    error: "#c74747"
+  };
+
+  box.style.color = colors[type] || colors.info;
+}
+
+
+/* ======================================
+   INITIALIZE PROFILE
+====================================== */
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  try {
+
+    if (
+      typeof supabaseClient === "undefined" ||
+      !supabaseClient
+    ) {
+      throw new Error(
+        "Supabase connection was not found. Check supabase-config.js."
+      );
+    }
+
+    const {
+      data: { user },
+      error: authError
+    } = await supabaseClient.auth.getUser();
+
+    if (authError) throw authError;
+
+    if (!user) {
+      window.location.replace("login.html");
+      return;
+    }
+
+    currentUser = user;
+
+    const params = new URLSearchParams(
+      window.location.search
+    );
+
+    const profileId = params.get("id");
+
+    if (!profileId) {
+      showMessage(
+        "No member profile was selected.",
+        "error"
+      );
+      return;
+    }
+
+    await loadMemberProfile(profileId);
+
+  } catch (error) {
+
+    console.error("Profile initialization error:", error);
+
+    showMessage(
+      error.message || "Unable to initialize your profile.",
+      "error"
+    );
+
   }
 
-  const params = new URLSearchParams(window.location.search);
-  const profileId = params.get("id");
+});
 
-  if(!profileId){
-   message.textContent =
-    "No member profile was selected.";
-   return;
+
+/* ======================================
+   LOAD MEMBER PROFILE
+====================================== */
+
+async function loadMemberProfile(profileId) {
+
+  const { data: profile, error } =
+    await supabaseClient
+      .from("profiles")
+      .select(
+        "id,full_name,username,bio,avatar_url,created_at"
+      )
+      .eq("id", profileId)
+      .maybeSingle();
+
+  if (error) throw error;
+
+  if (!profile) {
+
+    getElement("fullName").textContent =
+      "Profile unavailable";
+
+    showMessage(
+      "This profile is unavailable or private.",
+      "error"
+    );
+
+    return;
+
   }
 
-  const {data:profile,error:profileError} =
-   await supabaseClient
-    .from("profiles")
-    .select("id,full_name,username,bio,avatar_url,created_at")
-    .eq("id",profileId)
-    .maybeSingle();
+  currentProfile = profile;
 
-  if(profileError) throw profileError;
+  renderMemberProfile();
 
-  if(!profile){
-   message.textContent =
-    "Profile unavailable or private.";
-   return;
+  await loadProfileStatistics();
+
+  await loadMemberPosts();
+
+  configureProfileActions();
+
+  // Record visits only when viewing another member.
+
+  if (currentUser.id !== profile.id) {
+
+    const { error: viewError } =
+      await supabaseClient.rpc(
+        "record_profile_view",
+        {
+          target_profile_id: profile.id
+        }
+      );
+
+    if (viewError) {
+      console.warn(
+        "Profile visit was not recorded:",
+        viewError.message
+      );
+    }
+
   }
 
-  document.getElementById("fullName").textContent =
-   profile.full_name || "Community Member";
+}
 
-  document.getElementById("username").textContent =
-   "@" + (profile.username || "member");
 
-  document.getElementById("bio").textContent =
-   profile.bio || "Welcome to my VANTAGE X COMMUNITY profile.";
+/* ======================================
+   RENDER MEMBER INFORMATION
+====================================== */
 
-  if(profile.avatar_url){
-   document.getElementById("avatar").src =
-    profile.avatar_url;
+function renderMemberProfile() {
+
+  if (!currentProfile) return;
+
+  getElement("fullName").textContent =
+    currentProfile.full_name || "Community Member";
+
+  getElement("username").textContent =
+    "@" + (
+      currentProfile.username || "member"
+    );
+
+  getElement("bio").textContent =
+    currentProfile.bio ||
+    "Welcome to my VANTAGE X COMMUNITY profile.";
+
+  const avatar = getElement("avatar");
+
+  const avatarURL = currentProfile.avatar_url;
+
+  if (
+    avatarURL &&
+    /^https:\/\//i.test(avatarURL)
+  ) {
+    avatar.src = avatarURL;
   }
 
-  // Record a profile visit for another member.
-  if(user.id !== profile.id){
-   const {error:viewError} =
-    await supabaseClient.rpc("record_profile_view",{
-     target_profile_id:profile.id
+  getElement("editFullName").value =
+    currentProfile.full_name || "";
+
+  getElement("editUsername").value =
+    currentProfile.username || "";
+
+  getElement("editBio").value =
+    currentProfile.bio || "";
+
+}
+
+
+/* ======================================
+   LOAD FOLLOW STATISTICS
+====================================== */
+
+async function loadProfileStatistics() {
+
+  if (!currentProfile) return;
+
+  const profileId = currentProfile.id;
+
+  const [
+    followerResult,
+    followingResult
+  ] = await Promise.all([
+
+    supabaseClient.rpc(
+      "get_follower_count",
+      {
+        target_user_id: profileId
+      }
+    ),
+
+    supabaseClient.rpc(
+      "get_following_count",
+      {
+        target_user_id: profileId
+      }
+    )
+
+  ]);
+
+  if (followerResult.error) {
+    console.error(
+      "Follower count error:",
+      followerResult.error
+    );
+  }
+
+  if (followingResult.error) {
+    console.error(
+      "Following count error:",
+      followingResult.error
+    );
+  }
+
+  getElement("followerCount").textContent =
+    followerResult.error
+      ? "—"
+      : Number(followerResult.data || 0).toLocaleString();
+
+  getElement("followingCount").textContent =
+    followingResult.error
+      ? "—"
+      : Number(followingResult.data || 0).toLocaleString();
+
+}
+
+
+/* ======================================
+   LOAD MEMBER POSTS
+====================================== */
+
+async function loadMemberPosts() {
+
+  if (!currentProfile) return;
+
+  const postsBox = getElement("posts");
+
+  postsBox.textContent = "Loading posts...";
+
+  const { data: posts, error } =
+    await supabaseClient
+      .from("posts")
+      .select(
+        "id,content,media_url,media_type,created_at"
+      )
+      .eq("author_id", currentProfile.id)
+      .eq("status", "published")
+      .eq("visibility", "public")
+      .order("created_at", {
+        ascending: false
+      });
+
+  if (error) throw error;
+
+  getElement("postCount").textContent =
+    Number(posts.length).toLocaleString();
+
+  if (!posts.length) {
+
+    postsBox.textContent =
+      "This member has not published any posts yet.";
+
+    postsBox.className = "status";
+
+    return;
+
+  }
+
+  renderMemberPosts(posts);
+
+}
+ </script>
+
+ /* ======================================
+   CONFIGURE PROFILE ACTIONS
+====================================== */
+
+async function configureProfileActions() {
+
+  if (!currentProfile || !currentUser) return;
+
+  const isOwner =
+    currentProfile.id === currentUser.id;
+
+  const followButton = getElement("followButton");
+  const editButton = getElement("editProfileButton");
+  const uploadButton = getElement("avatarUploadButton");
+
+  if (isOwner) {
+
+    editButton.classList.remove("hidden");
+    uploadButton.classList.remove("hidden");
+
+    followButton.classList.add("hidden");
+
+  } else {
+
+    editButton.classList.add("hidden");
+    uploadButton.classList.add("hidden");
+
+    followButton.classList.remove("hidden");
+
+    await refreshFollowButton();
+
+  }
+
+}
+
+
+/* ======================================
+   CHECK FOLLOW STATUS
+====================================== */
+
+async function refreshFollowButton() {
+
+  const button = getElement("followButton");
+
+  if (!currentProfile || !currentUser) return;
+
+  button.disabled = true;
+  button.textContent = "Loading...";
+
+  const { data, error } =
+    await supabaseClient.rpc(
+      "is_following",
+      {
+        target_user_id: currentProfile.id
+      }
+    );
+
+  if (error) {
+
+    console.error("Follow status error:", error);
+
+    button.textContent = "Follow unavailable";
+
+    return;
+
+  }
+
+  if (data === true) {
+
+    button.textContent = "✓ Following";
+
+    button.classList.add("following");
+
+  } else {
+
+    button.textContent = "+ Follow";
+
+    button.classList.remove("following");
+
+  }
+
+  button.disabled = false;
+
+}
+
+
+/* ======================================
+   FOLLOW / UNFOLLOW MEMBER
+====================================== */
+
+async function toggleFollow() {
+
+  if (!currentProfile || !currentUser) return;
+
+  const button = getElement("followButton");
+
+  if (button.disabled) return;
+
+  button.disabled = true;
+
+  const { data: following, error: checkError } =
+    await supabaseClient.rpc(
+      "is_following",
+      {
+        target_user_id: currentProfile.id
+      }
+    );
+
+  if (checkError) {
+
+    showMessage(
+      "Unable to check follow status.",
+      "error"
+    );
+
+    button.disabled = false;
+
+    return;
+
+  }
+
+  if (following) {
+
+    const { error } =
+      await supabaseClient
+        .from("profile_follows")
+        .delete()
+        .eq("follower_id", currentUser.id)
+        .eq("following_id", currentProfile.id);
+
+    if (error) {
+
+      console.error(error);
+
+      showMessage(
+        "Unable to unfollow this member.",
+        "error"
+      );
+
+    } else {
+
+      showMessage(
+        "You have unfollowed this member.",
+        "success"
+      );
+
+    }
+
+  } else {
+
+    const { error } =
+      await supabaseClient
+        .from("profile_follows")
+        .insert({
+          follower_id: currentUser.id,
+          following_id: currentProfile.id
+        });
+
+    if (error) {
+
+      console.error(error);
+
+      showMessage(
+        "Unable to follow this member. Check whether their profile is public.",
+        "error"
+      );
+
+    } else {
+
+      showMessage(
+        "You are now following this member!",
+        "success"
+      );
+
+    }
+
+  }
+
+  await refreshFollowButton();
+
+  await loadProfileStatistics();
+
+}
+
+
+/* ======================================
+   LOAD FOLLOWERS OR FOLLOWING
+====================================== */
+
+async function loadConnections(type) {
+
+  if (!currentProfile) return;
+
+  const container = getElement("connectionsList");
+
+  container.textContent = "Loading connections...";
+
+  container.className = "status";
+
+  const column =
+    type === "followers"
+      ? "follower_id"
+      : "following_id";
+
+  const targetColumn =
+    type === "followers"
+      ? "following_id"
+      : "follower_id";
+
+  const { data: relationships, error } =
+    await supabaseClient
+      .from("profile_follows")
+      .select("follower_id,following_id")
+      .eq(targetColumn, currentProfile.id)
+      .limit(100);
+
+  if (error) {
+
+    console.error(error);
+
+    container.textContent =
+      "Unable to load connections.";
+
+    return;
+
+  }
+
+  if (!relationships.length) {
+
+    container.textContent =
+      type === "followers"
+        ? "This member has no followers yet."
+        : "This member is not following anyone yet.";
+
+    return;
+
+  }
+
+  const memberIds = relationships.map(
+    relationship => relationship[column]
+  );
+
+  const { data: members, error: memberError } =
+    await supabaseClient
+      .from("profiles")
+      .select("id,full_name,username,avatar_url")
+      .in("id", memberIds);
+
+  if (memberError) {
+
+    console.error(memberError);
+
+    container.textContent =
+      "Unable to load member information.";
+
+    return;
+
+  }
+
+  container.replaceChildren();
+
+  members.forEach(member => {
+
+    const item = document.createElement("div");
+
+    item.style.cssText =
+      "display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid #edf0f5;text-align:left;";
+
+    const image = document.createElement("img");
+
+    image.src =
+      member.avatar_url &&
+      /^https:\/\//i.test(member.avatar_url)
+        ? member.avatar_url
+        : "https://placehold.co/60x60?text=VX";
+
+    image.alt = "Member avatar";
+
+    image.style.cssText =
+      "width:48px;height:48px;border-radius:50%;object-fit:cover;";
+
+    const details = document.createElement("div");
+
+    details.style.flex = "1";
+
+    const name = document.createElement("strong");
+
+    name.textContent =
+      member.full_name || "Community Member";
+
+    const username = document.createElement("div");
+
+    username.textContent =
+      "@" + (member.username || "member");
+
+    username.style.cssText =
+      "font-size:12px;color:#78869a;margin-top:4px;";
+
+    details.append(name, username);
+
+    const viewButton = document.createElement("button");
+
+    viewButton.textContent = "View";
+
+    viewButton.className = "secondary-button";
+
+    viewButton.addEventListener("click", () => {
+
+      window.location.href =
+        "profile.html?id=" +
+        encodeURIComponent(member.id);
+
     });
 
-   if(viewError){
-    console.warn("Profile visit was not recorded:",viewError.message);
-   }
-  }
+    item.append(image, details, viewButton);
 
-  // Load this member's public posts.
-  const {data:posts,error:postsError} =
-   await supabaseClient
-    .from("posts")
-    .select("id,content,media_url,media_type,created_at")
-    .eq("author_id",profile.id)
-    .eq("status","published")
-    .eq("visibility","public")
-    .order("created_at",{ascending:false});
+    container.appendChild(item);
 
-  if(postsError) throw postsError;
-
-  document.getElementById("postCount").textContent =
-   posts.length;
-
-  if(!posts.length){
-   postsBox.innerHTML =
-    '<div class="status">This member has not published any posts yet.</div>';
-   return;
-  }
-
-  postsBox.innerHTML = "";
-
-  posts.forEach(post=>{
-
-   const article = document.createElement("article");
-   article.className = "post";
-
-   const content = document.createElement("p");
-   content.textContent = post.content || "";
-
-   article.appendChild(content);
-
-   if(post.media_url){
-    if(post.media_type === "image"){
-     const img = document.createElement("img");
-     img.src = post.media_url;
-     img.alt = "Post image";
-     img.style.cssText =
-      "width:100%;max-height:450px;object-fit:cover;border-radius:10px";
-     article.appendChild(img);
-    }
-
-    if(post.media_type === "video"){
-     const video = document.createElement("video");
-     video.src = post.media_url;
-     video.controls = true;
-     video.style.cssText = "width:100%;border-radius:10px";
-     article.appendChild(video);
-    }
-   }
-
-   const date = document.createElement("div");
-   date.className = "post-date";
-   date.textContent =
-    new Date(post.created_at).toLocaleString();
-
-   article.appendChild(date);
-   postsBox.appendChild(article);
   });
 
- } catch(error){
-  console.error("Profile error:",error);
-  message.textContent =
-   error.message || "Unable to load this profile.";
- }
+}
 
-})();
+
+/* ======================================
+   FOLLOW EVENT LISTENERS
+====================================== */
+
+getElement("followButton").addEventListener(
+  "click",
+  toggleFollow
+);
+
+getElement("viewFollowersButton").addEventListener(
+  "click",
+  () => loadConnections("followers")
+);
+
+getElement("viewFollowingButton").addEventListener(
+  "click",
+  () => loadConnections("following")
+);
+
+ /* ======================================
+   PROFILE PICTURE GALLERY
+====================================== */
+
+getElement("avatarUploadButton").addEventListener(
+  "click",
+  () => {
+    getElement("avatarInput").click();
+  }
+);
+
+
+/* ======================================
+   SELECT IMAGE FROM PHONE
+====================================== */
+
+getElement("avatarInput").addEventListener(
+  "change",
+  event => {
+
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+
+      showMessage(
+        "Please select a JPG, PNG or WebP image.",
+        "error"
+      );
+
+      event.target.value = "";
+
+      return;
+
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+
+      showMessage(
+        "Your image must not exceed 5 MB.",
+        "error"
+      );
+
+      event.target.value = "";
+
+      return;
+
+    }
+
+    selectedAvatarFile = file;
+
+    if (avatarPreviewURL) {
+      URL.revokeObjectURL(avatarPreviewURL);
+    }
+
+    avatarPreviewURL =
+      URL.createObjectURL(file);
+
+    getElement("avatarPreview").src =
+      avatarPreviewURL;
+
+    getElement("uploadStatus").textContent =
+      file.name;
+
+    getElement("uploadProgress").style.display =
+      "none";
+
+    getElement("avatarPreviewModal")
+      .classList.remove("hidden");
+
+  }
+);
+
+
+/* ======================================
+   CANCEL IMAGE SELECTION
+====================================== */
+
+getElement("cancelAvatarUpload").addEventListener(
+  "click",
+  closeAvatarPreview
+);
+
+function closeAvatarPreview() {
+
+  getElement("avatarPreviewModal")
+    .classList.add("hidden");
+
+  getElement("avatarInput").value = "";
+
+  selectedAvatarFile = null;
+
+  if (avatarPreviewURL) {
+
+    URL.revokeObjectURL(avatarPreviewURL);
+
+    avatarPreviewURL = null;
+
+  }
+
+}
+
+
+/* ======================================
+   UPLOAD PROFILE PICTURE
+====================================== */
+
+getElement("confirmAvatarUpload").addEventListener(
+  "click",
+  uploadAvatar
+);
+
+
+async function uploadAvatar() {
+
+  if (!selectedAvatarFile || !currentUser) {
+
+    showMessage(
+      "Please select a picture first.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  const uploadButton =
+    getElement("confirmAvatarUpload");
+
+  const status =
+    getElement("uploadStatus");
+
+  uploadButton.disabled = true;
+
+  uploadButton.textContent = "Uploading...";
+
+  status.textContent =
+    "Uploading your profile picture...";
+
+  const progress =
+    getElement("uploadProgress");
+
+  const progressBar =
+    getElement("uploadProgressBar");
+
+  progress.style.display = "block";
+
+  progressBar.style.width = "20%";
+
+  try {
+
+    const file = selectedAvatarFile;
+
+    const extensionMap = {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp"
+    };
+
+    const extension = extensionMap[file.type];
+
+    if (!extension) {
+      throw new Error("Unsupported image format.");
+    }
+
+    // Each upload gets a unique filename.
+
+    const filePath =
+      currentUser.id +
+      "/" +
+      crypto.randomUUID() +
+      "." +
+      extension;
+
+    const { data: uploadData, error: uploadError } =
+      await supabaseClient.storage
+        .from("profile-avatars")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: file.type
+        });
+
+    if (uploadError) throw uploadError;
+
+    progressBar.style.width = "70%";
+
+    // Get the public image URL.
+
+    const { data: publicData } =
+      supabaseClient.storage
+        .from("profile-avatars")
+        .getPublicUrl(uploadData.path);
+
+    const publicURL =
+      publicData.publicUrl;
+
+    // Update only the signed-in member's profile.
+
+    const { error: updateError } =
+      await supabaseClient
+        .from("profiles")
+        .update({
+          avatar_url: publicURL
+        })
+        .eq("id", currentUser.id);
+
+    if (updateError) {
+
+      // Remove the uploaded object if profile update fails.
+
+      await supabaseClient.storage
+        .from("profile-avatars")
+        .remove([filePath]);
+
+      throw updateError;
+
+    }
+
+    progressBar.style.width = "100%";
+
+    currentProfile.avatar_url = publicURL;
+
+    getElement("avatar").src = publicURL;
+
+    status.textContent =
+      "Your profile picture has been updated successfully!";
+
+    showMessage(
+      "Profile picture updated successfully.",
+      "success"
+    );
+
+    uploadButton.textContent = "Uploaded!";
+
+    setTimeout(() => {
+
+      closeAvatarPreview();
+
+      uploadButton.textContent =
+        "Upload Picture";
+
+      uploadButton.disabled = false;
+
+    }, 1200);
+
+  } catch (error) {
+
+    console.error("Avatar upload error:", error);
+
+    status.textContent =
+      error.message || "Picture upload failed.";
+
+    showMessage(
+      "Unable to upload your profile picture.",
+      "error"
+    );
+
+    uploadButton.disabled = false;
+
+    uploadButton.textContent =
+      "Try Again";
+
+  }
+
+}
+
+ /* ======================================
+   EDIT PROFILE
+====================================== */
+
+getElement("editProfileButton").addEventListener(
+  "click",
+  () => {
+
+    const panel = getElement("editProfilePanel");
+
+    panel.classList.toggle("hidden");
+
+    if (!panel.classList.contains("hidden")) {
+      panel.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+
+  }
+);
+
+
+/* ======================================
+   CANCEL PROFILE EDITING
+====================================== */
+
+getElement("cancelEditButton").addEventListener(
+  "click",
+  () => {
+
+    renderMemberProfile();
+
+    getElement("editProfilePanel")
+      .classList.add("hidden");
+
+  }
+);
+
+
+/* ======================================
+   SAVE PROFILE CHANGES
+====================================== */
+
+getElement("saveProfileButton").addEventListener(
+  "click",
+  saveProfile
+);
+
+
+async function saveProfile() {
+
+  if (!currentUser || !currentProfile) return;
+
+  const button = getElement("saveProfileButton");
+
+  const fullName =
+    getElement("editFullName").value.trim();
+
+  const username =
+    getElement("editUsername").value
+      .trim()
+      .toLowerCase();
+
+  const bio =
+    getElement("editBio").value.trim();
+
+  if (!fullName) {
+
+    showMessage(
+      "Please enter your full name.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if (!/^[a-z0-9_]{3,30}$/.test(username)) {
+
+    showMessage(
+      "Username must contain 3–30 letters, numbers or underscores.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  if (bio.length > 500) {
+
+    showMessage(
+      "Your bio cannot exceed 500 characters.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  button.disabled = true;
+
+  button.textContent = "Saving...";
+
+  try {
+
+    const { data, error } =
+      await supabaseClient
+        .from("profiles")
+        .update({
+          full_name: fullName,
+          username: username,
+          bio: bio
+        })
+        .eq("id", currentUser.id)
+        .select(
+          "id,full_name,username,bio,avatar_url,created_at"
+        )
+        .single();
+
+    if (error) throw error;
+
+    currentProfile = data;
+
+    renderMemberProfile();
+
+    getElement("editProfilePanel")
+      .classList.add("hidden");
+
+    showMessage(
+      "Your profile has been updated successfully.",
+      "success"
+    );
+
+  } catch (error) {
+
+    console.error("Profile update error:", error);
+
+    if (error.code === "23505") {
+
+      showMessage(
+        "That username is already taken. Choose another one.",
+        "error"
+      );
+
+    } else {
+
+      showMessage(
+        error.message || "Unable to save profile changes.",
+        "error"
+      );
+
+    }
+
+  } finally {
+
+    button.disabled = false;
+
+    button.textContent = "Save Changes";
+
+  }
+
+}
+
+
+/* ======================================
+   INITIAL PROFILE BUTTON STATE
+====================================== */
+
+// Hide upload controls until the profile is loaded.
+
+getElement("avatarUploadButton")
+  .classList.add("hidden");
+
+
+/* ======================================
+   VANTAGE X COMMUNITY
+   PROFILE PAGE INITIALIZATION COMPLETE
+====================================== */
+
+console.log(
+  "VANTAGE X COMMUNITY profile system initialized."
+);
+
 </script>
 
 </body>
