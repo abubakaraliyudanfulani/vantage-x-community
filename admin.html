@@ -352,15 +352,58 @@ h1{font-size:27px;letter-spacing:-.7px;color:#142239}
   </div>
 </section>
 
+
 <section class="page-section" id="members">
+
   <h1>Members & Accounts</h1>
-  <p class="subtitle">Manage member profiles, account status and permissions.</p>
+  <p class="subtitle">
+    Manage member profiles, account status and permissions.
+  </p>
+
   <div class="workspace">
-    <h2>Member management</h2>
-    <p>Secure member search, verification, warnings, suspensions, bans and appeals will be implemented here.</p>
-    <span class="coming">INTEGRATION PENDING</span>
+
+    <h2>Community Member Directory</h2>
+    <p>
+      View registered members and search the community database.
+    </p>
+
+    <div style="margin:22px 0;">
+      <input
+        type="search"
+        id="memberSearch"
+        placeholder="Search by name or username..."
+        style="width:100%;max-width:450px;padding:13px;border:1px solid #e0e5ed;border-radius:9px;font-size:13px;"
+      >
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;text-align:left;min-width:500px;">
+        <thead>
+          <tr style="background:#f3f5f9;">
+            <th style="padding:13px;font-size:11px;">MEMBER NAME</th>
+            <th style="padding:13px;font-size:11px;">USERNAME</th>
+            <th style="padding:13px;font-size:11px;">DATE JOINED</th>
+          </tr>
+        </thead>
+
+        <tbody id="membersTableBody">
+          <tr>
+            <td colspan="3" style="padding:20px;text-align:center;color:#929dad;">
+              Loading community members...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p id="memberDirectoryStatus"
+       style="margin-top:18px;font-size:11px;color:#8490a2;">
+       Connecting to member database...
+    </p>
+
   </div>
 </section>
+  
 
 <section class="page-section" id="content">
   <h1>Content Moderation</h1>
