@@ -595,17 +595,8 @@ navButtons.forEach(button => {
   const result = await verifyCommunityAdmin();
 
   if (!result.authorized) {
-    if (result.reason === "not_logged_in") {
-      window.location.replace("login.html");
-    } else {
-      document.body.innerHTML = `
-        <main style="font-family:Arial;text-align:center;padding:60px 20px">
-          <h2>Administrator Access Restricted</h2>
-          <p>Your account does not currently have verified administrator access.</p>
-          <a href="login.html">Return to Login</a>
-        </main>
-      `;
-    }
+    await supabaseClient.auth.signOut();
+    window.location.replace("admin-login.html");
     return;
   }
 
