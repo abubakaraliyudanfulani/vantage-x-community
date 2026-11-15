@@ -137,7 +137,18 @@ if (adminResult.authorized) {
     "Login succeeded, but account permissions could not be verified. Please try again.";
 }
 
-  const adminResult = await verifyCommunityAdmin();
+  message.textContent = "Login successful. Checking your account...";
+
+const adminResult = await verifyCommunityAdmin();
+
+if (adminResult.authorized) {
+  window.location.replace("admin.html");
+} else if (adminResult.reason === "not_an_admin") {
+  window.location.replace("dashboard.html");
+} else {
+  message.textContent =
+    "Login succeeded, but account permissions could not be verified. Please try again.";
+}
 
   if (adminResult.authorized) {
     window.location.href = "admin.html";
