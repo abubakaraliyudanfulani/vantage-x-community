@@ -247,44 +247,25 @@ message.textContent = "Connecting to your account...";
         message.textContent =
           "Login successful. Checking your account...";
 
-        const adminResult = await verifyCommunityAdmin();
-
-        if (adminResult.authorized) {
-
-          message.textContent =
-            "Administrator verified. Opening Admin Dashboard...";
-
-          window.location.replace("admin.html");
-
-        } else if (adminResult.reason === "not_an_admin") {
-
-          message.textContent =
-            "Opening your Community Dashboard...";
-
-          window.location.replace("dashboard.html");
-
-        } else {
-
-          message.textContent =
-            "Login succeeded, but account permissions could not be verified. Please try again.";
-
-        }
-
-      } catch (error) {
-
-        console.error("Community login error:", error);
-
         message.textContent =
-          error.message || "Unable to log in. Please try again.";
+  "Login successful. Opening your Community Dashboard...";
 
-      } finally {
+window.location.replace("dashboard.html");
 
-        button.disabled = false;
-        button.textContent = "Log In";
+} catch (error) {
 
-      }
+  console.error("Community login error:", error);
 
-    });
+  message.textContent =
+    error.message || "Unable to log in. Please try again.";
+
+} finally {
+
+  button.disabled = false;
+  button.textContent = "Log In";
+
+}
+});
 
 
     // FORGOT PASSWORD
