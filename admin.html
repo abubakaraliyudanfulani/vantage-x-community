@@ -523,5 +523,32 @@ document.getElementById("admin-search")?.addEventListener("input", event => {
 });
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="admin-auth.js"></script>
+
+<script>
+(async function protectAdminDashboard() {
+  const result = await verifyCommunityAdmin();
+
+  if (!result.authorized) {
+    if (result.reason === "not_logged_in") {
+      window.location.replace("login.html");
+    } else {
+      document.body.innerHTML = `
+        <main style="font-family:Arial;text-align:center;padding:60px 20px">
+          <h2>Administrator Access Restricted</h2>
+          <p>Your account does not currently have verified administrator access.</p>
+          <a href="login.html">Return to Login</a>
+        </main>
+      `;
+    }
+    return;
+  }
+
+  console.log("Administrator verified:", result.role);
+})();
+</script>
+  
 </body>
 </html>
