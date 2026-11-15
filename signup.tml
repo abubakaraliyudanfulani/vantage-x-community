@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#081426">
+  <title>Create Account | VANTAGE X COMMUNITY</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 30px 16px;
+      display: grid;
+      place-items: center;
+      background: #081426;
+      color: #f7f5ef;
+      font-family: Arial, sans-serif;
+    }
+    .card {
+      width: 100%;
+      max-width: 460px;
+      padding: 36px;
+      background: #102440;
+      border: 1px solid rgba(215,173,85,.3);
+      border-radius: 12px;
+    }
+    .brand {
+      color: #d7ad55;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    h1 { text-align: center; font-size: 28px; margin-bottom: 8px; }
+    .intro { text-align: center; color: #b8c2d1; margin-bottom: 26px; }
+    label { display: block; margin: 16px 0 7px; font-size: 14px; }
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #42536b;
+      border-radius: 5px;
+      background: #081426;
+      color: white;
+      font-size: 15px;
+    }
+    input:focus { outline: 2px solid #d7ad55; border-color: transparent; }
+    .hint { color: #b8c2d1; font-size: 12px; margin-top: 5px; }
+    .check { display: flex; gap: 9px; align-items: flex-start; margin: 18px 0; }
+    .check input { width: auto; margin-top: 3px; }
+    .check label { margin: 0; color: #b8c2d1; line-height: 1.5; }
+    button {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 5px;
+      background: #d7ad55;
+      color: #081426;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .6; cursor: wait; }
+    #message { margin-top: 17px; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+    .links { text-align: center; margin-top: 22px; color: #b8c2d1; font-size: 14px; }
+    a { color: #d7ad55; }
+    .back { display: block; text-align: center; margin-top: 22px; }
+    @media(max-width: 450px) { .card { padding: 25px 20px; } }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="brand">VANTAGE X COMMUNITY</div>
+    <h1>Create your account</h1>
+    <p class="intro">Join a community built around connection and growth.</p>
+
+    <form id="signupForm">
+      <label for="fullName">Full name</label>
+      <input id="fullName" name="fullName" type="text"
+             autocomplete="name" maxlength="100" required>
+
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text"
+             autocomplete="username" minlength="3" maxlength="30"
+             pattern="[A-Za-z0-9_]+" required>
+      <p class="hint">3–30 characters. Letters, numbers and underscores only.</p>
+
+      <label for="email">Email address</label>
+      <input id="email" name="email" type="email"
+             autocomplete="email" maxlength="254" required>
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password"
+             autocomplete="new-password" minlength="10" maxlength="72" required>
+      <p class="hint">Use at least 10 characters.</p>
+
+      <label for="confirmPassword">Confirm password</label>
+      <input id="confirmPassword" name="confirmPassword" type="password"
+             autocomplete="new-password" minlength="10" maxlength="72" required>
+
+      <div class="check">
+        <input id="terms" type="checkbox" required>
+        <label for="terms">
+          I agree to the VANTAGE X COMMUNITY terms and community standards.
+        </label>
+      </div>
+
+      <button id="submitButton" type="submit">Create Account</button>
+      <p id="message" role="status" aria-live="polite"></p>
+    </form>
+
+    <div class="links">
+      Already have an account? <a href="login.html">Log in</a>
+    </div>
+    <a class="back" href="index.html">Back to homepage</a>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
+
+  <script>
+    const form = document.getElementById("signupForm");
+    const message = document.getElementById("message");
+    const button = document.getElementById("submitButton");
+
+    form.addEventListener("submit", async function(event) {
+      event.preventDefault();
+      message.textContent = "";
+
+      const fullName = document.getElementById("fullName").value.trim();
+      const username = document.getElementById("username").value.trim().toLowerCase();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (password !== confirmPassword) {
+        message.textContent = "Your passwords do not match.";
+        return;
+      }
+
+      if (!document.getElementById("terms").checked) {
+        message.textContent = "Please agree to the community terms.";
+        return;
+      }
+
+      if (typeof registerCommunityUser !== "function" ||
+          typeof supabaseClient === "undefined") {
+        message.textContent = "Account service is not configured yet. Please try again later.";
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "Creating account...";
+
+      try {
+        const result = await registerCommunityUser(
+          fullName, username, email, password
+        );
+
+        if (result.error) {
+          message.textContent = result.error.message;
+        } else if (result.data && result.data.user) {
+          message.textContent = result.data.session
+            ? "Your account has been created. You can now log in."
+            : "Registration received. Check your email for a confirmation link before logging in.";
+          form.reset();
+        } else {
+          message.textContent = "We could not confirm registration. Please try again.";
+        }
+      } catch (error) {
+        message.textContent = "Something went wrong. Please try again.";
+      } finally {
+        button.disabled = false;
+        button.textContent = "Create Account";
+      }
+    });
+  </script>
+</body>
+</html>
