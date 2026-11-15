@@ -1,6 +1,8 @@
+
 // VANTAGE X COMMUNITY — Supabase Configuration
 
 const SUPABASE_URL = "https://urjxoewsgmfasnyygjuz.supabase.co";
+
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_xR8TdlRI5ruMKQJ6TtEsMQ_054sQjoS";
 
 if (!window.supabase) {
@@ -9,14 +11,14 @@ if (!window.supabase) {
 
 if (
   !SUPABASE_PUBLISHABLE_KEY ||
-  SUPABASE_PUBLISHABLE_KEY === "sb_publishable_xR8TdlRI5ruMKQJ6TtEsMQ_054sQjoS"
+  SUPABASE_PUBLISHABLE_KEY === "PASTE_YOUR_NEW_PUBLISHABLE_KEY_HERE"
 ) {
   throw new Error("Supabase publishable key has not been configured.");
 }
 
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
-  sb_publishable_xR8TdlRI5ruMKQJ6TtEsMQ_054sQjoS,
+  SUPABASE_PUBLISHABLE_KEY,
   {
     auth: {
       persistSession: true,
