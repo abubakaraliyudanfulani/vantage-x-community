@@ -7,6 +7,54 @@
 
 <title>Member Profile | VANTAGE X COMMUNITY</title>
 
+  /* =========================================
+   PROFILE AVATAR CONTROLS
+========================================= */
+
+.avatar-controls {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  z-index: 5;
+}
+
+.avatar-upload-button,
+.remove-avatar-button {
+  width: 36px;
+  height: 36px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+}
+
+.avatar-upload-button {
+  background: #d5ad55;
+  color: #10213a;
+}
+
+.remove-avatar-button {
+  background: #b83232;
+  color: #ffffff;
+}
+
+.avatar-upload-button:hover,
+.remove-avatar-button:hover {
+  transform: scale(1.08);
+}
+
+.hidden {
+  display: none !important;
+}
+  
 <style>
 :root {
   --navy:#10223b;
