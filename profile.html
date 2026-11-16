@@ -1527,12 +1527,8 @@ function renderMemberPosts(posts) {
     card.appendChild(viewLabel);
 
     card.addEventListener("click", () => {
-
-      alert(
-        post.content || "Opening this community post."
-      );
-
-    });
+  openProfilePost(post);
+});
 
     postsBox.appendChild(card);
 
