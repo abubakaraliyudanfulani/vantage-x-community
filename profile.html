@@ -2034,6 +2034,54 @@ console.log(
   "VANTAGE X COMMUNITY profile system initialized."
 );
 
+ 
+/* =====================================
+   VANTAGE X PROFILE TAB NAVIGATION
+===================================== */
+
+function initializeProfileTabs() {
+
+  const tabs = document.querySelectorAll(".profile-tab");
+
+  const panels = {
+    posts: document.getElementById("posts"),
+    videos: document.getElementById("videos"),
+    reposts: document.getElementById("reposts"),
+    saved: document.getElementById("saved"),
+    liked: document.getElementById("liked")
+  };
+
+  tabs.forEach((tab) => {
+
+    tab.addEventListener("click", () => {
+
+      const selectedTab = tab.dataset.profileTab;
+
+      if (!panels[selectedTab]) return;
+
+      // Update active tab
+      tabs.forEach((item) => {
+        item.classList.toggle("active", item === tab);
+      });
+
+      // Show selected content
+      Object.entries(panels).forEach(([name, panel]) => {
+        panel.classList.toggle(
+          "hidden",
+          name !== selectedTab
+        );
+      });
+
+    });
+
+  });
+
+}
+
+// Initialize profile navigation
+initializeProfileTabs();
+
+  
 </script>
 
 </body>
