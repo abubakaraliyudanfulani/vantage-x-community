@@ -691,25 +691,87 @@ header a:hover {
 </div>
 
 
+
 <!-- =====================================
-     MEMBER POSTS
+     VANTAGE X PROFILE CONTENT TABS
 ===================================== -->
 
-<section class="card">
+<section class="card profile-content-card">
 
-  <div class="posts-title">
-    Member's Posts
+  <div class="profile-content-tabs">
+
+    <button
+      type="button"
+      class="profile-tab active"
+      data-profile-tab="posts"
+    >
+      ▦ Posts
+    </button>
+
+    <button
+      type="button"
+      class="profile-tab"
+      data-profile-tab="videos"
+    >
+      ▷ Videos
+    </button>
+
+    <button
+      type="button"
+      class="profile-tab"
+      data-profile-tab="reposts"
+    >
+      ↻ Reposts
+    </button>
+
+    <button
+      type="button"
+      class="profile-tab"
+      data-profile-tab="saved"
+    >
+      ♡ Saved
+    </button>
+
+    <button
+      type="button"
+      class="profile-tab"
+      data-profile-tab="liked"
+    >
+      ♥ Liked
+    </button>
+
   </div>
 
-  <div id="posts">
+  <div class="profile-content-panel">
 
-    <div class="status">
-      Loading member posts...
+    <div id="posts">
+
+      <div class="status">
+        Loading member posts...
+      </div>
+
+    </div>
+
+    <div id="videos" class="profile-tab-content hidden">
+      <div class="status">Videos will appear here.</div>
+    </div>
+
+    <div id="reposts" class="profile-tab-content hidden">
+      <div class="status">Reposts will appear here.</div>
+    </div>
+
+    <div id="saved" class="profile-tab-content hidden">
+      <div class="status">Your saved content will appear here.</div>
+    </div>
+
+    <div id="liked" class="profile-tab-content hidden">
+      <div class="status">Your liked content will appear here.</div>
     </div>
 
   </div>
 
 </section>
+  
 
 
 <!-- =====================================
