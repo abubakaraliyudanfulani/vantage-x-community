@@ -232,10 +232,9 @@
   }
 }
 
-  
-/* =====================================
+  /* =========================================
    VANTAGE X FULL-SCREEN POST VIEWER
-===================================== */
+========================================= */
 
 .profile-post-viewer {
   position: fixed;
@@ -244,7 +243,7 @@
   display: flex;
   flex-direction: column;
   background: #071426;
-  color: #ffffff;
+  color: #fff;
   overflow-y: auto;
 }
 
@@ -258,7 +257,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 18px;
-  border-bottom: 1px solid rgba(213,173,85,0.2);
+  border-bottom: 1px solid rgba(213,173,85,.2);
 }
 
 .post-viewer-header strong {
@@ -299,7 +298,7 @@
 .post-viewer-text {
   max-width: 650px;
   padding: 25px;
-  color: #ffffff;
+  color: white;
   font-size: 18px;
   line-height: 1.7;
   overflow-wrap: anywhere;
@@ -322,341 +321,6 @@
   }
 }
 
-  
-<style>
-:root {
-  --navy:#10223b;
-  --navy2:#193653;
-  --gold:#d5ad55;
-  --gold-light:#f1dfb6;
-  --background:#f3f5f9;
-  --white:#ffffff;
-  --text:#17243a;
-  --muted:#78869a;
-  --border:#e8edf3;
-  --success:#16845b;
-  --danger:#c74747;
-}
-
-* {
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-body {
-  background:var(--background);
-  color:var(--text);
-  font-family:Arial,sans-serif;
-  min-height:100vh;
-}
-
-button,input {
-  font:inherit;
-}
-
-button {
-  cursor:pointer;
-  border:0;
-}
-
-header {
-  background:var(--navy);
-  color:white;
-  padding:16px 6%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-}
-
-.brand {
-  font-weight:900;
-  letter-spacing:1px;
-  font-size:18px;
-}
-
-.brand span {
-  color:var(--gold);
-}
-
-.brand small {
-  display:block;
-  font-size:10px;
-  letter-spacing:3px;
-  color:#cbd4df;
-  margin-top:3px;
-}
-
-header a {
-  color:white;
-  text-decoration:none;
-  font-size:14px;
-}
-
-header a:hover {
-  color:var(--gold);
-}
-
-.container {
-  max-width:900px;
-  margin:30px auto;
-  padding:0 16px;
-}
-
-.card {
-  background:white;
-  border-radius:16px;
-  margin-bottom:22px;
-  overflow:hidden;
-  box-shadow:0 4px 20px rgba(16,34,59,.055);
-  border:1px solid rgba(16,34,59,.035);
-}
-
-.cover {
-  height:190px;
-  background:
-    linear-gradient(120deg,
-      #10223b,
-      #294766,
-      #b38d43
-    );
-  position:relative;
-}
-
-.cover::after {
-  content:"VANTAGE X";
-  position:absolute;
-  right:25px;
-  bottom:20px;
-  color:rgba(255,255,255,.18);
-  font-size:25px;
-  font-weight:900;
-  letter-spacing:4px;
-}
-
-.profile-info {
-  padding:0 28px 28px;
-  position:relative;
-}
-
-.avatar-area {
-  position:relative;
-  width:125px;
-  margin-top:-62px;
-}
-
-.avatar {
-  width:125px;
-  height:125px;
-  border-radius:50%;
-  border:6px solid white;
-  background:#e8edf4;
-  object-fit:cover;
-  display:block;
-}
-
-.avatar-upload-button {
-  position:absolute;
-  right:4px;
-  bottom:5px;
-  width:37px;
-  height:37px;
-  border-radius:50%;
-  background:var(--gold);
-  color:var(--navy);
-  border:3px solid white;
-  font-size:18px;
-  font-weight:bold;
-}
-
-.avatar-upload-button:hover {
-  background:#efcb7d;
-}
-
-.name {
-  font-size:26px;
-  font-weight:900;
-  margin-top:15px;
-}
-
-.username {
-  color:var(--muted);
-  margin-top:5px;
-}
-
-.bio {
-  line-height:1.7;
-  color:#526176;
-  margin-top:16px;
-  white-space:pre-wrap;
-}
-
-.stats {
-  display:flex;
-  flex-wrap:wrap;
-  gap:35px;
-  margin-top:23px;
-}
-
-.stat {
-  text-align:center;
-  min-width:65px;
-}
-
-.stat strong {
-  display:block;
-  font-size:21px;
-  color:var(--navy);
-}
-
-.stat small {
-  color:var(--muted);
-  font-size:12px;
-}
-
-.profile-actions {
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-top:22px;
-}
-
-.primary-button {
-  background:var(--navy);
-  color:white;
-  padding:12px 22px;
-  border-radius:9px;
-  font-weight:700;
-}
-
-.primary-button:hover {
-  background:var(--navy2);
-}
-
-.gold-button {
-  background:var(--gold);
-  color:var(--navy);
-  padding:12px 22px;
-  border-radius:9px;
-  font-weight:800;
-}
-
-.gold-button:hover {
-  background:#edca7d;
-}
-
-.secondary-button {
-  background:#edf1f6;
-  color:var(--navy);
-  padding:12px 18px;
-  border-radius:9px;
-  font-weight:700;
-}
-
-.following-button {
-  background:#e8edf4;
-  color:var(--navy);
-}
-
-.posts-title {
-  padding:22px;
-  font-size:18px;
-  font-weight:900;
-  border-bottom:1px solid var(--border);
-}
-
-.post {
-  padding:22px;
-  border-bottom:1px solid var(--border);
-}
-
-.post:last-child {
-  border-bottom:0;
-}
-
-.post p {
-  line-height:1.8;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
-
-.post img,
-.post video {
-  width:100%;
-  max-height:480px;
-  object-fit:contain;
-  margin-top:14px;
-  border-radius:12px;
-  background:#f0f2f5;
-}
-
-.post-date {
-  font-size:12px;
-  color:#8793a4;
-  margin-top:14px;
-}
-
-.status {
-  padding:30px;
-  text-align:center;
-  color:#738198;
-  line-height:1.6;
-}
-
-.hidden {
-  display:none !important;
-}
-
-@media(max-width:600px) {
-  header {
-    padding:14px 16px;
-  }
-
-  .brand {
-    font-size:15px;
-  }
-
-  .container {
-    margin:18px auto;
-    padding:0 11px;
-  }
-
-  .cover {
-    height:135px;
-  }
-
-  .profile-info {
-    padding:0 17px 23px;
-  }
-
-  .avatar-area {
-    width:105px;
-    margin-top:-52px;
-  }
-
-  .avatar {
-    width:105px;
-    height:105px;
-  }
-
-  .name {
-    font-size:22px;
-  }
-
-  .stats {
-    gap:23px;
-  }
-
-  .profile-actions {
-    gap:8px;
-  }
-
-  .profile-actions button {
-    flex:1;
-    min-width:115px;
-  }
-}
 </style>
 </head>
 
