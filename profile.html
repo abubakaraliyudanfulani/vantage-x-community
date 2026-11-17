@@ -602,7 +602,51 @@ button {
 
 <main class="container">
 
-<section class="card">
+<section class="card profile-main-card">
+
+  <!-- PROFILE SETTINGS MENU -->
+  <div class="profile-menu-container">
+
+    <button
+      type="button"
+      id="profileMenuButton"
+      class="profile-menu-button"
+      aria-label="Open profile settings"
+      aria-expanded="false"
+    >
+      ⋮
+    </button>
+
+    <div
+      id="profileDropdown"
+      class="profile-dropdown hidden"
+    >
+      <div class="profile-dropdown-heading">
+        Profile Options
+      </div>
+
+      <button type="button" data-profile-action="edit">
+        ⚙️ Edit Profile
+      </button>
+
+      <button type="button" data-profile-action="privacy">
+        🔒 Privacy Settings
+      </button>
+
+      <button type="button" data-profile-action="share">
+        ↗ Share Profile
+      </button>
+
+      <button type="button" data-profile-action="copy">
+        🔗 Copy Profile Link
+      </button>
+
+      <button type="button" data-profile-action="blocked">
+        🚫 Blocked Accounts
+      </button>
+    </div>
+
+  </div>
 
   <div class="cover"></div>
 
