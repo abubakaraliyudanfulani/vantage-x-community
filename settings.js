@@ -8677,9 +8677,402 @@ document.addEventListener(
 );
 
 
+
+/* =====================================================
+   VANTAGE X COMMUNITY
+   JAVASCRIPT SECTION 14
+   SETTINGS CENTRE DIAGNOSTICS
+===================================================== */
+
+
 /* =========================================
-   END OF JAVASCRIPT SECTION 13
+   1. DIAGNOSTICS CONFIGURATION
 ========================================= */
+
+const VXDiagnostics = {
+
+  requiredPages: [
+    "account",
+    "privacy",
+    "security",
+    "notifications",
+    "content",
+    "messaging",
+    "appearance",
+    "data",
+    "professional"
+  ],
+
+  requiredElements: [
+    "settingsApplication",
+    "settingsSidebar",
+    "settingsNavigation",
+    "settingsMainContent",
+    "settingsSearch",
+    "settingsPageTitle",
+    "settingsPageDescription"
+  ],
+
+  results: [],
+
+  completed: false,
+
+
+  /* =========================================
+     2. RECORD DIAGNOSTIC RESULT
+  ========================================= */
+
+  record(name, passed, details = "") {
+
+    this.results.push({
+
+      name,
+
+      passed: Boolean(passed),
+
+      details
+
+    });
+
+  },
+
+
+  /* =========================================
+     3. CHECK REQUIRED HTML ELEMENTS
+  ========================================= */
+
+  checkRequiredElements() {
+
+    this.requiredElements.forEach(id => {
+
+      const exists = Boolean(
+        document.getElementById(id)
+      );
+
+      this.record(
+        `HTML element: ${id}`,
+        exists,
+        exists
+          ? "Element found."
+          : "Required element is missing."
+      );
+
+    });
+
+  },
+
+
+  /* =========================================
+     4. CHECK ALL NINE SETTINGS PAGES
+  ========================================= */
+
+  checkSettingsPages() {
+
+    this.requiredPages.forEach(page => {
+
+      const element = document.getElementById(
+        `page-${page}`
+      );
+
+      const navigationButton =
+        document.querySelector(
+          `[data-setting-page="${page}"]`
+        );
+
+      this.record(
+        `Settings page: ${page}`,
+        Boolean(element),
+        element
+          ? "Page element found."
+          : "Page element is missing."
+      );
+
+      this.record(
+        `Navigation: ${page}`,
+        Boolean(navigationButton),
+        navigationButton
+          ? "Navigation button found."
+          : "Navigation button is missing."
+      );
+
+    });
+
+  },
+
+
+  /* =========================================
+     5. CHECK APPLICATION STYLESHEET
+  ========================================= */
+
+  checkStylesheet() {
+
+    const stylesheet = Array.from(
+      document.styleSheets
+    ).some(sheet => {
+
+      try {
+
+        return Boolean(
+          sheet.href &&
+          sheet.href.includes("settings.css")
+        );
+
+      } catch {
+
+        return false;
+
+      }
+
+    });
+
+    this.record(
+      "Settings stylesheet",
+      stylesheet,
+      stylesheet
+        ? "settings.css is linked."
+        : "settings.css was not detected. Check the stylesheet link."
+    );
+
+  },
+
+
+  /* =========================================
+     6. CHECK SUPABASE AVAILABILITY
+  ========================================= */
+
+  checkSupabase() {
+
+    const available =
+      typeof supabaseClient !== "undefined" &&
+      Boolean(supabaseClient);
+
+    this.record(
+      "Supabase client",
+      available,
+      available
+        ? "Supabase client is available."
+        : "Supabase client is missing or unavailable."
+    );
+
+    return available;
+
+  },
+
+
+  /* =========================================
+     7. CHECK JAVASCRIPT MODULES
+  ========================================= */
+
+  checkJavaScriptModules() {
+
+    const modules = {
+
+      navigation: typeof VXNavigation !== "undefined",
+
+      authentication: typeof VXAuth !== "undefined",
+
+      accountCentre: typeof VXAccountCentre !== "undefined",
+
+      privacy: typeof VXPrivacy !== "undefined",
+
+      security: typeof VXSecurity !== "undefined",
+
+      notifications: typeof VXNotifications !== "undefined",
+
+      content: typeof VXContent !== "undefined",
+
+      messaging: typeof VXMessaging !== "undefined",
+
+      appearance: typeof VXAppearance !== "undefined",
+
+      dataManagement: typeof VXDataManagement !== "undefined",
+
+      professional: typeof VXProfessional !== "undefined"
+
+    };
+
+    Object.entries(modules).forEach(
+      ([name, available]) => {
+
+        this.record(
+          `JavaScript module: ${name}`,
+          available,
+          available
+            ? "Module is available."
+            : "Module is missing."
+        );
+
+      }
+    );
+
+  },
+
+
+  /* =========================================
+     8. CHECK SETTINGS NAVIGATION STATE
+  ========================================= */
+
+  checkNavigationState() {
+
+    const currentPage =
+      VXSettings.currentPage;
+
+    const pageExists = Boolean(
+      document.getElementById(
+        `page-${currentPage}`
+      )
+    );
+
+    this.record(
+      "Current navigation state",
+      pageExists,
+      pageExists
+        ? `Current page: ${currentPage}`
+        : "Current page is not available."
+    );
+
+  },
+
+
+  /* =========================================
+     9. RUN ALL DIAGNOSTICS
+  ========================================= */
+
+  run() {
+
+    if (this.completed) {
+
+      VXUtils.log(
+        "Diagnostics have already been completed."
+      );
+
+      return this.results;
+
+    }
+
+    this.results = [];
+
+    this.checkRequiredElements();
+
+    this.checkSettingsPages();
+
+    this.checkStylesheet();
+
+    this.checkSupabase();
+
+    this.checkJavaScriptModules();
+
+    this.checkNavigationState();
+
+    this.completed = true;
+
+    this.displayResults();
+
+    return this.results;
+
+  },
+
+
+  /* =========================================
+     10. DISPLAY DIAGNOSTIC RESULTS
+  ========================================= */
+
+  displayResults() {
+
+    const passed = this.results.filter(
+      result => result.passed
+    ).length;
+
+    const failed = this.results.filter(
+      result => !result.passed
+    ).length;
+
+    console.group(
+      "VANTAGE X SETTINGS CENTRE DIAGNOSTICS"
+    );
+
+    console.info(
+      `Passed: ${passed}`
+    );
+
+    console.info(
+      `Failed: ${failed}`
+    );
+
+    this.results.forEach(result => {
+
+      if (result.passed) {
+
+        console.info(
+          "PASS:",
+          result.name,
+          result.details
+        );
+
+      } else {
+
+        console.error(
+          "FAIL:",
+          result.name,
+          result.details
+        );
+
+      }
+
+    });
+
+    console.groupEnd();
+
+    VXUtils.log(
+      "Diagnostics completed.",
+      {
+        passed,
+        failed,
+        total: this.results.length
+      }
+    );
+
+  },
+
+
+  /* =========================================
+     11. RESET DIAGNOSTICS
+  ========================================= */
+
+  reset() {
+
+    this.results = [];
+
+    this.completed = false;
+
+    VXUtils.log(
+      "Diagnostics reset."
+    );
+
+  }
+
+};
+
+
+/* =========================================
+   12. RUN DIAGNOSTICS AFTER PAGE LOAD
+========================================= */
+
+window.addEventListener(
+  "load",
+  () => {
+
+    VXDiagnostics.run();
+
+  },
+  { once: true }
+);
+
+
+/* =========================================
+   END OF JAVASCRIPT SECTION 14
+========================================= */
+           
          
 
 
