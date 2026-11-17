@@ -2852,7 +2852,1367 @@ body.dark-mode .settings-secondary-button {
 }
 
 
+
+/* =====================================================
+   VANTAGE X COMMUNITY
+   CSS SECTION 6
+   APPEARANCE & ACCESSIBILITY ENHANCEMENTS
+===================================================== */
+
+
 /* =========================================
-   END OF SETTINGS CSS
+   1. GLOBAL ACCENT COLOUR SYSTEM
 ========================================= */
+
+:root {
+
+  --vx-accent: #c5a45e;
+
+  --vx-accent-light: #e0c783;
+
+  --vx-base-font-size: 16px;
+
+}
+
+body {
+
+  font-size: var(--vx-base-font-size);
+
+}
+
+
+/* =========================================
+   2. ACCENT COLOUR APPLICATION
+========================================= */
+
+.settings-primary-button,
+.settings-nav-item.active,
+.settings-switch input:checked
++ .settings-switch-slider {
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+
+}
+
+.settings-primary-button {
+
+  background: var(--vx-accent);
+
+}
+
+.settings-primary-button:hover {
+
+  filter: brightness(1.08);
+
+}
+
+.settings-nav-item.active {
+
+  border-color: var(--vx-accent);
+
+}
+
+
+/* =========================================
+   3. TEXT SIZE ACCESSIBILITY
+========================================= */
+
+body[data-text-size="small"] {
+
+  --vx-base-font-size: 14px;
+
+}
+
+body[data-text-size="medium"] {
+
+  --vx-base-font-size: 16px;
+
+}
+
+body[data-text-size="large"] {
+
+  --vx-base-font-size: 18px;
+
+}
+
+body[data-text-size="extra-large"] {
+
+  --vx-base-font-size: 20px;
+
+}
+
+body[data-text-size="large"] .settings-card p,
+body[data-text-size="large"] .settings-field label,
+body[data-text-size="large"] .settings-information-row p {
+
+  line-height: 1.7;
+
+}
+
+body[data-text-size="extra-large"] .settings-card p,
+body[data-text-size="extra-large"] .settings-field label,
+body[data-text-size="extra-large"] .settings-information-row p {
+
+  line-height: 1.8;
+
+}
+
+
+/* =========================================
+   4. COMPACT DISPLAY MODE
+========================================= */
+
+body.vx-compact-display .settings-card {
+
+  padding: 16px;
+
+}
+
+body.vx-compact-display .settings-card-heading {
+
+  margin-bottom: 14px;
+
+}
+
+body.vx-compact-display .settings-toggle-row,
+body.vx-compact-display .settings-information-row {
+
+  padding-top: 10px;
+
+  padding-bottom: 10px;
+
+}
+
+body.vx-compact-display .settings-section-intro {
+
+  margin-bottom: 20px;
+
+}
+
+
+/* =========================================
+   5. REDUCED ANIMATION MODE
+========================================= */
+
+body.vx-animations-disabled *,
+body.vx-animations-disabled *::before,
+body.vx-animations-disabled *::after {
+
+  animation-duration: 0.01ms !important;
+
+  animation-iteration-count: 1 !important;
+
+  transition-duration: 0.01ms !important;
+
+  scroll-behavior: auto !important;
+
+}
+
+
+/* =========================================
+   6. HIGH CONTRAST MODE
+========================================= */
+
+body.vx-high-contrast {
+
+  color: #ffffff;
+
+}
+
+body.vx-high-contrast .settings-card,
+body.vx-high-contrast .settings-sidebar,
+body.vx-high-contrast .settings-topbar {
+
+  border: 2px solid currentColor;
+
+}
+
+body.vx-high-contrast .settings-card p,
+body.vx-high-contrast .settings-section-intro p,
+body.vx-high-contrast .settings-information-row p {
+
+  color: inherit;
+
+  opacity: 1;
+
+}
+
+body.vx-high-contrast input,
+body.vx-high-contrast select,
+body.vx-high-contrast textarea,
+body.vx-high-contrast button {
+
+  border: 2px solid currentColor;
+
+}
+
+body.vx-high-contrast :focus-visible {
+
+  outline: 3px solid var(--vx-accent-light);
+
+  outline-offset: 4px;
+
+}
+
+
+/* =========================================
+   7. UNDERLINED LINKS MODE
+========================================= */
+
+body.vx-underline-links a {
+
+  text-decoration: underline !important;
+
+  text-underline-offset: 4px;
+
+}
+
+body.vx-underline-links button {
+
+  text-decoration: underline;
+
+  text-underline-offset: 3px;
+
+}
+
+
+/* =========================================
+   8. DARK MODE REFINEMENTS
+========================================= */
+
+body.dark-mode {
+
+  color-scheme: dark;
+
+}
+
+body.dark-mode .settings-card {
+
+  background: #172338;
+
+  border-color: #2b3b53;
+
+  color: #f2f5fa;
+
+}
+
+body.dark-mode .settings-card p,
+body.dark-mode .settings-information-row p {
+
+  color: #b8c3d3;
+
+}
+
+body.dark-mode .settings-field input,
+body.dark-mode .settings-field select,
+body.dark-mode .settings-field textarea {
+
+  background: #101b2c;
+
+  color: #f2f5fa;
+
+  border-color: #394b64;
+
+}
+
+body.dark-mode .settings-field input::placeholder,
+body.dark-mode .settings-field textarea::placeholder {
+
+  color: #9aa8bb;
+
+}
+
+body.dark-mode .settings-secondary-button {
+
+  background: #24344b;
+
+  color: #ffffff;
+
+  border-color: #40536d;
+
+}
+
+body.dark-mode .settings-information-tag {
+
+  background: #263750;
+
+  color: #e7d39e;
+
+}
+
+
+/* =========================================
+   9. KEYBOARD ACCESSIBILITY
+========================================= */
+
+.settings-page button:focus-visible,
+.settings-page input:focus-visible,
+.settings-page select:focus-visible,
+.settings-page textarea:focus-visible,
+.settings-sidebar button:focus-visible {
+
+  outline: 3px solid var(--vx-accent);
+
+  outline-offset: 3px;
+
+}
+
+.settings-switch input:focus-visible
++ .settings-switch-slider {
+
+  outline: 3px solid var(--vx-accent);
+
+  outline-offset: 4px;
+
+}
+
+
+/* =========================================
+   10. MOBILE ACCESSIBILITY
+========================================= */
+
+@media (max-width: 650px) {
+
+  body.vx-compact-display .settings-card {
+
+    padding: 13px;
+
+  }
+
+  body[data-text-size="extra-large"] {
+
+    font-size: 19px;
+
+  }
+
+  .settings-page button {
+
+    min-height: 44px;
+
+  }
+
+  .settings-field input,
+  .settings-field select,
+  .settings-field textarea {
+
+    min-height: 44px;
+
+  }
+
+}
+
+
+/* =====================================================
+   VANTAGE X COMMUNITY
+   CSS SECTION 7
+   PROFESSIONAL & BUSINESS SETTINGS
+===================================================== */
+
+
+/* =========================================
+   1. PROFESSIONAL PAGE LAYOUT
+========================================= */
+
+#page-professional {
+
+  width: 100%;
+
+  max-width: 1100px;
+
+  margin: 0 auto;
+
+}
+
+#page-professional .settings-section-intro {
+
+  margin-bottom: 28px;
+
+}
+
+#page-professional .settings-card {
+
+  margin-bottom: 22px;
+
+}
+
+
+/* =========================================
+   2. PROFESSIONAL CARD HEADINGS
+========================================= */
+
+#page-professional .settings-card-heading {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+}
+
+#page-professional .settings-card-icon {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 46px;
+
+  height: 46px;
+
+  border-radius: 13px;
+
+  background: rgba(197, 164, 94, 0.13);
+
+  color: var(--vx-accent);
+
+  font-size: 19px;
+
+}
+
+#page-professional .settings-card-heading h3 {
+
+  margin: 0 0 5px;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+}
+
+#page-professional .settings-card-heading p {
+
+  margin: 0;
+
+  line-height: 1.6;
+
+}
+
+
+/* =========================================
+   3. PROFESSIONAL FORM GRID
+========================================= */
+
+#page-professional .settings-form-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+
+}
+
+#page-professional .settings-field-full {
+
+  grid-column: 1 / -1;
+
+}
+
+#page-professional .settings-field {
+
+  min-width: 0;
+
+}
+
+#page-professional .settings-field label {
+
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-weight: 600;
+
+}
+
+#page-professional .settings-field input,
+#page-professional .settings-field select,
+#page-professional .settings-field textarea {
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+}
+
+#page-professional .settings-field textarea {
+
+  min-height: 125px;
+
+  resize: vertical;
+
+}
+
+#page-professional .settings-field small {
+
+  display: block;
+
+  margin-top: 7px;
+
+  font-size: 12px;
+
+  opacity: 0.75;
+
+}
+
+
+/* =========================================
+   4. PROFESSIONAL ACCOUNT STATUS
+========================================= */
+
+#professionalAccountStatus,
+#professionalVerificationStatus {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 30px;
+
+  padding: 6px 12px;
+
+  border-radius: 30px;
+
+  background: rgba(197, 164, 94, 0.14);
+
+  color: var(--vx-accent);
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+
+}
+
+
+/* =========================================
+   5. PROFESSIONAL TOGGLE ROWS
+========================================= */
+
+#page-professional .settings-toggle-row {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 17px 0;
+
+  border-bottom: 1px solid rgba(128, 128, 128, 0.16);
+
+}
+
+#page-professional .settings-toggle-row:last-child {
+
+  border-bottom: none;
+
+}
+
+#page-professional .settings-toggle-row strong {
+
+  display: block;
+
+  margin-bottom: 5px;
+
+}
+
+#page-professional .settings-toggle-row p {
+
+  margin: 0;
+
+  line-height: 1.6;
+
+}
+
+
+/* =========================================
+   6. PROFESSIONAL INFORMATION ROWS
+========================================= */
+
+#page-professional .settings-information-row {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding: 17px 0;
+
+  border-bottom: 1px solid rgba(128, 128, 128, 0.16);
+
+}
+
+#page-professional .settings-information-row:last-child {
+
+  border-bottom: none;
+
+}
+
+#page-professional .settings-information-row strong {
+
+  display: block;
+
+  margin-bottom: 5px;
+
+}
+
+#page-professional .settings-information-row p {
+
+  margin: 0;
+
+  line-height: 1.6;
+
+}
+
+
+/* =========================================
+   7. PROFESSIONAL BUTTONS
+========================================= */
+
+#page-professional .settings-primary-button,
+#page-professional .settings-secondary-button {
+
+  min-height: 42px;
+
+  padding: 10px 17px;
+
+  border-radius: 9px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
+
+}
+
+#page-professional .settings-primary-button:hover,
+#page-professional .settings-secondary-button:hover {
+
+  transform: translateY(-1px);
+
+  filter: brightness(1.08);
+
+}
+
+#page-professional button:disabled {
+
+  opacity: 0.55;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+}
+
+
+/* =========================================
+   8. PROFESSIONAL SAVE BAR
+========================================= */
+
+#page-professional .settings-save-bar {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-top: 25px;
+
+  padding: 20px;
+
+  border: 1px solid rgba(197, 164, 94, 0.25);
+
+  border-radius: 14px;
+
+  background: rgba(197, 164, 94, 0.07);
+
+}
+
+#page-professional .settings-save-bar strong {
+
+  display: block;
+
+  margin-bottom: 5px;
+
+}
+
+#page-professional .settings-save-bar p {
+
+  margin: 0;
+
+  line-height: 1.5;
+
+}
+
+
+/* =========================================
+   9. PROFESSIONAL STATUS MESSAGE
+========================================= */
+
+#professionalSettingsStatus {
+
+  margin-top: 16px;
+
+  padding: 12px 15px;
+
+  border-radius: 9px;
+
+  line-height: 1.6;
+
+  overflow-wrap: anywhere;
+
+}
+
+#professionalSettingsStatus:empty {
+
+  display: none;
+
+}
+
+#professionalSettingsStatus.info {
+
+  background: rgba(59, 130, 246, 0.10);
+
+  color: #2563eb;
+
+}
+
+#professionalSettingsStatus.success {
+
+  background: rgba(22, 163, 74, 0.10);
+
+  color: #15803d;
+
+}
+
+#professionalSettingsStatus.error {
+
+  background: rgba(220, 38, 38, 0.10);
+
+  color: #dc2626;
+
+}
+
+body.dark-mode #professionalSettingsStatus.info {
+
+  color: #93c5fd;
+
+}
+
+body.dark-mode #professionalSettingsStatus.success {
+
+  color: #86efac;
+
+}
+
+body.dark-mode #professionalSettingsStatus.error {
+
+  color: #fca5a5;
+
+}
+
+
+/* =========================================
+   10. PROFESSIONAL DARK MODE
+========================================= */
+
+body.dark-mode #page-professional .settings-card {
+
+  background: #172338;
+
+  border-color: #2b3b53;
+
+}
+
+body.dark-mode #page-professional .settings-toggle-row,
+body.dark-mode #page-professional .settings-information-row {
+
+  border-color: #34445b;
+
+}
+
+body.dark-mode #page-professional .settings-save-bar {
+
+  background: rgba(197, 164, 94, 0.09);
+
+  border-color: rgba(197, 164, 94, 0.3);
+
+}
+
+
+/* =========================================
+   11. TABLET RESPONSIVENESS
+========================================= */
+
+@media (max-width: 800px) {
+
+  #page-professional .settings-form-grid {
+
+    gap: 16px;
+
+  }
+
+  #page-professional .settings-card {
+
+    padding: 18px;
+
+  }
+
+}
+
+
+/* =========================================
+   12. MOBILE RESPONSIVENESS
+========================================= */
+
+@media (max-width: 600px) {
+
+  #page-professional .settings-form-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  #page-professional .settings-field-full {
+
+    grid-column: auto;
+
+  }
+
+  #page-professional .settings-information-row {
+
+    align-items: flex-start;
+
+    flex-direction: column;
+
+  }
+
+  #page-professional .settings-toggle-row {
+
+    gap: 12px;
+
+  }
+
+  #page-professional .settings-save-bar {
+
+    align-items: stretch;
+
+    flex-direction: column;
+
+  }
+
+  #page-professional .settings-save-bar button {
+
+    width: 100%;
+
+  }
+
+  #page-professional .settings-card-heading {
+
+    align-items: flex-start;
+
+  }
+
+}
+
+
+/* =====================================================
+   VANTAGE X COMMUNITY
+   CSS SECTION 8
+   GLOBAL INTERFACE REFINEMENTS
+===================================================== */
+
+
+/* =========================================
+   1. CONSISTENT SETTINGS CARD SPACING
+========================================= */
+
+.settings-page {
+
+  width: 100%;
+
+  min-width: 0;
+
+}
+
+.settings-page .settings-card {
+
+  box-sizing: border-box;
+
+  width: 100%;
+
+  margin-bottom: 22px;
+
+  overflow-wrap: anywhere;
+
+}
+
+.settings-card-heading {
+
+  min-width: 0;
+
+}
+
+.settings-card-heading > div:last-child {
+
+  min-width: 0;
+
+}
+
+
+/* =========================================
+   2. FORM FIELD CONSISTENCY
+========================================= */
+
+.settings-field {
+
+  min-width: 0;
+
+}
+
+.settings-field input,
+.settings-field select,
+.settings-field textarea {
+
+  box-sizing: border-box;
+
+  max-width: 100%;
+
+  font: inherit;
+
+  border-radius: 9px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+}
+
+.settings-field input:focus,
+.settings-field select:focus,
+.settings-field textarea:focus {
+
+  border-color: var(--vx-accent);
+
+  box-shadow:
+    0 0 0 3px rgba(197, 164, 94, 0.12);
+
+  outline: none;
+
+}
+
+.settings-field input:disabled,
+.settings-field select:disabled,
+.settings-field textarea:disabled {
+
+  opacity: 0.65;
+
+  cursor: not-allowed;
+
+}
+
+
+/* =========================================
+   3. BUTTON CONSISTENCY
+========================================= */
+
+.settings-page button {
+
+  font: inherit;
+
+}
+
+.settings-primary-button,
+.settings-secondary-button,
+.settings-danger-button {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  text-align: center;
+
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+
+}
+
+.settings-primary-button:active,
+.settings-secondary-button:active,
+.settings-danger-button:active {
+
+  transform: scale(0.98);
+
+}
+
+.settings-page button:focus-visible {
+
+  outline: 3px solid var(--vx-accent);
+
+  outline-offset: 3px;
+
+}
+
+
+/* =========================================
+   4. SETTINGS ACTION STATUS MESSAGES
+========================================= */
+
+.settings-action-status {
+
+  box-sizing: border-box;
+
+  width: 100%;
+
+  line-height: 1.6;
+
+  overflow-wrap: anywhere;
+
+}
+
+.settings-action-status:empty {
+
+  display: none;
+
+}
+
+.settings-action-status.info {
+
+  background: rgba(59, 130, 246, 0.10);
+
+  color: #2563eb;
+
+}
+
+.settings-action-status.success {
+
+  background: rgba(22, 163, 74, 0.10);
+
+  color: #15803d;
+
+}
+
+.settings-action-status.error {
+
+  background: rgba(220, 38, 38, 0.10);
+
+  color: #dc2626;
+
+}
+
+body.dark-mode .settings-action-status.info {
+
+  color: #93c5fd;
+
+}
+
+body.dark-mode .settings-action-status.success {
+
+  color: #86efac;
+
+}
+
+body.dark-mode .settings-action-status.error {
+
+  color: #fca5a5;
+
+}
+
+
+/* =========================================
+   5. INFORMATION ROW REFINEMENTS
+========================================= */
+
+.settings-information-row > div {
+
+  min-width: 0;
+
+  flex: 1;
+
+}
+
+.settings-information-row strong {
+
+  overflow-wrap: anywhere;
+
+}
+
+.settings-information-row p {
+
+  overflow-wrap: anywhere;
+
+}
+
+
+/* =========================================
+   6. SETTINGS SAVE BAR REFINEMENTS
+========================================= */
+
+.settings-save-bar {
+
+  box-sizing: border-box;
+
+  width: 100%;
+
+  flex-wrap: wrap;
+
+}
+
+.settings-save-bar > div {
+
+  min-width: 0;
+
+  flex: 1;
+
+}
+
+.settings-save-bar button {
+
+  flex-shrink: 0;
+
+}
+
+
+/* =========================================
+   7. TOGGLE CONTROL REFINEMENTS
+========================================= */
+
+.settings-switch {
+
+  flex-shrink: 0;
+
+}
+
+.settings-switch input {
+
+  cursor: pointer;
+
+}
+
+.settings-switch-slider {
+
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+}
+
+
+/* =========================================
+   8. SETTINGS PAGE TRANSITIONS
+========================================= */
+
+.settings-page {
+
+  animation: vxSettingsPageEnter 0.22s ease;
+
+}
+
+@keyframes vxSettingsPageEnter {
+
+  from {
+
+    opacity: 0;
+
+    transform: translateY(5px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform: translateY(0);
+
+  }
+
+}
+
+
+/* =========================================
+   9. DARK MODE FORM REFINEMENTS
+========================================= */
+
+body.dark-mode .settings-field input,
+body.dark-mode .settings-field select,
+body.dark-mode .settings-field textarea {
+
+  background-color: #101b2c;
+
+  color: #f2f5fa;
+
+  border-color: #394b64;
+
+}
+
+body.dark-mode .settings-field input:focus,
+body.dark-mode .settings-field select:focus,
+body.dark-mode .settings-field textarea:focus {
+
+  border-color: var(--vx-accent-light);
+
+}
+
+body.dark-mode .settings-card {
+
+  color: #f2f5fa;
+
+}
+
+
+/* =========================================
+   10. TABLET LAYOUT REFINEMENTS
+========================================= */
+
+@media (max-width: 850px) {
+
+  .settings-page .settings-card {
+
+    margin-bottom: 18px;
+
+  }
+
+  .settings-save-bar {
+
+    gap: 14px;
+
+  }
+
+}
+
+
+/* =========================================
+   11. MOBILE LAYOUT REFINEMENTS
+========================================= */
+
+@media (max-width: 600px) {
+
+  .settings-page {
+
+    overflow-wrap: anywhere;
+
+  }
+
+  .settings-page .settings-card {
+
+    padding: 16px;
+
+    border-radius: 12px;
+
+  }
+
+  .settings-card-heading {
+
+    gap: 11px;
+
+  }
+
+  .settings-card-icon {
+
+    width: 40px;
+
+    height: 40px;
+
+    font-size: 17px;
+
+  }
+
+  .settings-card-actions {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+  }
+
+  .settings-card-actions button {
+
+    width: 100%;
+
+  }
+
+  .settings-save-bar {
+
+    align-items: stretch;
+
+    flex-direction: column;
+
+  }
+
+  .settings-save-bar button {
+
+    width: 100%;
+
+  }
+
+  .settings-information-row {
+
+    gap: 12px;
+
+  }
+
+}
+
+
+/* =========================================
+   12. REDUCED MOTION SUPPORT
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .settings-page,
+  .settings-page *,
+  .settings-page *::before,
+  .settings-page *::after {
+
+    animation-duration: 0.01ms !important;
+
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
+
+    scroll-behavior: auto !important;
+
+  }
+
+}
+
+
+/* =========================================
+   END OF CSS SECTION 8
+========================================= */
+
+
+
+
+   
     
