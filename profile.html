@@ -2538,7 +2538,64 @@ function initializeProfileTabs() {
 // Initialize profile navigation
 initializeProfileTabs();
 
-  
+ /* =====================================
+   VANTAGE X PROFILE MENU FUNCTIONALITY
+===================================== */
+
+const profileMenuButton =
+  document.getElementById("profileMenuButton");
+
+const profileDropdown =
+  document.getElementById("profileDropdown");
+
+function closeProfileMenu() {
+  profileDropdown.classList.add("hidden");
+  profileMenuButton.setAttribute("aria-expanded", "false");
+}
+
+profileMenuButton.addEventListener("click", (event) => {
+  event.stopPropagation();
+
+  const isOpen =
+    !profileDropdown.classList.contains("hidden");
+
+  if (isOpen) {
+    closeProfileMenu();
+  } else {
+    profileDropdown.classList.remove("hidden");
+    profileMenuButton.setAttribute("aria-expanded", "true");
+  }
+});
+
+// Close menu when clicking outside it.
+document.addEventListener("click", (event) => {
+  if (
+    !profileDropdown.contains(event.target) &&
+    !profileMenuButton.contains(event.target)
+  ) {
+    closeProfileMenu();
+  }
+});
+
+// Close menu with the Escape key.
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeProfileMenu();
+  }
+});
+
+// Connect the Edit Profile menu option.
+document.querySelectorAll("[data-profile-action]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const action = button.dataset.profileAction;
+
+    closeProfileMenu();
+
+    if (action === "edit") {
+      document.getElementById("editProfileButton").click();
+    }
+  });
+}); 
 </script>
 
 </body>
