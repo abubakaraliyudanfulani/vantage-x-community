@@ -2759,7 +2759,8 @@ async function loadPrivacySettings() {
     data.push_notifications;
 }
 
-  /* =====================================
+  
+/* =====================================
    SAVE MEMBER PRIVACY SETTINGS
 ===================================== */
 
@@ -2775,30 +2776,44 @@ document.getElementById("savePrivacySettings")
     button.textContent = "Saving...";
     message.textContent = "";
 
-    const settings = {
-      is_private: document.getElementById("privateAccountToggle").checked,
-      email_notifications: document.getElementById("emailNotificationsToggle").checked,
-      push_notifications: document.getElementById("pushNotificationsToggle").checked
-    };
+    try {
+      const settings = {
+        is_private: document.getElementById("privateAccountToggle").checked,
+        email_notifications: document.getElementById("emailNotificationsToggle").checked,
+        push_notifications: document.getElementById("pushNotificationsToggle").checked
+      };
 
-    const { error } = await supabaseClient
-      .from("account_settings")
-      .update(settings)
-      .eq("user_id", currentUser.id);
+      const { data, error } = await supabaseClient
+        .from("account_settings")
+        .update(settings)
+        .eq("user_id", currentUser.id)
+        .select("user_id")
+        .maybeSingle();
 
-    button.disabled = false;
-    button.textContent = "Save Privacy Settings";
+      if (error) throw error;
 
-    if (error) {
+      if (!data) {
+        throw new Error("No account settings record was updated.");
+      }
+
+      message.textContent = "Your privacy settings have been saved successfully.";
+      message.style.color = "#16834a";
+
+    } catch (error) {
       console.error("Saving privacy settings failed:", error);
-      message.textContent = "Unable to save settings. Please try again.";
+
+      message.textContent = error.message ||
+        "Unable to save settings. Please try again.";
+
       message.style.color = "#dc3545";
-      return;
+
+    } finally {
+      button.disabled = false;
+      button.textContent = "Save Privacy Settings";
     }
 
-    message.textContent = "Your privacy settings have been saved successfully.";
-    message.style.color = "#16834a";
   });
+  
   
 </script>
 
