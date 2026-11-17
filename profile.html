@@ -1145,17 +1145,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       window.location.search
     );
 
-    const profileId = params.get("id");
+  // Open the selected member's profile.
+// If no ID is provided, open the signed-in user's profile.
 
-    if (!profileId) {
-      showMessage(
-        "No member profile was selected.",
-        "error"
-      );
-      return;
-    }
+const profileId = params.get("id") || user.id;
 
-    await loadMemberProfile(profileId);
+await loadMemberProfile(profileId);
 
   } catch (error) {
 
