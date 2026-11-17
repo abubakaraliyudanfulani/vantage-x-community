@@ -6232,9 +6232,862 @@ document.addEventListener(
 );
 
 
+/* =====================================================
+   VANTAGE X COMMUNITY
+   JAVASCRIPT SECTION 11
+   APPEARANCE & ACCESSIBILITY MANAGEMENT
+===================================================== */
+
+
 /* =========================================
-   END OF JAVASCRIPT SECTION 10
+   1. APPEARANCE CONTROLLER
 ========================================= */
+
+const VXAppearance = {
+
+  initialized: false,
+
+  storageKey: "vx_appearance_preferences",
+
+  user: null,
+
+  mediaQuery: null,
+
+  systemThemeHandler: null,
+
+
+  /* =========================================
+     2. DEFAULT PREFERENCES
+  ========================================= */
+
+  defaults: {
+
+    appearanceTheme: "system",
+
+    appearanceAutoTheme: true,
+
+    appearanceAccent: "gold",
+
+    appearanceTextSize: "medium",
+
+    appearanceCompactDisplay: false,
+
+    appearanceAnimations: true,
+
+    appearanceReduceMotion: false,
+
+    appearanceHighContrast: false,
+
+    appearanceUnderlineLinks: false,
+
+    appearanceLanguage: "en",
+
+    appearanceRegion: "NG",
+
+    appearanceDateFormat: "DD/MM/YYYY"
+
+  },
+
+
+  /* =========================================
+     3. FIELD CONFIGURATION
+  ========================================= */
+
+  selectFields: [
+
+    "appearanceTheme",
+
+    "appearanceAccent",
+
+    "appearanceTextSize",
+
+    "appearanceLanguage",
+
+    "appearanceRegion",
+
+    "appearanceDateFormat"
+
+  ],
+
+  toggleFields: [
+
+    "appearanceAutoTheme",
+
+    "appearanceCompactDisplay",
+
+    "appearanceAnimations",
+
+    "appearanceReduceMotion",
+
+    "appearanceHighContrast",
+
+    "appearanceUnderlineLinks"
+
+  ],
+
+
+  /* =========================================
+     4. INITIALIZE APPEARANCE
+  ========================================= */
+
+  async initialize() {
+
+    if (this.initialized) return;
+
+    try {
+
+      const client = VXDatabase.getClient();
+
+      if (client) {
+
+        const { data, error } =
+          await client.auth.getSession();
+
+        if (error) throw error;
+
+        this.user = data.session?.user || null;
+
+      }
+
+      this.storageKey = this.user
+        ? `vx_appearance_preferences_${this.user.id}`
+        : "vx_appearance_preferences_guest";
+
+
+      this.mediaQuery = window.matchMedia
+        ? window.matchMedia("(prefers-color-scheme: dark)")
+        : null;
+
+
+      this.loadPreferences();
+
+      this.applyAllPreferences();
+
+      this.attachEvents();
+
+      this.watchSystemTheme();
+
+      this.initialized = true;
+
+
+      VXUtils.log(
+        "Appearance and accessibility initialized."
+      );
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Appearance initialization failed.",
+        error
+      );
+
+      this.showStatus(
+        "Appearance settings could not be initialized.",
+        "error"
+      );
+
+    }
+
+  },
+
+
+  /* =========================================
+     5. COLLECT PREFERENCES
+  ========================================= */
+
+  collectPreferences() {
+
+    const preferences = {};
+
+    this.selectFields.forEach(id => {
+
+      const element = VXElements.byId(id);
+
+      if (element) {
+
+        preferences[id] = element.value;
+
+      }
+
+    });
+
+
+    this.toggleFields.forEach(id => {
+
+      const element = VXElements.byId(id);
+
+      if (element) {
+
+        preferences[id] = element.checked;
+
+      }
+
+    });
+
+    return preferences;
+
+  },
+
+
+  /* =========================================
+     6. VALIDATE PREFERENCES
+  ========================================= */
+
+  validatePreferences(preferences) {
+
+    const allowedValues = {
+
+      appearanceTheme: [
+        "system",
+        "light",
+        "dark"
+      ],
+
+      appearanceAccent: [
+        "gold",
+        "blue",
+        "green",
+        "purple"
+      ],
+
+      appearanceTextSize: [
+        "small",
+        "medium",
+        "large",
+        "extra-large"
+      ],
+
+      appearanceLanguage: [
+        "en",
+        "ha",
+        "ar",
+        "fr"
+      ],
+
+      appearanceRegion: [
+        "NG",
+        "GH",
+        "KE",
+        "ZA",
+        "GB",
+        "US",
+        "OTHER"
+      ],
+
+      appearanceDateFormat: [
+        "DD/MM/YYYY",
+        "MM/DD/YYYY",
+        "YYYY-MM-DD"
+      ]
+
+    };
+
+
+    for (const field of this.selectFields) {
+
+      if (
+        !allowedValues[field].includes(
+          preferences[field]
+        )
+      ) {
+
+        return {
+          valid: false,
+          message: "An appearance selection is invalid."
+        };
+
+      }
+
+    }
+
+
+    for (const field of this.toggleFields) {
+
+      if (
+        typeof preferences[field] !== "boolean"
+      ) {
+
+        return {
+          valid: false,
+          message: "An accessibility preference is invalid."
+        };
+
+      }
+
+    }
+
+
+    return {
+      valid: true,
+      message: "Appearance preferences are valid."
+    };
+
+  },
+
+
+  /* =========================================
+     7. LOAD SAVED PREFERENCES
+  ========================================= */
+
+  loadPreferences() {
+
+    let saved = {};
+
+    try {
+
+      const stored = localStorage.getItem(
+        this.storageKey
+      );
+
+      if (stored) {
+
+        saved = JSON.parse(stored);
+
+      }
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Could not read appearance preferences.",
+        error
+      );
+
+    }
+
+
+    const combined = {
+
+      ...this.defaults,
+
+      ...saved
+
+    };
+
+
+    const validation =
+      this.validatePreferences(combined);
+
+
+    this.preferences = validation.valid
+      ? combined
+      : { ...this.defaults };
+
+
+    this.applyPreferencesToForm();
+
+  },
+
+
+  /* =========================================
+     8. APPLY PREFERENCES TO FORM
+  ========================================= */
+
+  applyPreferencesToForm() {
+
+    Object.entries(this.preferences).forEach(
+      ([id, value]) => {
+
+        const element = VXElements.byId(id);
+
+        if (!element) return;
+
+        if (element.type === "checkbox") {
+
+          element.checked = Boolean(value);
+
+        } else {
+
+          element.value = value;
+
+        }
+
+      }
+    );
+
+  },
+
+
+  /* =========================================
+     9. DETERMINE ACTIVE THEME
+  ========================================= */
+
+  getActiveTheme() {
+
+    const preferences = this.preferences;
+
+    if (
+      preferences.appearanceAutoTheme ||
+      preferences.appearanceTheme === "system"
+    ) {
+
+      return this.mediaQuery?.matches
+        ? "dark"
+        : "light";
+
+    }
+
+    return preferences.appearanceTheme;
+
+  },
+
+
+  /* =========================================
+     10. APPLY THEME
+  ========================================= */
+
+  applyTheme() {
+
+    const theme = this.getActiveTheme();
+
+    document.body.classList.toggle(
+      "dark-mode",
+      theme === "dark"
+    );
+
+    document.documentElement.dataset.theme = theme;
+
+    document.documentElement.style.colorScheme =
+      theme;
+
+
+    return theme;
+
+  },
+
+
+  /* =========================================
+     11. APPLY ACCENT COLOUR
+  ========================================= */
+
+  applyAccent() {
+
+    const accent =
+      this.preferences.appearanceAccent;
+
+    const accentColours = {
+
+      gold: {
+        primary: "#C9A44C",
+        secondary: "#E2C77A"
+      },
+
+      blue: {
+        primary: "#2675D8",
+        secondary: "#70A8F0"
+      },
+
+      green: {
+        primary: "#16865B",
+        secondary: "#54B78B"
+      },
+
+      purple: {
+        primary: "#7952B8",
+        secondary: "#A98ADB"
+      }
+
+    };
+
+    const selected =
+      accentColours[accent] ||
+      accentColours.gold;
+
+
+    document.documentElement.style.setProperty(
+      "--vx-accent",
+      selected.primary
+    );
+
+    document.documentElement.style.setProperty(
+      "--vx-accent-light",
+      selected.secondary
+    );
+
+    document.documentElement.dataset.accent = accent;
+
+  },
+
+
+  /* =========================================
+     12. APPLY TEXT SIZE
+  ========================================= */
+
+  applyTextSize() {
+
+    const sizes = {
+
+      small: "14px",
+
+      medium: "16px",
+
+      large: "18px",
+
+      "extra-large": "20px"
+
+    };
+
+    const size =
+      sizes[this.preferences.appearanceTextSize] ||
+      sizes.medium;
+
+
+    document.documentElement.style.setProperty(
+      "--vx-base-font-size",
+      size
+    );
+
+    document.documentElement.dataset.textSize =
+      this.preferences.appearanceTextSize;
+
+  },
+
+
+  /* =========================================
+     13. APPLY COMPACT DISPLAY
+  ========================================= */
+
+  applyCompactDisplay() {
+
+    document.body.classList.toggle(
+      "vx-compact-display",
+      this.preferences.appearanceCompactDisplay
+    );
+
+  },
+
+
+  /* =========================================
+     14. APPLY ANIMATION PREFERENCES
+  ========================================= */
+
+  applyAnimations() {
+
+    const animationsEnabled =
+      this.preferences.appearanceAnimations &&
+      !this.preferences.appearanceReduceMotion;
+
+
+    document.body.classList.toggle(
+      "vx-animations-disabled",
+      !animationsEnabled
+    );
+
+  },
+
+
+  /* =========================================
+     15. APPLY HIGH CONTRAST
+  ========================================= */
+
+  applyHighContrast() {
+
+    document.body.classList.toggle(
+      "vx-high-contrast",
+      this.preferences.appearanceHighContrast
+    );
+
+  },
+
+
+  /* =========================================
+     16. APPLY UNDERLINED LINKS
+  ========================================= */
+
+  applyUnderlineLinks() {
+
+    document.body.classList.toggle(
+      "vx-underline-links",
+      this.preferences.appearanceUnderlineLinks
+    );
+
+  },
+
+
+  /* =========================================
+     17. APPLY LANGUAGE AND REGION
+  ========================================= */
+
+  applyLanguageAndRegion() {
+
+    const language =
+      this.preferences.appearanceLanguage;
+
+    document.documentElement.lang = language;
+
+    document.documentElement.dataset.region =
+      this.preferences.appearanceRegion;
+
+    document.documentElement.dataset.dateFormat =
+      this.preferences.appearanceDateFormat;
+
+  },
+
+
+  /* =========================================
+     18. APPLY ALL PREFERENCES
+  ========================================= */
+
+  applyAllPreferences() {
+
+    this.applyTheme();
+
+    this.applyAccent();
+
+    this.applyTextSize();
+
+    this.applyCompactDisplay();
+
+    this.applyAnimations();
+
+    this.applyHighContrast();
+
+    this.applyUnderlineLinks();
+
+    this.applyLanguageAndRegion();
+
+  },
+
+
+  /* =========================================
+     19. WATCH DEVICE THEME CHANGES
+  ========================================= */
+
+  watchSystemTheme() {
+
+    if (!this.mediaQuery) return;
+
+    this.systemThemeHandler = () => {
+
+      if (
+        this.preferences.appearanceAutoTheme ||
+        this.preferences.appearanceTheme === "system"
+      ) {
+
+        this.applyTheme();
+
+      }
+
+    };
+
+
+    if (
+      typeof this.mediaQuery.addEventListener === "function"
+    ) {
+
+      this.mediaQuery.addEventListener(
+        "change",
+        this.systemThemeHandler
+      );
+
+    } else if (
+      typeof this.mediaQuery.addListener === "function"
+    ) {
+
+      this.mediaQuery.addListener(
+        this.systemThemeHandler
+      );
+
+    }
+
+  },
+
+
+  /* =========================================
+     20. HANDLE LIVE FORM CHANGES
+  ========================================= */
+
+  handlePreferenceChange() {
+
+    const current = this.collectPreferences();
+
+    const validation =
+      this.validatePreferences(current);
+
+
+    if (!validation.valid) {
+
+      this.showStatus(
+        validation.message,
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    this.preferences = current;
+
+    this.applyAllPreferences();
+
+    this.showStatus(
+      "Appearance preview updated. Save your settings to keep these choices.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     21. SAVE PREFERENCES
+  ========================================= */
+
+  savePreferences() {
+
+    const preferences = this.collectPreferences();
+
+    const validation =
+      this.validatePreferences(preferences);
+
+
+    if (!validation.valid) {
+
+      this.showStatus(
+        validation.message,
+        "error"
+      );
+
+      return false;
+
+    }
+
+
+    try {
+
+      localStorage.setItem(
+        this.storageKey,
+        JSON.stringify(preferences)
+      );
+
+
+      this.preferences = preferences;
+
+      this.applyAllPreferences();
+
+
+      this.showStatus(
+        "Your appearance and accessibility preferences have been saved on this device.",
+        "success"
+      );
+
+
+      VXUtils.log(
+        "Appearance preferences saved.",
+        preferences
+      );
+
+      return true;
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Appearance preferences could not be saved.",
+        error
+      );
+
+      this.showStatus(
+        "Unable to save your preferences. Check your browser storage.",
+        "error"
+      );
+
+      return false;
+
+    }
+
+  },
+
+
+  /* =========================================
+     22. STATUS MESSAGE
+  ========================================= */
+
+  showStatus(message, type = "info") {
+
+    const element = VXElements.byId(
+      "appearanceSettingsStatus"
+    );
+
+    if (!element) return;
+
+    element.textContent = message;
+
+    element.classList.remove(
+      "success",
+      "error",
+      "info"
+    );
+
+    element.classList.add(type);
+
+    element.setAttribute(
+      "role",
+      type === "error" ? "alert" : "status"
+    );
+
+  },
+
+
+  /* =========================================
+     23. ATTACH EVENT LISTENERS
+  ========================================= */
+
+  attachEvents() {
+
+    const saveButton = VXElements.byId(
+      "saveAppearancePreferences"
+    );
+
+    if (saveButton) {
+
+      saveButton.addEventListener(
+        "click",
+        () => this.savePreferences()
+      );
+
+    }
+
+
+    [...this.selectFields, ...this.toggleFields]
+      .forEach(id => {
+
+        const element = VXElements.byId(id);
+
+        if (!element) return;
+
+        element.addEventListener(
+          "change",
+          () => {
+
+            this.handlePreferenceChange();
+
+          }
+        );
+
+      });
+
+  }
+
+};
+
+
+/* =========================================
+   24. INITIALIZE APPEARANCE MODULE
+========================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    VXAppearance.initialize();
+
+  }
+);
+
+
+/* =========================================
+   END OF JAVASCRIPT SECTION 11
+========================================= */
+
 
 
 
