@@ -7871,9 +7871,817 @@ document.addEventListener(
 );
 
 
+/* =====================================================
+   VANTAGE X COMMUNITY
+   JAVASCRIPT SECTION 13
+   CREATOR & BUSINESS SETTINGS
+===================================================== */
+
+
 /* =========================================
-   END OF JAVASCRIPT SECTION 12
+   1. PROFESSIONAL SETTINGS CONFIGURATION
 ========================================= */
+
+const VXProfessional = {
+
+  user: null,
+
+  storageKey: null,
+
+  initialized: false,
+
+  controls: {
+
+    accountType: "professionalAccountType",
+
+    businessName: "professionalBusinessName",
+
+    industry: "professionalIndustry",
+
+    businessEmail: "professionalBusinessEmail",
+
+    businessPhone: "professionalBusinessPhone",
+
+    businessAddress: "professionalBusinessAddress",
+
+    businessWebsite: "professionalBusinessWebsite",
+
+    businessDescription: "professionalBusinessDescription",
+
+    creatorTools: "professionalCreatorTools",
+
+    contactButton: "professionalContactButton",
+
+    showCategory: "professionalShowCategory"
+
+  },
+
+
+  /* =========================================
+     2. INITIALIZE PROFESSIONAL SETTINGS
+  ========================================= */
+
+  async initialize() {
+
+    if (this.initialized) return;
+
+    try {
+
+      const client = VXDatabase.getClient();
+
+      if (!client) {
+
+        throw new Error(
+          "Supabase is not available."
+        );
+
+      }
+
+      const {
+        data,
+        error
+      } = await client.auth.getSession();
+
+      if (error) throw error;
+
+      const session = data?.session;
+
+      if (!session?.user) {
+
+        this.showStatus(
+          "Sign in to manage your professional settings.",
+          "info"
+        );
+
+        return;
+
+      }
+
+      this.user = session.user;
+
+      this.storageKey =
+        `vx_professional_settings_${this.user.id}`;
+
+      this.loadPreferences();
+
+      this.attachEvents();
+
+      this.updateAccountStatus();
+
+      this.initialized = true;
+
+      VXUtils.log(
+        "Professional settings initialized."
+      );
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Professional settings initialization failed.",
+        error
+      );
+
+      this.showStatus(
+        "Unable to load professional settings. Please refresh and try again.",
+        "error"
+      );
+
+    }
+
+  },
+
+
+  /* =========================================
+     3. COLLECT PROFESSIONAL PREFERENCES
+  ========================================= */
+
+  collectPreferences() {
+
+    return {
+
+      accountType: VXUtils.getValue(
+        this.controls.accountType
+      ),
+
+      businessName: VXUtils.getValue(
+        this.controls.businessName
+      ),
+
+      industry: VXUtils.getValue(
+        this.controls.industry
+      ),
+
+      businessEmail: VXUtils.getValue(
+        this.controls.businessEmail
+      ),
+
+      businessPhone: VXUtils.getValue(
+        this.controls.businessPhone
+      ),
+
+      businessAddress: VXUtils.getValue(
+        this.controls.businessAddress
+      ),
+
+      businessWebsite: VXUtils.getValue(
+        this.controls.businessWebsite
+      ),
+
+      businessDescription: VXUtils.getValue(
+        this.controls.businessDescription
+      ),
+
+      creatorTools: VXUtils.getValue(
+        this.controls.creatorTools
+      ),
+
+      contactButton: VXUtils.getValue(
+        this.controls.contactButton
+      ),
+
+      showCategory: VXUtils.getValue(
+        this.controls.showCategory
+      )
+
+    };
+
+  },
+
+
+  /* =========================================
+     4. VALIDATE PROFESSIONAL INFORMATION
+  ========================================= */
+
+  validatePreferences(preferences) {
+
+    const validAccountTypes = [
+      "personal",
+      "creator",
+      "business",
+      "brand",
+      "public_figure",
+      "professional"
+    ];
+
+    const validIndustries = [
+      "",
+      "technology",
+      "real_estate",
+      "education",
+      "health",
+      "finance",
+      "agriculture",
+      "fashion",
+      "media",
+      "sports",
+      "retail",
+      "professional_services",
+      "other"
+    ];
+
+    if (
+      !validAccountTypes.includes(
+        preferences.accountType
+      )
+    ) {
+
+      return "Please select a valid professional account type.";
+
+    }
+
+    if (
+      !validIndustries.includes(
+        preferences.industry
+      )
+    ) {
+
+      return "Please select a valid business industry.";
+
+    }
+
+    if (
+      preferences.businessName.length > 150
+    ) {
+
+      return "Business name must not exceed 150 characters.";
+
+    }
+
+    if (
+      preferences.businessEmail &&
+      !VXUtils.isValidEmail(
+        preferences.businessEmail
+      )
+    ) {
+
+      return "Please enter a valid business email address.";
+
+    }
+
+    if (
+      preferences.businessPhone.length > 30
+    ) {
+
+      return "Business phone number is too long.";
+
+    }
+
+    if (
+      preferences.businessAddress.length > 255
+    ) {
+
+      return "Business address must not exceed 255 characters.";
+
+    }
+
+    if (
+      preferences.businessWebsite
+    ) {
+
+      try {
+
+        const website = new URL(
+          preferences.businessWebsite
+        );
+
+        if (
+          website.protocol !== "https:" &&
+          website.protocol !== "http:"
+        ) {
+
+          return "Business website must use HTTP or HTTPS.";
+
+        }
+
+      } catch {
+
+        return "Please enter a valid business website URL.";
+
+      }
+
+    }
+
+    if (
+      preferences.businessDescription.length > 1000
+    ) {
+
+      return "Business description must not exceed 1,000 characters.";
+
+    }
+
+    return null;
+
+  },
+
+
+  /* =========================================
+     5. LOAD SAVED PROFESSIONAL PREFERENCES
+  ========================================= */
+
+  loadPreferences() {
+
+    if (!this.storageKey) return;
+
+    try {
+
+      const saved = localStorage.getItem(
+        this.storageKey
+      );
+
+      if (!saved) {
+
+        this.updateAccountStatus();
+
+        return;
+
+      }
+
+      const preferences = JSON.parse(saved);
+
+      if (
+        !preferences ||
+        typeof preferences !== "object"
+      ) {
+
+        throw new Error(
+          "Invalid professional settings data."
+        );
+
+      }
+
+      Object.entries(this.controls).forEach(
+        ([key, elementId]) => {
+
+          if (
+            !Object.prototype.hasOwnProperty.call(
+              preferences,
+              key
+            )
+          ) return;
+
+          VXUtils.setValue(
+            elementId,
+            preferences[key]
+          );
+
+        }
+      );
+
+      this.updateAccountStatus();
+
+      VXUtils.log(
+        "Professional preferences loaded."
+      );
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to load professional preferences.",
+        error
+      );
+
+      this.showStatus(
+        "Some saved preferences could not be loaded.",
+        "error"
+      );
+
+    }
+
+  },
+
+
+  /* =========================================
+     6. SAVE PROFESSIONAL PREFERENCES
+  ========================================= */
+
+  savePreferences() {
+
+    if (!this.user || !this.storageKey) {
+
+      this.showStatus(
+        "Please sign in before saving professional settings.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    try {
+
+      const preferences =
+        this.collectPreferences();
+
+      const validationError =
+        this.validatePreferences(preferences);
+
+      if (validationError) {
+
+        this.showStatus(
+          validationError,
+          "error"
+        );
+
+        return;
+
+      }
+
+      localStorage.setItem(
+        this.storageKey,
+        JSON.stringify(preferences)
+      );
+
+      this.updateAccountStatus();
+
+      this.showStatus(
+        "Professional preferences saved on this device. Business information is not yet synced to the VANTAGE X database.",
+        "success"
+      );
+
+      VXUtils.log(
+        "Professional preferences saved locally."
+      );
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to save professional preferences.",
+        error
+      );
+
+      this.showStatus(
+        "Unable to save your preferences. Check your browser storage and try again.",
+        "error"
+      );
+
+    }
+
+  },
+
+
+  /* =========================================
+     7. SAVE PROFESSIONAL ACCOUNT TYPE
+  ========================================= */
+
+  saveAccountType() {
+
+    const accountType = VXUtils.getValue(
+      "professionalAccountType"
+    );
+
+    const validTypes = [
+      "personal",
+      "creator",
+      "business",
+      "brand",
+      "public_figure",
+      "professional"
+    ];
+
+    if (!validTypes.includes(accountType)) {
+
+      this.showStatus(
+        "Please select a valid account type.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    this.savePreferences();
+
+  },
+
+
+  /* =========================================
+     8. SAVE BUSINESS INFORMATION
+  ========================================= */
+
+  saveBusinessInformation() {
+
+    const preferences =
+      this.collectPreferences();
+
+    const validationError =
+      this.validatePreferences(preferences);
+
+    if (validationError) {
+
+      this.showStatus(
+        validationError,
+        "error"
+      );
+
+      return;
+
+    }
+
+    if (
+      !preferences.businessName.trim() &&
+      (
+        preferences.businessEmail ||
+        preferences.businessPhone ||
+        preferences.businessAddress ||
+        preferences.businessWebsite ||
+        preferences.businessDescription
+      )
+    ) {
+
+      this.showStatus(
+        "Please enter your business or brand name.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    this.savePreferences();
+
+  },
+
+
+  /* =========================================
+     9. UPDATE PROFESSIONAL ACCOUNT STATUS
+  ========================================= */
+
+  updateAccountStatus() {
+
+    const accountType = VXUtils.getValue(
+      "professionalAccountType"
+    ) || "personal";
+
+    const labels = {
+
+      personal: "Personal",
+
+      creator: "Content Creator",
+
+      business: "Business",
+
+      brand: "Brand / Organisation",
+
+      public_figure: "Public Figure",
+
+      professional: "Professional Services"
+
+    };
+
+    VXUtils.setText(
+      "professionalAccountStatus",
+      labels[accountType] || "Personal"
+    );
+
+  },
+
+
+  /* =========================================
+     10. CREATOR PREFERENCES
+  ========================================= */
+
+  saveCreatorPreferences() {
+
+    const preferences =
+      this.collectPreferences();
+
+    const validationError =
+      this.validatePreferences(preferences);
+
+    if (validationError) {
+
+      this.showStatus(
+        validationError,
+        "error"
+      );
+
+      return;
+
+    }
+
+    this.savePreferences();
+
+  },
+
+
+  /* =========================================
+     11. AUDIENCE INSIGHTS
+  ========================================= */
+
+  viewAudienceInsights() {
+
+    this.showStatus(
+      "Audience Insights will become available when the VANTAGE X follower analytics and audience statistics modules are connected.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     12. CONTENT PERFORMANCE
+  ========================================= */
+
+  viewContentPerformance() {
+
+    this.showStatus(
+      "Content Performance will become available when post impressions, reach and engagement analytics are connected.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     13. PROFESSIONAL VERIFICATION
+  ========================================= */
+
+  requestVerification() {
+
+    VXUtils.setText(
+      "professionalVerificationStatus",
+      "Not verified"
+    );
+
+    this.showStatus(
+      "Professional verification applications are not yet available. A secure application and review system must be implemented before requests can be submitted.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     14. PROFESSIONAL ACCOUNT SUPPORT
+  ========================================= */
+
+  openProfessionalHelp() {
+
+    this.showStatus(
+      "Professional account support will be connected to the VANTAGE X Community Help Centre.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     15. STATUS MESSAGE
+  ========================================= */
+
+  showStatus(message, type = "info") {
+
+    VXStatus.show(
+      "professionalSettingsStatus",
+      message,
+      type
+    );
+
+  },
+
+
+  /* =========================================
+     16. ATTACH PROFESSIONAL SETTINGS EVENTS
+  ========================================= */
+
+  attachEvents() {
+
+    const saveType = VXElements.byId(
+      "saveProfessionalAccountType"
+    );
+
+    const saveBusiness = VXElements.byId(
+      "saveBusinessInformation"
+    );
+
+    const savePreferences = VXElements.byId(
+      "saveProfessionalPreferences"
+    );
+
+    const audienceInsights = VXElements.byId(
+      "professionalAudienceInsights"
+    );
+
+    const contentPerformance = VXElements.byId(
+      "professionalContentPerformance"
+    );
+
+    const verification = VXElements.byId(
+      "professionalRequestVerification"
+    );
+
+    const help = VXElements.byId(
+      "professionalAccountHelp"
+    );
+
+
+    if (saveType) {
+
+      saveType.addEventListener(
+        "click",
+        () => this.saveAccountType()
+      );
+
+    }
+
+
+    if (saveBusiness) {
+
+      saveBusiness.addEventListener(
+        "click",
+        () => this.saveBusinessInformation()
+      );
+
+    }
+
+
+    if (savePreferences) {
+
+      savePreferences.addEventListener(
+        "click",
+        () => this.saveCreatorPreferences()
+      );
+
+    }
+
+
+    if (audienceInsights) {
+
+      audienceInsights.addEventListener(
+        "click",
+        () => this.viewAudienceInsights()
+      );
+
+    }
+
+
+    if (contentPerformance) {
+
+      contentPerformance.addEventListener(
+        "click",
+        () => this.viewContentPerformance()
+      );
+
+    }
+
+
+    if (verification) {
+
+      verification.addEventListener(
+        "click",
+        () => this.requestVerification()
+      );
+
+    }
+
+
+    if (help) {
+
+      help.addEventListener(
+        "click",
+        () => this.openProfessionalHelp()
+      );
+
+    }
+
+
+    const accountType = VXElements.byId(
+      "professionalAccountType"
+    );
+
+    if (accountType) {
+
+      accountType.addEventListener(
+        "change",
+        () => this.updateAccountStatus()
+      );
+
+    }
+
+  }
+
+};
+
+
+/* =========================================
+   17. INITIALIZE PROFESSIONAL SETTINGS
+========================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    VXProfessional.initialize();
+
+  }
+);
+
+
+/* =========================================
+   END OF JAVASCRIPT SECTION 13
+========================================= */
+         
+
 
 
 
