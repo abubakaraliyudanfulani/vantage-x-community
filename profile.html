@@ -2775,6 +2775,40 @@ document.querySelectorAll("[data-profile-action]").forEach((button) => {
     }
   });
 }); 
+
+  /* =====================================
+   LOAD MEMBER PRIVACY SETTINGS
+===================================== */
+
+async function loadPrivacySettings() {
+  if (!currentUser) return;
+
+  const { data, error } = await supabaseClient
+    .from("account_settings")
+    .select("is_private, email_notifications, push_notifications")
+    .eq("user_id", currentUser.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Privacy settings error:", error);
+    return;
+  }
+
+  if (!data) {
+    console.warn("No privacy settings record found.");
+    return;
+  }
+
+  document.getElementById("privateAccountToggle").checked =
+    data.is_private;
+
+  document.getElementById("emailNotificationsToggle").checked =
+    data.email_notifications;
+
+  document.getElementById("pushNotificationsToggle").checked =
+    data.push_notifications;
+}
+  
 </script>
 
 </body>
