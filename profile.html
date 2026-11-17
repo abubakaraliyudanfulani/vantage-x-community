@@ -2808,6 +2808,47 @@ async function loadPrivacySettings() {
   document.getElementById("pushNotificationsToggle").checked =
     data.push_notifications;
 }
+
+  /* =====================================
+   SAVE MEMBER PRIVACY SETTINGS
+===================================== */
+
+document.getElementById("savePrivacySettings")
+  .addEventListener("click", async () => {
+
+    if (!currentUser) return;
+
+    const button = document.getElementById("savePrivacySettings");
+    const message = document.getElementById("privacySettingsMessage");
+
+    button.disabled = true;
+    button.textContent = "Saving...";
+    message.textContent = "";
+
+    const settings = {
+      is_private: document.getElementById("privateAccountToggle").checked,
+      email_notifications: document.getElementById("emailNotificationsToggle").checked,
+      push_notifications: document.getElementById("pushNotificationsToggle").checked
+    };
+
+    const { error } = await supabaseClient
+      .from("account_settings")
+      .update(settings)
+      .eq("user_id", currentUser.id);
+
+    button.disabled = false;
+    button.textContent = "Save Privacy Settings";
+
+    if (error) {
+      console.error("Saving privacy settings failed:", error);
+      message.textContent = "Unable to save settings. Please try again.";
+      message.style.color = "#dc3545";
+      return;
+    }
+
+    message.textContent = "Your privacy settings have been saved successfully.";
+    message.style.color = "#16834a";
+  });
   
 </script>
 
