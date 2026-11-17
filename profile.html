@@ -13,6 +13,65 @@
 
 <title>Member Profile | VANTAGE X COMMUNITY</title>
 
+  /* =====================================
+   PRIVACY SETTINGS PANEL
+===================================== */
+
+.privacy-settings-content {
+  padding: 18px;
+}
+
+.privacy-setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 18px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.privacy-setting-item strong {
+  display: block;
+  color: var(--navy);
+  font-size: 14px;
+}
+
+.privacy-setting-item p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.privacy-setting-item input[type="checkbox"] {
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+
+#savePrivacySettings {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 260px;
+}
+
+#privacySettingsMessage {
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+@media (max-width: 480px) {
+  .privacy-settings-content {
+    padding: 12px;
+  }
+
+  .privacy-setting-item {
+    padding: 16px 8px;
+  }
+}
+  
 <style>
 
   /* =====================================
