@@ -4972,9 +4972,703 @@ document.addEventListener(
 );
 
 
+
 /* =====================================================
-   END OF JAVASCRIPT SECTION 8
+   VANTAGE X COMMUNITY
+   JAVASCRIPT SECTION 9
+   CONTENT & INTERACTION MANAGEMENT
 ===================================================== */
+
+
+/* =========================================
+   1. CONTENT MANAGEMENT CONFIGURATION
+========================================= */
+
+const VXContent = {
+
+  initialized: false,
+
+  client: null,
+
+  user: null,
+
+  storageKey: "vx_content_preferences",
+
+  controls: [
+
+    "contentFeedOrder",
+
+    "contentRecommendedPosts",
+
+    "contentPersonalisedRecommendations",
+
+    "contentSuggestedAccounts",
+
+    "contentSensitiveLevel",
+
+    "contentHideOffensive",
+
+    "contentHideRepeated",
+
+    "contentConfirmRepost",
+
+    "contentConfirmDeleteComment"
+
+  ],
+
+
+  /* =========================================
+     2. DEFAULT CONTENT PREFERENCES
+  ========================================= */
+
+  defaults: {
+
+    contentFeedOrder: "recommended",
+
+    contentRecommendedPosts: true,
+
+    contentPersonalisedRecommendations: true,
+
+    contentSuggestedAccounts: true,
+
+    contentSensitiveLevel: "restricted",
+
+    contentHideOffensive: true,
+
+    contentHideRepeated: true,
+
+    contentConfirmRepost: true,
+
+    contentConfirmDeleteComment: true
+
+  },
+
+
+  /* =========================================
+     3. INITIALIZE CONTENT MANAGEMENT
+  ========================================= */
+
+  async initialize() {
+
+    if (this.initialized) return;
+
+    this.client = VXDatabase.getClient();
+
+    if (!this.client) {
+
+      VXUtils.error(
+        "Content management cannot connect to Supabase."
+      );
+
+      return;
+
+    }
+
+    this.initialized = true;
+
+    await this.loadAuthenticatedUser();
+
+    this.loadPreferences();
+
+    this.attachEvents();
+
+    VXUtils.log(
+      "Content and interaction management initialized."
+    );
+
+  },
+
+
+  /* =========================================
+     4. AUTHENTICATED USER
+  ========================================= */
+
+  async loadAuthenticatedUser() {
+
+    try {
+
+      const {
+        data,
+        error
+      } = await this.client.auth.getUser();
+
+      if (error) throw error;
+
+      this.user = data.user || null;
+
+      return this.user;
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to identify content settings account.",
+        error
+      );
+
+      this.user = null;
+
+      return null;
+
+    }
+
+  },
+
+
+  /* =========================================
+     5. USER-SPECIFIC STORAGE KEY
+  ========================================= */
+
+  getStorageKey() {
+
+    if (!this.user) {
+
+      return this.storageKey + "_guest";
+
+    }
+
+    return (
+      this.storageKey +
+      "_" +
+      this.user.id
+    );
+
+  },
+
+
+  /* =========================================
+     6. COLLECT CONTENT PREFERENCES
+  ========================================= */
+
+  collectPreferences() {
+
+    const preferences = {};
+
+    this.controls.forEach(id => {
+
+      const element = VXElements.byId(id);
+
+      if (!element) return;
+
+      if (element.type === "checkbox") {
+
+        preferences[id] = element.checked;
+
+      } else {
+
+        preferences[id] = element.value;
+
+      }
+
+    });
+
+    return preferences;
+
+  },
+
+
+  /* =========================================
+     7. VALIDATE CONTENT PREFERENCES
+  ========================================= */
+
+  validatePreferences(preferences) {
+
+    const allowedFeedOrders = [
+
+      "recommended",
+      "latest",
+      "following"
+
+    ];
+
+    const allowedSensitiveLevels = [
+
+      "restricted",
+      "standard",
+      "expanded"
+
+    ];
+
+    if (
+      !allowedFeedOrders.includes(
+        preferences.contentFeedOrder
+      )
+    ) {
+
+      return {
+        valid: false,
+        message: "Please select a valid feed order."
+      };
+
+    }
+
+    if (
+      !allowedSensitiveLevels.includes(
+        preferences.contentSensitiveLevel
+      )
+    ) {
+
+      return {
+        valid: false,
+        message: "Please select a valid content filtering level."
+      };
+
+    }
+
+    return {
+      valid: true
+    };
+
+  },
+
+
+  /* =========================================
+     8. LOAD SAVED PREFERENCES
+  ========================================= */
+
+  loadPreferences() {
+
+    let saved = {};
+
+    try {
+
+      const stored = localStorage.getItem(
+        this.getStorageKey()
+      );
+
+      if (stored) {
+
+        saved = JSON.parse(stored);
+
+      }
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to load content preferences.",
+        error
+      );
+
+    }
+
+    const preferences = {
+
+      ...this.defaults,
+
+      ...saved
+
+    };
+
+    this.controls.forEach(id => {
+
+      if (
+        preferences[id] === undefined ||
+        preferences[id] === null
+      ) {
+
+        return;
+
+      }
+
+      VXUtils.setValue(
+        id,
+        preferences[id]
+      );
+
+    });
+
+  },
+
+
+  /* =========================================
+     9. SAVE CONTENT PREFERENCES
+  ========================================= */
+
+  savePreferences() {
+
+    const button = VXElements.byId(
+      "saveContentPreferences"
+    );
+
+    if (button) {
+
+      button.disabled = true;
+
+      button.textContent = "Saving...";
+
+    }
+
+    try {
+
+      const preferences =
+        this.collectPreferences();
+
+      const validation =
+        this.validatePreferences(preferences);
+
+      if (!validation.valid) {
+
+        VXStatus.show(
+          "contentSettingsStatus",
+          validation.message,
+          "error"
+        );
+
+        return;
+
+      }
+
+      localStorage.setItem(
+        this.getStorageKey(),
+        JSON.stringify(preferences)
+      );
+
+      VXStatus.show(
+        "contentSettingsStatus",
+        "Your content and interaction preferences have been saved on this device.",
+        "success"
+      );
+
+      VXUtils.log(
+        "Content preferences saved.",
+        preferences
+      );
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to save content preferences.",
+        error
+      );
+
+      VXStatus.show(
+        "contentSettingsStatus",
+        error.message ||
+        "Unable to save content preferences.",
+        "error"
+      );
+
+    } finally {
+
+      if (button) {
+
+        button.disabled = false;
+
+        button.textContent =
+          "Save Content Settings";
+
+      }
+
+    }
+
+  },
+
+
+  /* =========================================
+     10. CONTENT MODULE CONNECTION CHECK
+  ========================================= */
+
+  showModuleStatus(moduleName) {
+
+    const messages = {
+
+      saved:
+        "Saved posts will appear here when the Saved Content module and database are connected.",
+
+      collections:
+        "Saved collections management will become available when collection storage is implemented.",
+
+      likes:
+        "Your liked posts will appear here when the Reactions and Likes module is connected.",
+
+      comments:
+        "Your comment history will appear here when the Comments module is connected.",
+
+      reposts:
+        "Your repost history will appear here when the Reposts module is connected.",
+
+      hiddenPosts:
+        "Hidden posts management will become available when feed filtering and hidden-post storage are connected.",
+
+      hiddenAccounts:
+        "Hidden accounts management will become available when account muting and filtering are implemented."
+
+    };
+
+    const message = messages[moduleName];
+
+    if (!message) return;
+
+    VXStatus.show(
+      "contentSettingsStatus",
+      message,
+      "info"
+    );
+
+    VXUtils.log(
+      "Content module requested:",
+      moduleName
+    );
+
+  },
+
+
+  /* =========================================
+     11. CONTENT MANAGEMENT ACTIONS
+  ========================================= */
+
+  viewSavedContent() {
+
+    this.showModuleStatus("saved");
+
+  },
+
+
+  manageSavedCollections() {
+
+    this.showModuleStatus("collections");
+
+  },
+
+
+  viewLikedPosts() {
+
+    this.showModuleStatus("likes");
+
+  },
+
+
+  viewCommentHistory() {
+
+    this.showModuleStatus("comments");
+
+  },
+
+
+  viewRepostHistory() {
+
+    this.showModuleStatus("reposts");
+
+  },
+
+
+  manageHiddenPosts() {
+
+    this.showModuleStatus("hiddenPosts");
+
+  },
+
+
+  manageHiddenAccounts() {
+
+    this.showModuleStatus("hiddenAccounts");
+
+  },
+
+
+  /* =========================================
+     12. APPLY INTERACTION CONFIRMATION
+  ========================================= */
+
+  shouldConfirmRepost() {
+
+    return Boolean(
+      VXUtils.getValue(
+        "contentConfirmRepost"
+      )
+    );
+
+  },
+
+
+  shouldConfirmCommentDeletion() {
+
+    return Boolean(
+      VXUtils.getValue(
+        "contentConfirmDeleteComment"
+      )
+    );
+
+  },
+
+
+  confirmRepost() {
+
+    if (!this.shouldConfirmRepost()) {
+
+      return true;
+
+    }
+
+    return confirm(
+      "Are you sure you want to repost this content?"
+    );
+
+  },
+
+
+  confirmCommentDeletion() {
+
+    if (!this.shouldConfirmCommentDeletion()) {
+
+      return true;
+
+    }
+
+    return confirm(
+      "Are you sure you want to delete this comment?"
+    );
+
+  },
+
+
+  /* =========================================
+     13. GET FEED PREFERENCES
+  ========================================= */
+
+  getFeedPreferences() {
+
+    return {
+
+      order: VXUtils.getValue(
+        "contentFeedOrder"
+      ),
+
+      recommendedPosts: Boolean(
+        VXUtils.getValue(
+          "contentRecommendedPosts"
+        )
+      ),
+
+      personalisedRecommendations: Boolean(
+        VXUtils.getValue(
+          "contentPersonalisedRecommendations"
+        )
+      ),
+
+      suggestedAccounts: Boolean(
+        VXUtils.getValue(
+          "contentSuggestedAccounts"
+        )
+      )
+
+    };
+
+  },
+
+
+  /* =========================================
+     14. GET CONTENT SAFETY PREFERENCES
+  ========================================= */
+
+  getSafetyPreferences() {
+
+    return {
+
+      sensitiveLevel: VXUtils.getValue(
+        "contentSensitiveLevel"
+      ),
+
+      hideOffensive: Boolean(
+        VXUtils.getValue(
+          "contentHideOffensive"
+        )
+      ),
+
+      hideRepeated: Boolean(
+        VXUtils.getValue(
+          "contentHideRepeated"
+        )
+      )
+
+    };
+
+  },
+
+
+  /* =========================================
+     15. CONNECT ALL BUTTONS
+  ========================================= */
+
+  attachEvents() {
+
+    const buttonActions = {
+
+      viewSavedContent:
+        () => this.viewSavedContent(),
+
+      manageSavedCollections:
+        () => this.manageSavedCollections(),
+
+      viewLikedPosts:
+        () => this.viewLikedPosts(),
+
+      viewCommentHistory:
+        () => this.viewCommentHistory(),
+
+      viewRepostHistory:
+        () => this.viewRepostHistory(),
+
+      manageHiddenPosts:
+        () => this.manageHiddenPosts(),
+
+      manageHiddenAccounts:
+        () => this.manageHiddenAccounts()
+
+    };
+
+
+    Object.entries(buttonActions).forEach(
+      ([id, action]) => {
+
+        const button = VXElements.byId(id);
+
+        if (!button) return;
+
+        button.addEventListener(
+          "click",
+          action
+        );
+
+      }
+    );
+
+
+    const saveButton = VXElements.byId(
+      "saveContentPreferences"
+    );
+
+    if (saveButton) {
+
+      saveButton.addEventListener(
+        "click",
+        () => this.savePreferences()
+      );
+
+    }
+
+  }
+
+};
+
+
+/* =========================================
+   16. INITIALIZE CONTENT MANAGEMENT
+========================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    VXContent.initialize();
+
+  }
+);
+
+
+/* =====================================================
+   END OF JAVASCRIPT SECTION 9
+===================================================== */
+
 
 
 
