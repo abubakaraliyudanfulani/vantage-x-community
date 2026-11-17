@@ -7084,9 +7084,797 @@ document.addEventListener(
 );
 
 
+
+/* =====================================================
+   VANTAGE X COMMUNITY
+   JAVASCRIPT SECTION 12
+   DATA & ACCOUNT MANAGEMENT
+===================================================== */
+
+
 /* =========================================
-   END OF JAVASCRIPT SECTION 11
+   1. DATA MANAGEMENT CONTROLLER
 ========================================= */
+
+const VXDataManagement = {
+
+  initialized: false,
+
+  user: null,
+
+  storageKey: null,
+
+  preferences: {},
+
+
+  /* =========================================
+     2. DEFAULT PREFERENCES
+  ========================================= */
+
+  defaults: {
+
+    dataCameraPermission: true,
+
+    dataMicrophonePermission: true,
+
+    dataLocationPermission: false,
+
+    dataMediaPermission: true,
+
+    dataPersonalisation: true,
+
+    dataUsageAnalytics: true
+
+  },
+
+
+  /* =========================================
+     3. PREFERENCE FIELD CONFIGURATION
+  ========================================= */
+
+  toggleFields: [
+
+    "dataCameraPermission",
+
+    "dataMicrophonePermission",
+
+    "dataLocationPermission",
+
+    "dataMediaPermission",
+
+    "dataPersonalisation",
+
+    "dataUsageAnalytics"
+
+  ],
+
+
+  /* =========================================
+     4. INITIALIZE DATA MANAGEMENT
+  ========================================= */
+
+  async initialize() {
+
+    if (this.initialized) return;
+
+    try {
+
+      const client = VXDatabase.getClient();
+
+      if (!client) {
+
+        throw new Error(
+          "Supabase client is unavailable."
+        );
+
+      }
+
+
+      const { data, error } =
+        await client.auth.getSession();
+
+      if (error) throw error;
+
+
+      this.user = data.session?.user || null;
+
+
+      this.storageKey = this.user
+
+        ? `vx_data_preferences_${this.user.id}`
+
+        : "vx_data_preferences_guest";
+
+
+      this.loadPreferences();
+
+      this.attachEvents();
+
+      this.initialized = true;
+
+
+      VXUtils.log(
+        "Data management initialized."
+      );
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Data management initialization failed.",
+        error
+      );
+
+      this.showStatus(
+        "Data management could not be initialized. Please refresh and try again.",
+        "error"
+      );
+
+    }
+
+  },
+
+
+  /* =========================================
+     5. COLLECT PREFERENCES
+  ========================================= */
+
+  collectPreferences() {
+
+    const preferences = {};
+
+    this.toggleFields.forEach(id => {
+
+      const element = VXElements.byId(id);
+
+      if (element) {
+
+        preferences[id] = element.checked;
+
+      }
+
+    });
+
+    return preferences;
+
+  },
+
+
+  /* =========================================
+     6. VALIDATE PREFERENCES
+  ========================================= */
+
+  validatePreferences(preferences) {
+
+    for (const field of this.toggleFields) {
+
+      if (
+        typeof preferences[field] !== "boolean"
+      ) {
+
+        return {
+
+          valid: false,
+
+          message:
+            "One or more data preferences are invalid."
+
+        };
+
+      }
+
+    }
+
+
+    return {
+
+      valid: true,
+
+      message: "Data preferences are valid."
+
+    };
+
+  },
+
+
+  /* =========================================
+     7. LOAD SAVED PREFERENCES
+  ========================================= */
+
+  loadPreferences() {
+
+    let savedPreferences = {};
+
+    try {
+
+      const stored = localStorage.getItem(
+        this.storageKey
+      );
+
+      if (stored) {
+
+        savedPreferences = JSON.parse(stored);
+
+      }
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Could not read saved data preferences.",
+        error
+      );
+
+    }
+
+
+    const combined = {
+
+      ...this.defaults,
+
+      ...savedPreferences
+
+    };
+
+
+    const validation =
+      this.validatePreferences(combined);
+
+
+    this.preferences = validation.valid
+
+      ? combined
+
+      : { ...this.defaults };
+
+
+    this.applyPreferences();
+
+  },
+
+
+  /* =========================================
+     8. APPLY PREFERENCES TO FORM
+  ========================================= */
+
+  applyPreferences() {
+
+    this.toggleFields.forEach(id => {
+
+      const element = VXElements.byId(id);
+
+      if (!element) return;
+
+      element.checked = Boolean(
+        this.preferences[id]
+      );
+
+    });
+
+  },
+
+
+  /* =========================================
+     9. SAVE DATA PREFERENCES
+  ========================================= */
+
+  savePreferences() {
+
+    const preferences =
+      this.collectPreferences();
+
+
+    const validation =
+      this.validatePreferences(preferences);
+
+
+    if (!validation.valid) {
+
+      this.showStatus(
+        validation.message,
+        "error"
+      );
+
+      return false;
+
+    }
+
+
+    try {
+
+      localStorage.setItem(
+        this.storageKey,
+        JSON.stringify(preferences)
+      );
+
+
+      this.preferences = preferences;
+
+
+      this.showStatus(
+        "Your data preferences have been saved on this device. These choices do not independently grant or revoke browser or operating-system permissions.",
+        "success"
+      );
+
+
+      VXUtils.log(
+        "Data preferences saved.",
+        preferences
+      );
+
+      return true;
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Could not save data preferences.",
+        error
+      );
+
+      this.showStatus(
+        "Your preferences could not be saved. Check your browser storage and try again.",
+        "error"
+      );
+
+      return false;
+
+    }
+
+  },
+
+
+  /* =========================================
+     10. DISPLAY STATUS MESSAGES
+  ========================================= */
+
+  showStatus(message, type = "info") {
+
+    const element = VXElements.byId(
+      "dataSettingsStatus"
+    );
+
+    if (!element) return;
+
+    element.textContent = message;
+
+    element.classList.remove(
+      "success",
+      "error",
+      "info"
+    );
+
+    element.classList.add(type);
+
+    element.setAttribute(
+      "role",
+      type === "error" ? "alert" : "status"
+    );
+
+  },
+
+
+  /* =========================================
+     11. PERSONAL DATA OVERVIEW
+  ========================================= */
+
+  viewPersonalData() {
+
+    if (!this.user) {
+
+      this.showStatus(
+        "Sign in to review information associated with your account.",
+        "info"
+      );
+
+      return;
+
+    }
+
+
+    const categories = [
+
+      "Account identity and profile information",
+
+      "Username and account details",
+
+      "Profile picture and biography",
+
+      "Account preferences",
+
+      "Authentication and security information",
+
+      "Community activity, where collected",
+
+      "Content and interactions, where available"
+
+    ];
+
+
+    this.showStatus(
+      "Your account may contain the following categories: " +
+      categories.join("; ") +
+      ". This is a general category overview, not a complete export of your stored records.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     12. REQUEST PERSONAL DATA DOWNLOAD
+  ========================================= */
+
+  requestDataDownload() {
+
+    if (!this.user) {
+
+      this.showStatus(
+        "Please sign in before requesting your personal data.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    this.showStatus(
+      "Data export is not yet connected to a secure server-side export service. Your request has not been submitted. This feature will be enabled after the export workflow and identity checks are implemented.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     13. VIEW ACCOUNT ACTIVITY
+  ========================================= */
+
+  viewAccountActivity() {
+
+    if (!this.user) {
+
+      this.showStatus(
+        "Sign in to review your account activity.",
+        "info"
+      );
+
+      return;
+
+    }
+
+
+    this.showStatus(
+      "The account activity history is not yet connected to a complete activity-log database. No activity report has been generated.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     14. MANAGE SEARCH HISTORY
+  ========================================= */
+
+  manageSearchHistory() {
+
+    if (!this.user) {
+
+      this.showStatus(
+        "Sign in to manage your account search history.",
+        "info"
+      );
+
+      return;
+
+    }
+
+
+    this.showStatus(
+      "Search history management will be connected when the Community search-history storage system is implemented.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     15. CLEAR SEARCH HISTORY
+  ========================================= */
+
+  clearSearchHistory() {
+
+    if (!this.user) {
+
+      this.showStatus(
+        "Please sign in before managing search history.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const confirmed = window.confirm(
+
+      "Search history deletion is not yet connected to the server. No records will be deleted at this stage. Continue to view the feature status?"
+
+    );
+
+
+    if (!confirmed) return;
+
+
+    this.showStatus(
+      "Search history deletion is not yet available. No search records have been deleted.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     16. CONNECTED APPLICATIONS
+  ========================================= */
+
+  manageConnectedApplications() {
+
+    this.showStatus(
+      "Connected application management is not yet connected to an integration registry. No external application permissions have been changed.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     17. APPLICATION PERMISSION INFORMATION
+  ========================================= */
+
+  explainPermission(permissionName) {
+
+    const messages = {
+
+      dataCameraPermission:
+        "Camera preference updated. Actual camera access still depends on browser permission and the device's privacy settings.",
+
+      dataMicrophonePermission:
+        "Microphone preference updated. Actual microphone access still depends on browser permission and the device's privacy settings.",
+
+      dataLocationPermission:
+        "Location preference updated. Actual location access still depends on browser permission and the device's privacy settings.",
+
+      dataMediaPermission:
+        "Photo and file preference updated. Access to selected files remains controlled by the browser and device."
+
+    };
+
+
+    this.showStatus(
+      messages[permissionName] ||
+      "Permission preference updated.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     18. DATA PRIVACY INFORMATION
+  ========================================= */
+
+  explainPrivacyPreference(preferenceName) {
+
+    const messages = {
+
+      dataPersonalisation:
+        "Personalisation preference updated. Actual recommendation and personalisation behaviour must also respect this setting in the platform backend.",
+
+      dataUsageAnalytics:
+        "Analytics preference updated. Analytics collection must be connected to and respect this preference before it can take effect."
+
+    };
+
+
+    this.showStatus(
+      messages[preferenceName] ||
+      "Privacy preference updated.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     19. ACCOUNT DEACTIVATION
+  ========================================= */
+
+  deactivateAccount() {
+
+    if (!this.user) {
+
+      this.showStatus(
+        "Sign in before requesting account deactivation.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const confirmed = window.confirm(
+
+      "Account deactivation is not yet connected to the secure account-management service. No account changes will be made. Continue?"
+
+    );
+
+
+    if (!confirmed) return;
+
+
+    this.showStatus(
+      "Account deactivation is not yet available. Your account remains active. A secure server-side workflow will be required before this feature can be enabled.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     20. PERMANENT ACCOUNT DELETION
+  ========================================= */
+
+  deleteAccount() {
+
+    if (!this.user) {
+
+      this.showStatus(
+        "Sign in before requesting account deletion.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const firstConfirmation = window.confirm(
+
+      "WARNING: Permanent account deletion is a serious action. The secure deletion service is not yet implemented. No account will be deleted. Do you want to continue to the next confirmation?"
+
+    );
+
+
+    if (!firstConfirmation) return;
+
+
+    const secondConfirmation = window.confirm(
+
+      "Please confirm that you understand this is currently an unavailable feature. Your account and data will remain unchanged."
+
+    );
+
+
+    if (!secondConfirmation) return;
+
+
+    this.showStatus(
+      "Permanent deletion is not yet available. No account or personal data has been deleted. This feature requires identity verification and a secure server-side deletion workflow.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     21. ATTACH BUTTON EVENTS
+  ========================================= */
+
+  attachEvents() {
+
+    const buttonActions = {
+
+      requestDataDownload: () =>
+        this.requestDataDownload(),
+
+      viewPersonalData: () =>
+        this.viewPersonalData(),
+
+      viewAccountActivity: () =>
+        this.viewAccountActivity(),
+
+      manageSearchHistory: () =>
+        this.manageSearchHistory(),
+
+      clearSearchHistory: () =>
+        this.clearSearchHistory(),
+
+      manageConnectedApplications: () =>
+        this.manageConnectedApplications(),
+
+      dataDeactivateAccount: () =>
+        this.deactivateAccount(),
+
+      dataDeleteAccount: () =>
+        this.deleteAccount(),
+
+      saveDataPreferences: () =>
+        this.savePreferences()
+
+    };
+
+
+    Object.entries(buttonActions).forEach(
+      ([id, callback]) => {
+
+        const button = VXElements.byId(id);
+
+        if (!button) return;
+
+        button.addEventListener(
+          "click",
+          callback
+        );
+
+      }
+    );
+
+
+    /* =====================================
+       PERMISSION AND PRIVACY CHANGE EVENTS
+    ===================================== */
+
+    this.toggleFields.forEach(id => {
+
+      const element = VXElements.byId(id);
+
+      if (!element) return;
+
+      element.addEventListener(
+        "change",
+        () => {
+
+          if (id.startsWith("dataCamera") ||
+              id.startsWith("dataMicrophone") ||
+              id.startsWith("dataLocation") ||
+              id.startsWith("dataMedia")) {
+
+            this.explainPermission(id);
+
+          } else {
+
+            this.explainPrivacyPreference(id);
+
+          }
+
+        }
+      );
+
+    });
+
+  }
+
+};
+
+
+/* =========================================
+   22. INITIALIZE DATA MANAGEMENT MODULE
+========================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    VXDataManagement.initialize();
+
+  }
+);
+
+
+/* =========================================
+   END OF JAVASCRIPT SECTION 12
+========================================= */
+
 
 
 
