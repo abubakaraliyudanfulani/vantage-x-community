@@ -1,0 +1,2858 @@
+
+/* =====================================================
+   VANTAGE X COMMUNITY
+   SETTINGS & PRIVACY CENTRE
+   CSS SECTION 1 — DESIGN FOUNDATION
+===================================================== */
+
+
+/* =========================================
+   1. ROOT DESIGN SYSTEM
+========================================= */
+
+:root {
+
+  --vx-navy: #10223b;
+  --vx-navy-dark: #081629;
+  --vx-navy-light: #1b3556;
+
+  --vx-gold: #c9a45c;
+  --vx-gold-light: #e5c77f;
+
+  --vx-white: #ffffff;
+  --vx-background: #f4f6fa;
+  --vx-surface: #ffffff;
+
+  --vx-text: #182438;
+  --vx-text-muted: #778397;
+
+  --vx-border: #e5e9f0;
+
+  --vx-success: #21865b;
+  --vx-danger: #d84b4b;
+  --vx-warning: #d69a35;
+
+  --vx-radius-sm: 8px;
+  --vx-radius-md: 14px;
+  --vx-radius-lg: 20px;
+
+  --vx-shadow-sm:
+    0 3px 12px rgba(16, 34, 59, 0.05);
+
+  --vx-shadow-md:
+    0 8px 28px rgba(16, 34, 59, 0.08);
+
+  --vx-shadow-lg:
+    0 18px 50px rgba(16, 34, 59, 0.12);
+
+  --vx-transition:
+    all 0.25s ease;
+
+}
+
+
+/* =========================================
+   2. GLOBAL RESET
+========================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  background: var(--vx-background);
+
+  color: var(--vx-text);
+
+  min-height: 100vh;
+
+  line-height: 1.6;
+
+  overflow-x: hidden;
+
+}
+
+button,
+input,
+textarea,
+select {
+
+  font: inherit;
+
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+
+/* =========================================
+   3. APPLICATION FOUNDATION
+========================================= */
+
+#settingsApplication {
+
+  width: 100%;
+
+  min-height: 100vh;
+
+  background: var(--vx-background);
+
+}
+
+
+/* =========================================
+   4. TOP NAVIGATION BAR
+========================================= */
+
+.settings-topbar {
+
+  width: 100%;
+
+  height: 76px;
+
+  background: var(--vx-navy-dark);
+
+  color: var(--vx-white);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 0 5%;
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 1000;
+
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.15);
+
+  border-bottom:
+    1px solid rgba(201, 164, 92, 0.25);
+
+}
+
+
+/* =========================================
+   5. BRAND IDENTITY
+========================================= */
+
+.settings-brand a {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  color: var(--vx-white);
+
+  font-size: 21px;
+
+  font-weight: 850;
+
+  letter-spacing: 1.4px;
+
+}
+
+.settings-brand a span {
+
+  color: var(--vx-gold);
+
+}
+
+.settings-brand small {
+
+  display: block;
+
+  font-size: 9px;
+
+  letter-spacing: 3px;
+
+  color: var(--vx-gold-light);
+
+  font-weight: 600;
+
+  margin-left: 5px;
+
+  align-self: flex-end;
+
+  padding-bottom: 3px;
+
+}
+
+
+/* =========================================
+   6. TOPBAR ACTIONS
+========================================= */
+
+.settings-topbar-actions {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+
+}
+
+.topbar-dashboard-link {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 9px;
+
+  padding: 10px 18px;
+
+  border: 1px solid rgba(201, 164, 92, 0.45);
+
+  border-radius: 30px;
+
+  color: var(--vx-gold-light);
+
+  font-size: 13px;
+
+  font-weight: 650;
+
+  transition: var(--vx-transition);
+
+}
+
+.topbar-dashboard-link:hover {
+
+  background: var(--vx-gold);
+
+  color: var(--vx-navy-dark);
+
+  border-color: var(--vx-gold);
+
+  transform: translateY(-2px);
+
+}
+
+
+/* =========================================
+   7. MOBILE MENU BUTTON
+========================================= */
+
+.mobile-settings-menu {
+
+  width: 42px;
+
+  height: 42px;
+
+  display: none;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 1px solid rgba(201, 164, 92, 0.4);
+
+  background: transparent;
+
+  color: var(--vx-gold-light);
+
+  border-radius: 10px;
+
+  font-size: 18px;
+
+  transition: var(--vx-transition);
+
+}
+
+.mobile-settings-menu:hover {
+
+  background: rgba(201, 164, 92, 0.15);
+
+}
+
+
+/* =========================================
+   8. ACCESSIBILITY FOUNDATION
+========================================= */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+
+  outline: 3px solid rgba(201, 164, 92, 0.65);
+
+  outline-offset: 3px;
+
+}
+
+::selection {
+
+  background: var(--vx-gold);
+
+  color: var(--vx-navy-dark);
+
+}
+
+
+/* =====================================================
+   VANTAGE X COMMUNITY
+   CSS SECTION 2 — SIDEBAR & NAVIGATION
+===================================================== */
+
+
+/* =========================================
+   1. MAIN SETTINGS WORKSPACE
+========================================= */
+
+.settings-workspace {
+
+  width: 100%;
+
+  max-width: 1600px;
+
+  min-height: calc(100vh - 76px);
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns: 290px minmax(0, 1fr);
+
+  align-items: stretch;
+
+}
+
+
+/* =========================================
+   2. SETTINGS SIDEBAR
+========================================= */
+
+.settings-sidebar {
+
+  width: 100%;
+
+  min-height: calc(100vh - 76px);
+
+  background: var(--vx-white);
+
+  border-right: 1px solid var(--vx-border);
+
+  padding: 30px 20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 25px;
+
+  position: relative;
+
+  z-index: 100;
+
+}
+
+
+/* =========================================
+   3. SIDEBAR INTRODUCTION
+========================================= */
+
+.settings-sidebar-heading {
+
+  padding: 5px 5px 0;
+
+}
+
+.settings-eyebrow {
+
+  display: inline-block;
+
+  color: var(--vx-gold);
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 2px;
+
+  text-transform: uppercase;
+
+}
+
+.settings-sidebar-heading h1 {
+
+  margin-top: 8px;
+
+  color: var(--vx-navy);
+
+  font-size: 28px;
+
+  font-weight: 800;
+
+  letter-spacing: -0.8px;
+
+}
+
+.settings-sidebar-heading p {
+
+  margin-top: 7px;
+
+  color: var(--vx-text-muted);
+
+  font-size: 12px;
+
+  line-height: 1.7;
+
+}
+
+
+/* =========================================
+   4. MEMBER PROFILE SUMMARY
+========================================= */
+
+.settings-member-summary {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 15px 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f8f9fc,
+      #ffffff
+    );
+
+  border: 1px solid var(--vx-border);
+
+  border-radius: var(--vx-radius-md);
+
+  min-width: 0;
+
+}
+
+.settings-member-avatar {
+
+  width: 48px;
+
+  height: 48px;
+
+  flex: 0 0 48px;
+
+  border-radius: 50%;
+
+  overflow: hidden;
+
+  border: 2px solid var(--vx-gold);
+
+  background: var(--vx-navy);
+
+}
+
+.settings-member-avatar img {
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+
+}
+
+.settings-member-details {
+
+  display: flex;
+
+  flex-direction: column;
+
+  min-width: 0;
+
+  gap: 2px;
+
+}
+
+.settings-member-details strong {
+
+  color: var(--vx-navy);
+
+  font-size: 13px;
+
+  font-weight: 750;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+}
+
+.settings-member-details span {
+
+  color: var(--vx-text-muted);
+
+  font-size: 11px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+}
+
+.settings-member-details small {
+
+  color: var(--vx-gold);
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  margin-top: 2px;
+
+}
+
+
+/* =========================================
+   5. SETTINGS SEARCH
+========================================= */
+
+.settings-search {
+
+  width: 100%;
+
+  min-height: 44px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 13px;
+
+  background: #f7f8fb;
+
+  border: 1px solid var(--vx-border);
+
+  border-radius: 10px;
+
+  transition: var(--vx-transition);
+
+}
+
+.settings-search:focus-within {
+
+  background: var(--vx-white);
+
+  border-color: var(--vx-gold);
+
+  box-shadow:
+    0 0 0 3px rgba(201, 164, 92, 0.12);
+
+}
+
+.settings-search i {
+
+  color: var(--vx-text-muted);
+
+  font-size: 13px;
+
+}
+
+.settings-search input {
+
+  width: 100%;
+
+  min-width: 0;
+
+  height: 42px;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  color: var(--vx-text);
+
+  font-size: 12px;
+
+}
+
+.settings-search input::placeholder {
+
+  color: #9aa4b3;
+
+}
+
+
+/* =========================================
+   6. SETTINGS NAVIGATION
+========================================= */
+
+.settings-navigation {
+
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+}
+
+.settings-nav-label {
+
+  color: #9aa4b3;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.3px;
+
+  padding: 17px 9px 7px;
+
+  text-transform: uppercase;
+
+}
+
+.settings-nav-item {
+
+  width: 100%;
+
+  min-height: 46px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 11px 12px;
+
+  border: 1px solid transparent;
+
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: #667287;
+
+  text-align: left;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  transition: var(--vx-transition);
+
+}
+
+.settings-nav-item > i:first-child {
+
+  width: 19px;
+
+  text-align: center;
+
+  font-size: 15px;
+
+  color: #8792a4;
+
+  transition: var(--vx-transition);
+
+}
+
+.settings-nav-item span {
+
+  flex: 1;
+
+}
+
+.settings-nav-item .nav-arrow {
+
+  font-size: 10px;
+
+  opacity: 0;
+
+  transform: translateX(-4px);
+
+  transition: var(--vx-transition);
+
+}
+
+
+/* =========================================
+   7. NAVIGATION HOVER EFFECT
+========================================= */
+
+.settings-nav-item:hover {
+
+  background: #f6f7fa;
+
+  color: var(--vx-navy);
+
+  border-color: #edf0f5;
+
+}
+
+.settings-nav-item:hover > i:first-child {
+
+  color: var(--vx-gold);
+
+}
+
+.settings-nav-item:hover .nav-arrow {
+
+  opacity: 0.7;
+
+  transform: translateX(0);
+
+}
+
+
+/* =========================================
+   8. ACTIVE NAVIGATION ITEM
+========================================= */
+
+.settings-nav-item.active {
+
+  background:
+    linear-gradient(
+      100deg,
+      rgba(201, 164, 92, 0.16),
+      rgba(201, 164, 92, 0.05)
+    );
+
+  color: var(--vx-navy);
+
+  border-color: rgba(201, 164, 92, 0.25);
+
+  font-weight: 750;
+
+  box-shadow:
+    inset 3px 0 0 var(--vx-gold);
+
+}
+
+.settings-nav-item.active > i:first-child {
+
+  color: var(--vx-gold);
+
+}
+
+.settings-nav-item.active .nav-arrow {
+
+  opacity: 1;
+
+  transform: translateX(0);
+
+  color: var(--vx-gold);
+
+}
+
+
+/* =========================================
+   9. SIDEBAR FOOTER
+========================================= */
+
+.settings-sidebar-footer {
+
+  margin-top: auto;
+
+  padding: 20px 8px 5px;
+
+  border-top: 1px solid var(--vx-border);
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+}
+
+.settings-sidebar-footer a {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  color: var(--vx-navy);
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  padding: 10px 8px;
+
+  border-radius: 8px;
+
+  transition: var(--vx-transition);
+
+}
+
+.settings-sidebar-footer a:hover {
+
+  background: #f5f6f9;
+
+  color: var(--vx-gold);
+
+}
+
+.settings-sidebar-footer a i {
+
+  color: var(--vx-gold);
+
+}
+
+.settings-sidebar-footer > span {
+
+  margin-top: 12px;
+
+  color: var(--vx-navy);
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+
+}
+
+.settings-sidebar-footer small {
+
+  color: var(--vx-text-muted);
+
+  font-size: 10px;
+
+}
+
+
+
+ 
+/* =====================================================
+   VANTAGE X COMMUNITY
+   CSS SECTION 3 — MAIN CONTENT & SETTINGS CARDS
+===================================================== */
+
+
+/* =========================================
+   1. MAIN SETTINGS CONTENT
+========================================= */
+
+.settings-main {
+
+  width: 100%;
+
+  min-width: 0;
+
+  padding: 38px 42px 60px;
+
+  background: var(--vx-background);
+
+}
+
+
+/* =========================================
+   2. MAIN PAGE HEADER
+========================================= */
+
+.settings-main-top {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 32px;
+
+  padding-bottom: 25px;
+
+  border-bottom: 1px solid var(--vx-border);
+
+}
+
+.settings-main-top h2 {
+
+  margin-top: 7px;
+
+  color: var(--vx-navy);
+
+  font-size: 28px;
+
+  font-weight: 800;
+
+  letter-spacing: -0.7px;
+
+}
+
+.settings-main-top p {
+
+  margin-top: 7px;
+
+  color: var(--vx-text-muted);
+
+  font-size: 13px;
+
+  line-height: 1.7;
+
+}
+
+
+/* =========================================
+   3. ACCOUNT STATUS
+========================================= */
+
+.settings-account-status {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 9px 13px;
+
+  background: var(--vx-white);
+
+  border: 1px solid var(--vx-border);
+
+  border-radius: 30px;
+
+  color: var(--vx-text-muted);
+
+  font-size: 11px;
+
+  font-weight: 650;
+
+  white-space: nowrap;
+
+}
+
+.status-indicator {
+
+  width: 8px;
+
+  height: 8px;
+
+  display: inline-block;
+
+  border-radius: 50%;
+
+  background: var(--vx-success);
+
+  box-shadow:
+    0 0 0 3px rgba(33, 134, 91, 0.12);
+
+}
+
+
+/* =========================================
+   4. SETTINGS PAGE VISIBILITY
+========================================= */
+
+.settings-page {
+
+  display: none;
+
+  width: 100%;
+
+  animation: settingsPageEnter 0.3s ease;
+
+}
+
+.settings-page.active {
+
+  display: block;
+
+}
+
+@keyframes settingsPageEnter {
+
+  from {
+
+    opacity: 0;
+
+    transform: translateY(8px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform: translateY(0);
+
+  }
+
+}
+
+
+/* =========================================
+   5. PAGE INTRODUCTION
+========================================= */
+
+.settings-section-intro {
+
+  margin-bottom: 22px;
+
+}
+
+.settings-section-intro h3 {
+
+  color: var(--vx-navy);
+
+  font-size: 19px;
+
+  font-weight: 800;
+
+  margin-bottom: 6px;
+
+}
+
+.settings-section-intro p {
+
+  color: var(--vx-text-muted);
+
+  font-size: 12px;
+
+  line-height: 1.7;
+
+  max-width: 720px;
+
+}
+
+
+/* =========================================
+   6. SETTINGS CARDS
+========================================= */
+
+.settings-card {
+
+  width: 100%;
+
+  background: var(--vx-white);
+
+  border: 1px solid var(--vx-border);
+
+  border-radius: var(--vx-radius-lg);
+
+  padding: 25px;
+
+  margin-bottom: 22px;
+
+  box-shadow: var(--vx-shadow-sm);
+
+  transition: var(--vx-transition);
+
+}
+
+.settings-card:hover {
+
+  box-shadow: var(--vx-shadow-md);
+
+  border-color: #dce2eb;
+
+}
+
+
+/* =========================================
+   7. SETTINGS CARD HEADING
+========================================= */
+
+.settings-card-heading {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  margin-bottom: 22px;
+
+  padding-bottom: 17px;
+
+  border-bottom: 1px solid #edf0f4;
+
+}
+
+.settings-card-heading h3 {
+
+  color: var(--vx-navy);
+
+  font-size: 15px;
+
+  font-weight: 800;
+
+}
+
+.settings-card-heading p {
+
+  margin-top: 4px;
+
+  color: var(--vx-text-muted);
+
+  font-size: 11px;
+
+  line-height: 1.6;
+
+}
+
+.settings-card-icon {
+
+  width: 42px;
+
+  height: 42px;
+
+  flex: 0 0 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(201, 164, 92, 0.19),
+      rgba(201, 164, 92, 0.06)
+    );
+
+  color: var(--vx-gold);
+
+  font-size: 17px;
+
+}
+
+
+/* =========================================
+   8. FORM GRID
+========================================= */
+
+.settings-form-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+
+}
+
+.settings-field {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+  min-width: 0;
+
+}
+
+.settings-field-full {
+
+  grid-column: 1 / -1;
+
+}
+
+
+/* =========================================
+   9. FORM LABELS
+========================================= */
+
+.settings-field label {
+
+  color: var(--vx-navy);
+
+  font-size: 12px;
+
+  font-weight: 750;
+
+}
+
+.settings-field small {
+
+  color: var(--vx-text-muted);
+
+  font-size: 10px;
+
+  line-height: 1.6;
+
+}
+
+
+/* =========================================
+   10. FORM INPUTS
+========================================= */
+
+.settings-field input,
+.settings-field select,
+.settings-field textarea {
+
+  width: 100%;
+
+  min-height: 45px;
+
+  padding: 11px 13px;
+
+  background: #fbfcfe;
+
+  border: 1px solid var(--vx-border);
+
+  border-radius: 9px;
+
+  color: var(--vx-text);
+
+  font-size: 12px;
+
+  outline: none;
+
+  transition: var(--vx-transition);
+
+}
+
+.settings-field textarea {
+
+  min-height: 110px;
+
+  resize: vertical;
+
+}
+
+.settings-field input:hover,
+.settings-field select:hover,
+.settings-field textarea:hover {
+
+  border-color: #cbd3df;
+
+}
+
+.settings-field input:focus,
+.settings-field select:focus,
+.settings-field textarea:focus {
+
+  background: var(--vx-white);
+
+  border-color: var(--vx-gold);
+
+  box-shadow:
+    0 0 0 3px rgba(201, 164, 92, 0.12);
+
+}
+
+.settings-field input::placeholder,
+.settings-field textarea::placeholder {
+
+  color: #a0a9b6;
+
+}
+
+
+/* =========================================
+   11. INFORMATION ROWS
+========================================= */
+
+.settings-information-row {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding: 17px 0;
+
+  border-bottom: 1px solid #edf0f4;
+
+}
+
+.settings-information-row:first-child {
+
+  padding-top: 0;
+
+}
+
+.settings-information-row:last-child {
+
+  border-bottom: none;
+
+}
+
+.settings-information-row > div {
+
+  min-width: 0;
+
+}
+
+.settings-information-row strong {
+
+  display: block;
+
+  color: var(--vx-navy);
+
+  font-size: 12px;
+
+  font-weight: 750;
+
+}
+
+.settings-information-row p {
+
+  margin-top: 4px;
+
+  color: var(--vx-text-muted);
+
+  font-size: 11px;
+
+  line-height: 1.6;
+
+}
+
+.settings-information-tag {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 6px 10px;
+
+  border-radius: 20px;
+
+  background: #f2f5f9;
+
+  color: var(--vx-navy);
+
+  font-size: 10px;
+
+  font-weight: 750;
+
+  white-space: nowrap;
+
+}
+
+
+/* =========================================
+   12. CARD ACTION AREAS
+========================================= */
+
+.settings-card-actions {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  flex-wrap: wrap;
+
+  gap: 12px;
+
+  margin-top: 22px;
+
+  padding-top: 17px;
+
+  border-top: 1px solid #edf0f4;
+
+}
+
+.settings-action-status {
+
+  margin-right: auto;
+
+  color: var(--vx-text-muted);
+
+  font-size: 11px;
+
+  line-height: 1.5;
+
+}
+
+
+/* =========================================
+   13. SAVE BAR
+========================================= */
+
+.settings-save-bar {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+
+  gap: 15px;
+
+  margin-top: 25px;
+
+  padding: 18px 20px;
+
+  background: var(--vx-white);
+
+  border: 1px solid var(--vx-border);
+
+  border-radius: var(--vx-radius-md);
+
+  box-shadow: var(--vx-shadow-sm);
+
+}
+
+.settings-save-bar p {
+
+  color: var(--vx-text-muted);
+
+  font-size: 11px;
+
+}
+
+
+/* =========================================
+   14. BUTTON FOUNDATION
+========================================= */
+
+.settings-primary-button,
+.settings-secondary-button,
+.settings-danger-button {
+
+  min-height: 41px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 10px 17px;
+
+  border-radius: 9px;
+
+  font-size: 11px;
+
+  font-weight: 750;
+
+  transition: var(--vx-transition);
+
+  cursor: pointer;
+
+}
+
+
+/* =========================================
+   15. PRIMARY BUTTON
+========================================= */
+
+.settings-primary-button {
+
+  background: var(--vx-navy);
+
+  color: var(--vx-white);
+
+  border: 1px solid var(--vx-navy);
+
+}
+
+.settings-primary-button:hover {
+
+  background: var(--vx-navy-light);
+
+  border-color: var(--vx-navy-light);
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 5px 14px rgba(16, 34, 59, 0.15);
+
+}
+
+
+/* =========================================
+   16. SECONDARY BUTTON
+========================================= */
+
+.settings-secondary-button {
+
+  background: var(--vx-white);
+
+  color: var(--vx-navy);
+
+  border: 1px solid var(--vx-border);
+
+}
+
+.settings-secondary-button:hover {
+
+  border-color: var(--vx-gold);
+
+  color: #9b7837;
+
+  background: #fffdf8;
+
+}
+
+
+/* =========================================
+   17. DANGER BUTTON
+========================================= */
+
+.settings-danger-button {
+
+  background: #fff5f5;
+
+  color: var(--vx-danger);
+
+  border: 1px solid #f3d4d4;
+
+}
+
+.settings-danger-button:hover {
+
+  background: var(--vx-danger);
+
+  color: var(--vx-white);
+
+  border-color: var(--vx-danger);
+
+}
+
+
+/* =========================================
+   18. DISABLED BUTTONS
+========================================= */
+
+.settings-primary-button:disabled,
+.settings-secondary-button:disabled,
+.settings-danger-button:disabled {
+
+  opacity: 0.55;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+
+}
+
+
+/* =====================================================
+   VANTAGE X COMMUNITY
+   CSS SECTION 4 — CONTROLS & SECURITY COMPONENTS
+===================================================== */
+
+
+/* =========================================
+   1. TOGGLE ROWS
+========================================= */
+
+.settings-toggle-row {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding: 17px 0;
+
+  border-bottom: 1px solid #edf0f4;
+
+}
+
+.settings-toggle-row:last-child {
+
+  border-bottom: none;
+
+}
+
+.settings-toggle-row > div:first-child {
+
+  flex: 1;
+
+  min-width: 0;
+
+}
+
+.settings-toggle-row strong {
+
+  display: block;
+
+  color: var(--vx-navy);
+
+  font-size: 12px;
+
+  font-weight: 750;
+
+}
+
+.settings-toggle-row p {
+
+  margin-top: 4px;
+
+  color: var(--vx-text-muted);
+
+  font-size: 11px;
+
+  line-height: 1.6;
+
+}
+
+
+/* =========================================
+   2. CUSTOM SWITCH
+========================================= */
+
+.settings-switch {
+
+  position: relative;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  flex: 0 0 46px;
+
+  width: 46px;
+
+  height: 25px;
+
+}
+
+.settings-switch input {
+
+  position: absolute;
+
+  width: 1px;
+
+  height: 1px;
+
+  opacity: 0;
+
+}
+
+.settings-switch-slider {
+
+  position: absolute;
+
+  inset: 0;
+
+  background: #d9dee7;
+
+  border-radius: 30px;
+
+  cursor: pointer;
+
+  transition: var(--vx-transition);
+
+}
+
+.settings-switch-slider::before {
+
+  content: "";
+
+  position: absolute;
+
+  width: 19px;
+
+  height: 19px;
+
+  left: 3px;
+
+  top: 3px;
+
+  background: var(--vx-white);
+
+  border-radius: 50%;
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+
+  transition: var(--vx-transition);
+
+}
+
+.settings-switch input:checked + .settings-switch-slider {
+
+  background: var(--vx-navy);
+
+}
+
+.settings-switch input:checked + .settings-switch-slider::before {
+
+  transform: translateX(21px);
+
+  background: var(--vx-gold-light);
+
+}
+
+.settings-switch input:focus-visible + .settings-switch-slider {
+
+  outline: 3px solid rgba(201, 164, 92, 0.5);
+
+  outline-offset: 3px;
+
+}
+
+.settings-switch input:disabled + .settings-switch-slider {
+
+  opacity: 0.5;
+
+  cursor: not-allowed;
+
+}
+
+
+/* =========================================
+   3. SELECT ROWS
+========================================= */
+
+.settings-select-row {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding: 16px 0;
+
+  border-bottom: 1px solid #edf0f4;
+
+}
+
+.settings-select-row > div:first-child {
+
+  flex: 1;
+
+  min-width: 0;
+
+}
+
+.settings-select-row strong {
+
+  display: block;
+
+  color: var(--vx-navy);
+
+  font-size: 12px;
+
+  font-weight: 750;
+
+}
+
+.settings-select-row p {
+
+  margin-top: 4px;
+
+  color: var(--vx-text-muted);
+
+  font-size: 11px;
+
+  line-height: 1.6;
+
+}
+
+.settings-select-row select {
+
+  min-width: 150px;
+
+  max-width: 220px;
+
+  min-height: 40px;
+
+  padding: 8px 11px;
+
+  background: #fbfcfe;
+
+  color: var(--vx-text);
+
+  border: 1px solid var(--vx-border);
+
+  border-radius: 8px;
+
+  font-size: 11px;
+
+  outline: none;
+
+}
+
+.settings-select-row select:focus {
+
+  border-color: var(--vx-gold);
+
+  box-shadow:
+    0 0 0 3px rgba(201, 164, 92, 0.12);
+
+}
+
+
+/* =========================================
+   4. SECURITY OVERVIEW PANEL
+========================================= */
+
+.security-overview-panel {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+
+  padding: 22px;
+
+  margin-bottom: 22px;
+
+  background:
+    linear-gradient(
+      120deg,
+      var(--vx-navy-dark),
+      var(--vx-navy-light)
+    );
+
+  color: var(--vx-white);
+
+  border-radius: var(--vx-radius-lg);
+
+  box-shadow: var(--vx-shadow-md);
+
+}
+
+.security-overview-icon {
+
+  width: 55px;
+
+  height: 55px;
+
+  flex: 0 0 55px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 15px;
+
+  background: rgba(201, 164, 92, 0.18);
+
+  color: var(--vx-gold-light);
+
+  font-size: 23px;
+
+}
+
+.security-overview-panel h3 {
+
+  color: var(--vx-white);
+
+  font-size: 16px;
+
+  font-weight: 800;
+
+}
+
+.security-overview-panel p {
+
+  margin-top: 5px;
+
+  color: rgba(255, 255, 255, 0.75);
+
+  font-size: 11px;
+
+  line-height: 1.7;
+
+}
+
+
+/* =========================================
+   5. SECURITY STATUS TEXT
+========================================= */
+
+.security-overview-panel .security-status-text {
+
+  display: inline-block;
+
+  margin-top: 9px;
+
+  color: var(--vx-gold-light);
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  text-transform: uppercase;
+
+}
+
+
+/* =========================================
+   6. ACTIVITY CONTAINER
+========================================= */
+
+.settings-activity-container {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0;
+
+}
+
+.settings-activity-item {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 13px;
+
+  padding: 17px 0;
+
+  border-bottom: 1px solid #edf0f4;
+
+}
+
+.settings-activity-item:last-child {
+
+  border-bottom: none;
+
+}
+
+.settings-activity-icon {
+
+  width: 37px;
+
+  height: 37px;
+
+  flex: 0 0 37px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #f2f5f9;
+
+  color: var(--vx-navy);
+
+  font-size: 14px;
+
+}
+
+.settings-activity-details {
+
+  flex: 1;
+
+  min-width: 0;
+
+}
+
+.settings-activity-details strong {
+
+  display: block;
+
+  color: var(--vx-navy);
+
+  font-size: 12px;
+
+  font-weight: 750;
+
+}
+
+.settings-activity-details p {
+
+  margin-top: 4px;
+
+  color: var(--vx-text-muted);
+
+  font-size: 10px;
+
+  line-height: 1.6;
+
+}
+
+.settings-activity-time {
+
+  color: #929cad;
+
+  font-size: 10px;
+
+  white-space: nowrap;
+
+}
+
+
+/* =========================================
+   7. EMPTY STATES
+========================================= */
+
+.settings-empty-state {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  min-height: 180px;
+
+  padding: 25px;
+
+  text-align: center;
+
+  background: #fafbfd;
+
+  border: 1px dashed #dce2eb;
+
+  border-radius: var(--vx-radius-md);
+
+}
+
+.settings-empty-state > i {
+
+  color: var(--vx-gold);
+
+  font-size: 28px;
+
+  margin-bottom: 3px;
+
+}
+
+.settings-empty-state h4 {
+
+  color: var(--vx-navy);
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+}
+
+.settings-empty-state p {
+
+  max-width: 400px;
+
+  color: var(--vx-text-muted);
+
+  font-size: 11px;
+
+  line-height: 1.7;
+
+}
+
+
+/* =========================================
+   8. DANGER ZONE
+========================================= */
+
+.danger-row {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding: 17px 0;
+
+  border-bottom: 1px solid #f2e4e4;
+
+}
+
+.danger-row:last-child {
+
+  border-bottom: none;
+
+}
+
+.danger-row > div {
+
+  flex: 1;
+
+  min-width: 0;
+
+}
+
+.danger-row strong {
+
+  display: block;
+
+  color: var(--vx-danger);
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+}
+
+.danger-row p {
+
+  margin-top: 4px;
+
+  color: var(--vx-text-muted);
+
+  font-size: 11px;
+
+  line-height: 1.6;
+
+}
+
+
+/* =========================================
+   9. FORM STATUS MESSAGES
+========================================= */
+
+.settings-action-status.success,
+.settings-action-status.error {
+
+  font-weight: 700;
+
+}
+
+.settings-action-status.success {
+
+  color: var(--vx-success);
+
+}
+
+.settings-action-status.error {
+
+  color: var(--vx-danger);
+
+}
+
+
+/* =========================================
+   10. SETTINGS CARD DIVIDERS
+========================================= */
+
+.settings-card hr {
+
+  border: none;
+
+  height: 1px;
+
+  background: var(--vx-border);
+
+  margin: 18px 0;
+
+}
+
+
+/* =========================================
+   11. LOADING STATE
+========================================= */
+
+.settings-loading {
+
+  opacity: 0.65;
+
+  pointer-events: none;
+
+  cursor: progress;
+
+}
+
+
+/* =========================================
+   12. SMALL STATUS LABELS
+========================================= */
+
+.settings-status-success {
+
+  color: var(--vx-success);
+
+  background: #eaf6ef;
+
+}
+
+.settings-status-warning {
+
+  color: #9b6b19;
+
+  background: #fff6e6;
+
+}
+
+.settings-status-danger {
+
+  color: var(--vx-danger);
+
+  background: #fff0f0;
+
+}
+
+
+
+/* =====================================================
+   VANTAGE X COMMUNITY
+   CSS SECTION 5 — RESPONSIVENESS & ACCESSIBILITY
+===================================================== */
+
+
+/* =========================================
+   1. LARGE TABLETS AND SMALL LAPTOPS
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .settings-workspace {
+
+    grid-template-columns: 255px minmax(0, 1fr);
+
+  }
+
+  .settings-sidebar {
+
+    padding: 25px 15px;
+
+  }
+
+  .settings-main {
+
+    padding: 32px 25px 50px;
+
+  }
+
+  .settings-card {
+
+    padding: 21px;
+
+  }
+
+}
+
+
+/* =========================================
+   2. TABLET LAYOUT
+========================================= */
+
+@media (max-width: 850px) {
+
+  .settings-workspace {
+
+    grid-template-columns: 225px minmax(0, 1fr);
+
+  }
+
+  .settings-sidebar {
+
+    padding: 22px 12px;
+
+  }
+
+  .settings-main {
+
+    padding: 27px 20px 45px;
+
+  }
+
+  .settings-main-top {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+  }
+
+  .settings-account-status {
+
+    margin-top: 3px;
+
+  }
+
+  .settings-form-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .settings-field-full {
+
+    grid-column: auto;
+
+  }
+
+}
+
+
+/* =========================================
+   3. MOBILE NAVIGATION
+========================================= */
+
+@media (max-width: 650px) {
+
+  .settings-topbar {
+
+    height: 65px;
+
+    padding: 0 17px;
+
+  }
+
+  .settings-brand a {
+
+    font-size: 17px;
+
+  }
+
+  .settings-brand small {
+
+    font-size: 8px;
+
+    letter-spacing: 2px;
+
+  }
+
+  .topbar-dashboard-link {
+
+    width: 39px;
+
+    height: 39px;
+
+    padding: 0;
+
+    border-radius: 10px;
+
+    font-size: 15px;
+
+  }
+
+  .topbar-dashboard-link span {
+
+    display: none;
+
+  }
+
+  .mobile-settings-menu {
+
+    display: inline-flex;
+
+  }
+
+  .settings-workspace {
+
+    display: block;
+
+    min-height: calc(100vh - 65px);
+
+    position: relative;
+
+  }
+
+  .settings-sidebar {
+
+    position: fixed;
+
+    top: 65px;
+
+    left: 0;
+
+    bottom: 0;
+
+    width: min(310px, 86vw);
+
+    min-height: 0;
+
+    height: calc(100dvh - 65px);
+
+    overflow-y: auto;
+
+    padding: 25px 17px;
+
+    background: var(--vx-white);
+
+    box-shadow: var(--vx-shadow-lg);
+
+    transform: translateX(-110%);
+
+    visibility: hidden;
+
+    transition:
+      transform 0.3s ease,
+      visibility 0.3s ease;
+
+    z-index: 900;
+
+  }
+
+  .settings-sidebar.mobile-open {
+
+    transform: translateX(0);
+
+    visibility: visible;
+
+  }
+
+  .settings-main {
+
+    width: 100%;
+
+    padding: 25px 16px 40px;
+
+  }
+
+  .settings-main-top {
+
+    gap: 14px;
+
+    margin-bottom: 23px;
+
+    padding-bottom: 20px;
+
+  }
+
+  .settings-main-top h2 {
+
+    font-size: 23px;
+
+  }
+
+  .settings-main-top p {
+
+    font-size: 12px;
+
+  }
+
+  .settings-card {
+
+    padding: 18px;
+
+    border-radius: 14px;
+
+    margin-bottom: 17px;
+
+  }
+
+  .settings-card-heading {
+
+    gap: 10px;
+
+    margin-bottom: 17px;
+
+  }
+
+  .settings-card-heading h3 {
+
+    font-size: 14px;
+
+  }
+
+  .settings-card-icon {
+
+    width: 38px;
+
+    height: 38px;
+
+    flex-basis: 38px;
+
+    font-size: 15px;
+
+  }
+
+  .settings-save-bar {
+
+    align-items: stretch;
+
+    flex-direction: column;
+
+    padding: 16px;
+
+  }
+
+  .settings-save-bar button {
+
+    width: 100%;
+
+  }
+
+}
+
+
+/* =========================================
+   4. SMALL MOBILE PHONES
+========================================= */
+
+@media (max-width: 420px) {
+
+  .settings-main {
+
+    padding: 21px 12px 35px;
+
+  }
+
+  .settings-main-top h2 {
+
+    font-size: 21px;
+
+  }
+
+  .settings-card {
+
+    padding: 15px;
+
+  }
+
+  .settings-card-actions {
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+  }
+
+  .settings-card-actions button {
+
+    width: 100%;
+
+  }
+
+  .settings-action-status {
+
+    margin-right: 0;
+
+    width: 100%;
+
+  }
+
+  .settings-toggle-row {
+
+    gap: 10px;
+
+  }
+
+  .settings-select-row {
+
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+  }
+
+  .settings-select-row select {
+
+    width: 100%;
+
+    max-width: none;
+
+  }
+
+  .settings-information-row {
+
+    align-items: flex-start;
+
+  }
+
+  .settings-information-tag {
+
+    white-space: normal;
+
+    text-align: center;
+
+  }
+
+  .security-overview-panel {
+
+    align-items: flex-start;
+
+    padding: 17px;
+
+    gap: 12px;
+
+  }
+
+  .security-overview-icon {
+
+    width: 43px;
+
+    height: 43px;
+
+    flex-basis: 43px;
+
+    font-size: 18px;
+
+  }
+
+  .settings-activity-item {
+
+    flex-wrap: wrap;
+
+  }
+
+}
+
+
+/* =========================================
+   5. DARK MODE FOUNDATION
+========================================= */
+
+body.dark-mode {
+
+  --vx-background: #0b1422;
+
+  --vx-surface: #142237;
+
+  --vx-white: #142237;
+
+  --vx-text: #edf2fa;
+
+  --vx-text-muted: #a5b0c0;
+
+  --vx-border: #293a50;
+
+  --vx-navy: #edf2fa;
+
+  --vx-navy-dark: #08111e;
+
+  --vx-navy-light: #1b3556;
+
+}
+
+body.dark-mode .settings-main {
+
+  background: var(--vx-background);
+
+}
+
+body.dark-mode .settings-sidebar {
+
+  background: var(--vx-surface);
+
+  border-color: var(--vx-border);
+
+}
+
+body.dark-mode .settings-card,
+body.dark-mode .settings-save-bar {
+
+  background: var(--vx-surface);
+
+  border-color: var(--vx-border);
+
+}
+
+body.dark-mode .settings-member-summary,
+body.dark-mode .settings-search,
+body.dark-mode .settings-field input,
+body.dark-mode .settings-field select,
+body.dark-mode .settings-field textarea,
+body.dark-mode .settings-select-row select {
+
+  background: #101e30;
+
+  border-color: var(--vx-border);
+
+  color: var(--vx-text);
+
+}
+
+body.dark-mode .settings-nav-item {
+
+  color: #bdc8d8;
+
+}
+
+body.dark-mode .settings-nav-item:hover,
+body.dark-mode .settings-sidebar-footer a:hover {
+
+  background: #1b2b40;
+
+}
+
+body.dark-mode .settings-nav-item.active {
+
+  background: rgba(201, 164, 92, 0.13);
+
+  color: var(--vx-white);
+
+}
+
+body.dark-mode .settings-card-heading,
+body.dark-mode .settings-information-row,
+body.dark-mode .settings-toggle-row,
+body.dark-mode .settings-select-row,
+body.dark-mode .settings-activity-item,
+body.dark-mode .settings-card-actions,
+body.dark-mode .settings-sidebar-footer {
+
+  border-color: var(--vx-border);
+
+}
+
+body.dark-mode .settings-empty-state {
+
+  background: #101e30;
+
+  border-color: var(--vx-border);
+
+}
+
+body.dark-mode .settings-information-tag {
+
+  background: #1d3047;
+
+  color: var(--vx-text);
+
+}
+
+body.dark-mode .settings-secondary-button {
+
+  background: #1b2b40;
+
+  color: var(--vx-text);
+
+  border-color: var(--vx-border);
+
+}
+
+
+/* =========================================
+   6. REDUCED MOTION ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+
+    scroll-behavior: auto !important;
+
+    animation-duration: 0.01ms !important;
+
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
+
+  }
+
+}
+
+
+/* =========================================
+   7. TOUCH SCREEN IMPROVEMENTS
+========================================= */
+
+@media (hover: none) {
+
+  .settings-nav-item:hover,
+  .settings-primary-button:hover,
+  .settings-secondary-button:hover,
+  .settings-danger-button:hover {
+
+    transform: none;
+
+  }
+
+  .settings-nav-item,
+  .settings-primary-button,
+  .settings-secondary-button,
+  .settings-danger-button,
+  .settings-switch {
+
+    -webkit-tap-highlight-color: transparent;
+
+  }
+
+}
+
+
+/* =========================================
+   8. FINAL LAYOUT PROTECTION
+========================================= */
+
+.settings-main,
+.settings-sidebar,
+.settings-card,
+.settings-page {
+
+  box-sizing: border-box;
+
+}
+
+.settings-main img {
+
+  max-width: 100%;
+
+  height: auto;
+
+}
+
+
+/* =========================================
+   END OF SETTINGS CSS
+========================================= */
+    
