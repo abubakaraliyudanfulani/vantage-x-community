@@ -1,0 +1,3063 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="theme-color" content="#10223b">
+  <meta name="description" content="Manage your VANTAGE X COMMUNITY account, privacy, security and preferences.">
+
+  <title>Settings & Privacy | VANTAGE X COMMUNITY</title>
+
+  <!-- VANTAGE X SETTINGS ICON -->
+  <link
+    rel="icon"
+    href="assets/vantage-x-icon.png"
+    type="image/png"
+  >
+
+  <!-- ICON LIBRARY -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+  >
+
+  <!-- VANTAGE X SETTINGS DESIGN -->
+  <link rel="stylesheet" href="settings.css">
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+
+</head>
+
+<body>
+
+  <div id="settingsApplication">
+
+    
+<!-- =========================================
+     VANTAGE X SETTINGS CENTRE
+     MAIN APPLICATION LAYOUT
+========================================= -->
+
+<!-- TOP HEADER -->
+<header class="settings-topbar">
+
+  <div class="settings-brand">
+    <a href="index.html">
+      VANTAGE <span>X</span>
+      <small>COMMUNITY</small>
+    </a>
+  </div>
+
+  <div class="settings-topbar-actions">
+
+    <a href="member-dashboard.html" class="topbar-dashboard-link">
+      <i class="fa-solid fa-house"></i>
+      <span>Dashboard</span>
+    </a>
+
+    <button
+      type="button"
+      id="mobileSettingsMenu"
+      class="mobile-settings-menu"
+      aria-label="Open settings navigation"
+      aria-expanded="false"
+    >
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+  </div>
+
+</header>
+
+
+<!-- SETTINGS WORKSPACE -->
+<div class="settings-workspace">
+
+  <!-- SIDEBAR -->
+  <aside class="settings-sidebar" id="settingsSidebar">
+
+    <div class="settings-sidebar-heading">
+
+      <span class="settings-eyebrow">CONTROL CENTRE</span>
+
+      <h1>Settings</h1>
+
+      <p>
+        Manage your account, privacy and community experience.
+      </p>
+
+    </div>
+
+
+    <!-- MEMBER SUMMARY -->
+    <div class="settings-member-summary">
+
+      <div class="settings-member-avatar">
+        <img
+          id="settingsMemberAvatar"
+          src="https://placehold.co/100x100?text=VX"
+          alt="Member profile picture"
+        >
+      </div>
+
+      <div class="settings-member-details">
+
+        <strong id="settingsMemberName">Loading account...</strong>
+
+        <span id="settingsMemberUsername">@member</span>
+
+        <small id="settingsMemberType">Community Member</small>
+
+      </div>
+
+    </div>
+
+
+    <!-- SETTINGS SEARCH -->
+    <div class="settings-search">
+
+      <i class="fa-solid fa-magnifying-glass"></i>
+
+      <input
+        type="search"
+        id="settingsSearch"
+        placeholder="Search settings..."
+        autocomplete="off"
+      >
+
+    </div>
+
+
+    <!-- SETTINGS NAVIGATION -->
+    <nav class="settings-navigation" id="settingsNavigation">
+
+      <div class="settings-nav-label">
+        ACCOUNT MANAGEMENT
+      </div>
+
+      <button
+        type="button"
+        class="settings-nav-item active"
+        data-setting-page="account"
+      >
+        <i class="fa-solid fa-user-gear"></i>
+        <span>Account Centre</span>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+      </button>
+
+
+      <div class="settings-nav-label">
+        PRIVACY AND PROTECTION
+      </div>
+
+      <button
+        type="button"
+        class="settings-nav-item"
+        data-setting-page="privacy"
+      >
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Privacy & Audience</span>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+      </button>
+
+      <button
+        type="button"
+        class="settings-nav-item"
+        data-setting-page="security"
+      >
+        <i class="fa-solid fa-lock"></i>
+        <span>Security & Login</span>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+      </button>
+
+
+      <div class="settings-nav-label">
+        COMMUNITY EXPERIENCE
+      </div>
+
+      <button
+        type="button"
+        class="settings-nav-item"
+        data-setting-page="notifications"
+      >
+        <i class="fa-solid fa-bell"></i>
+        <span>Notifications</span>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+      </button>
+
+      <button
+        type="button"
+        class="settings-nav-item"
+        data-setting-page="content"
+      >
+        <i class="fa-solid fa-photo-film"></i>
+        <span>Content & Interaction</span>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+      </button>
+
+      <button
+        type="button"
+        class="settings-nav-item"
+        data-setting-page="messaging"
+      >
+        <i class="fa-solid fa-comments"></i>
+        <span>Messaging & Communication</span>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+      </button>
+
+
+      <div class="settings-nav-label">
+        PERSONALISATION
+      </div>
+
+      <button
+        type="button"
+        class="settings-nav-item"
+        data-setting-page="appearance"
+      >
+        <i class="fa-solid fa-palette"></i>
+        <span>Appearance & Accessibility</span>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+      </button>
+
+
+      <div class="settings-nav-label">
+        DATA AND PROFESSIONAL TOOLS
+      </div>
+
+      <button
+        type="button"
+        class="settings-nav-item"
+        data-setting-page="data"
+      >
+        <i class="fa-solid fa-database"></i>
+        <span>Data & Account Management</span>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+      </button>
+
+      <button
+        type="button"
+        class="settings-nav-item"
+        data-setting-page="professional"
+      >
+        <i class="fa-solid fa-briefcase"></i>
+        <span>Creator & Business Settings</span>
+        <i class="fa-solid fa-chevron-right nav-arrow"></i>
+      </button>
+
+    </nav>
+
+
+    <!-- SIDEBAR FOOTER -->
+    <div class="settings-sidebar-footer">
+
+      <a href="profile.html">
+        <i class="fa-solid fa-arrow-left"></i>
+        Return to Profile
+      </a>
+
+      <span>VANTAGE X COMMUNITY</span>
+      <small>Settings Centre</small>
+
+    </div>
+
+  </aside>
+
+
+  <!-- MAIN SETTINGS CONTENT -->
+  <main class="settings-main" id="settingsMainContent">
+
+    <div class="settings-main-top">
+
+      <div>
+        <span class="settings-eyebrow">MEMBER CONTROL PANEL</span>
+        <h2 id="settingsPageTitle">Account Centre</h2>
+        <p id="settingsPageDescription">
+          Manage your personal information and account details.
+        </p>
+      </div>
+
+      <div class="settings-account-status">
+        <span class="status-indicator"></span>
+        <span>Account Settings</span>
+      </div>
+
+    </div>
+
+
+    
+<!-- =========================================
+     SECTION 1: ACCOUNT CENTRE
+========================================= -->
+
+<section class="settings-page active" id="page-account">
+
+  <div class="settings-section-intro">
+    <span class="settings-eyebrow">YOUR ACCOUNT</span>
+    <h3>Account Centre</h3>
+    <p>
+      Manage your personal information, account identity
+      and important account preferences.
+    </p>
+  </div>
+
+
+  <!-- PERSONAL INFORMATION -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-user"></i>
+      </div>
+
+      <div>
+        <h3>Personal Information</h3>
+        <p>Manage the information associated with your profile.</p>
+      </div>
+    </div>
+
+    <div class="settings-form-grid">
+
+      <div class="settings-field">
+        <label for="accountFullName">Full Name</label>
+        <input type="text" id="accountFullName"
+          placeholder="Your full name" maxlength="100">
+      </div>
+
+      <div class="settings-field">
+        <label for="accountUsername">Username</label>
+        <input type="text" id="accountUsername"
+          placeholder="Your username" maxlength="30">
+      </div>
+
+      <div class="settings-field settings-field-full">
+        <label for="accountBio">About You</label>
+        <textarea id="accountBio"
+          placeholder="Tell the community about yourself..."
+          maxlength="500" rows="4"></textarea>
+        <small>Maximum 500 characters.</small>
+      </div>
+
+      <div class="settings-field">
+        <label for="accountLocation">Location</label>
+        <input type="text" id="accountLocation"
+          placeholder="City or country" maxlength="100">
+      </div>
+
+      <div class="settings-field">
+        <label for="accountWebsite">Website</label>
+        <input type="url" id="accountWebsite"
+          placeholder="https://example.com" maxlength="255">
+      </div>
+
+    </div>
+
+    <div class="settings-card-actions">
+      <button type="button" class="settings-primary-button"
+        id="savePersonalInformation">
+        Save Personal Information
+      </button>
+      <span id="personalInformationStatus"
+        class="settings-action-status" aria-live="polite"></span>
+    </div>
+
+  </div>
+
+
+  <!-- CONTACT INFORMATION -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-address-card"></i>
+      </div>
+
+      <div>
+        <h3>Contact Information</h3>
+        <p>Manage your private account contact details.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Email Address</strong>
+        <p id="accountEmailDisplay">Loading email address...</p>
+      </div>
+
+      <button type="button" class="settings-secondary-button"
+        id="changeEmailButton">
+        Change Email
+      </button>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Phone Number</strong>
+        <p id="accountPhoneDisplay">Not added</p>
+      </div>
+
+      <button type="button" class="settings-secondary-button"
+        id="managePhoneButton">
+        Manage Phone
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- ACCOUNT IDENTITY -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-id-badge"></i>
+      </div>
+
+      <div>
+        <h3>Account Identity</h3>
+        <p>Information about your VANTAGE X membership.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Account Type</strong>
+        <p id="accountTypeDisplay">Community Member</p>
+      </div>
+      <span class="settings-information-tag">Account</span>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Membership Status</strong>
+        <p id="accountStatusDisplay">Loading status...</p>
+      </div>
+      <span class="settings-information-tag">Status</span>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Member Since</strong>
+        <p id="accountCreatedDisplay">Loading date...</p>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ACCOUNT MANAGEMENT -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-gears"></i>
+      </div>
+
+      <div>
+        <h3>Account Management</h3>
+        <p>Manage important changes to your membership.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Account Deactivation</strong>
+        <p>Temporarily deactivate your account.</p>
+      </div>
+
+      <button type="button" class="settings-secondary-button"
+        id="deactivateAccountButton">
+        Deactivate
+      </button>
+    </div>
+
+    <div class="settings-information-row danger-row">
+      <div>
+        <strong>Delete Account</strong>
+        <p>Permanently request deletion of your account and associated data.</p>
+      </div>
+
+      <button type="button" class="settings-danger-button"
+        id="deleteAccountButton">
+        Delete Account
+      </button>
+    </div>
+
+  </div>
+
+</section>
+    
+
+  <
+<!-- =========================================
+     SECTION 2: PRIVACY & AUDIENCE
+========================================= -->
+
+<section class="settings-page" id="page-privacy">
+
+  <div class="settings-section-intro">
+    <span class="settings-eyebrow">YOUR PRIVACY</span>
+    <h3>Privacy & Audience</h3>
+    <p>
+      Control who can see your profile, discover your account,
+      interact with your content and communicate with you.
+    </p>
+  </div>
+
+
+  <!-- ACCOUNT PRIVACY -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      <div>
+        <h3>Account Privacy</h3>
+        <p>Choose how people can access your profile.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Private Account</strong>
+        <p>Require approval before new people can follow you and view private content.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="privacyPrivateAccount">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Show Profile in Search</strong>
+        <p>Allow your profile to appear in community search results.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="privacySearchVisibility" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Allow Profile Discovery</strong>
+        <p>Allow other members to discover your profile through recommendations.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="privacyProfileDiscovery" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Show Activity Status</strong>
+        <p>Allow people to see when you are active on the community.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="privacyActivityStatus">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- FOLLOWER CONTROLS -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-users"></i>
+      </div>
+      <div>
+        <h3>Followers & Following</h3>
+        <p>Manage how members connect with your account.</p>
+      </div>
+    </div>
+
+    <div class="settings-select-row">
+      <div>
+        <strong>Who Can Follow You?</strong>
+        <p>Choose who can send you a follow request.</p>
+      </div>
+      <select id="privacyWhoCanFollow">
+        <option value="everyone">Everyone</option>
+        <option value="approved">People you approve</option>
+      </select>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Show Followers List</strong>
+        <p>Allow other members to view your followers.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="privacyShowFollowers" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Show Following List</strong>
+        <p>Allow other members to see the accounts you follow.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="privacyShowFollowing" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- CONTENT VISIBILITY -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-eye"></i>
+      </div>
+      <div>
+        <h3>Content Visibility</h3>
+        <p>Manage who can view and interact with your content.</p>
+      </div>
+    </div>
+
+    <div class="settings-select-row">
+      <div>
+        <strong>Default Post Audience</strong>
+        <p>Choose the default audience for new posts.</p>
+      </div>
+      <select id="privacyDefaultAudience">
+        <option value="public">Public</option>
+        <option value="followers">Followers</option>
+        <option value="private">Only Me</option>
+      </select>
+    </div>
+
+    <div class="settings-select-row">
+      <div>
+        <strong>Who Can Comment?</strong>
+        <p>Control who can comment on your posts.</p>
+      </div>
+      <select id="privacyWhoCanComment">
+        <option value="everyone">Everyone</option>
+        <option value="followers">Followers</option>
+        <option value="following">People You Follow</option>
+        <option value="none">No One</option>
+      </select>
+    </div>
+
+    <div class="settings-select-row">
+      <div>
+        <strong>Who Can Share Your Posts?</strong>
+        <p>Choose who can share your public content.</p>
+      </div>
+      <select id="privacyWhoCanShare">
+        <option value="everyone">Everyone</option>
+        <option value="followers">Followers</option>
+        <option value="none">No One</option>
+      </select>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Allow Reposts</strong>
+        <p>Allow other members to repost your public content.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="privacyAllowReposts" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- MENTIONS AND TAGGING -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-at"></i>
+      </div>
+      <div>
+        <h3>Mentions & Tags</h3>
+        <p>Control how other members identify you.</p>
+      </div>
+    </div>
+
+    <div class="settings-select-row">
+      <div>
+        <strong>Who Can Mention You?</strong>
+        <p>Choose who can mention your username.</p>
+      </div>
+      <select id="privacyWhoCanMention">
+        <option value="everyone">Everyone</option>
+        <option value="followers">Followers</option>
+        <option value="following">People You Follow</option>
+        <option value="none">No One</option>
+      </select>
+    </div>
+
+    <div class="settings-select-row">
+      <div>
+        <strong>Who Can Tag You?</strong>
+        <p>Control who can tag your profile in content.</p>
+      </div>
+      <select id="privacyWhoCanTag">
+        <option value="everyone">Everyone</option>
+        <option value="followers">Followers</option>
+        <option value="following">People You Follow</option>
+        <option value="none">No One</option>
+      </select>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Approve Tags Manually</strong>
+        <p>Review tags before they appear on your profile.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="privacyManualTagApproval" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- PROFILE INTERACTION -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-user-check"></i>
+      </div>
+      <div>
+        <h3>Profile Interaction</h3>
+        <p>Manage profile visits and other member interactions.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Profile Visit History</strong>
+        <p>Allow profile visit history to record visits to your profile.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="privacyProfileVisitHistory" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Show Your Likes</strong>
+        <p>Allow others to see your liked public posts.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="privacyShowLikes" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- BLOCKING AND RESTRICTIONS -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-user-lock"></i>
+      </div>
+      <div>
+        <h3>Blocking & Restrictions</h3>
+        <p>Manage unwanted interactions and accounts.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Blocked Accounts</strong>
+        <p>View and manage accounts you have blocked.</p>
+      </div>
+      <button type="button" class="settings-secondary-button"
+        id="manageBlockedAccounts">
+        Manage
+      </button>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Restricted Accounts</strong>
+        <p>Limit interactions from selected members without blocking them.</p>
+      </div>
+      <button type="button" class="settings-secondary-button"
+        id="manageRestrictedAccounts">
+        Manage
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- SAVE PRIVACY PREFERENCES -->
+  <div class="settings-save-bar">
+
+    <div>
+      <strong>Privacy Preferences</strong>
+      <p>Save your changes to apply your preferences.</p>
+    </div>
+
+    <button type="button" class="settings-primary-button"
+      id="savePrivacyPreferences">
+      Save Privacy Settings
+    </button>
+
+  </div>
+
+  <div
+    id="privacySettingsStatus"
+    class="settings-action-status"
+    aria-live="polite"
+  ></div>
+
+        </section>
+
+    
+<!-- =========================================
+     SECTION 3: SECURITY & LOGIN
+========================================= -->
+
+<section class="settings-page" id="page-security">
+
+  <div class="settings-section-intro">
+    <span class="settings-eyebrow">ACCOUNT PROTECTION</span>
+    <h3>Security & Login</h3>
+    <p>
+      Protect your account, manage login access and monitor
+      security-related activity across your devices.
+    </p>
+  </div>
+
+
+  <!-- SECURITY OVERVIEW -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div>
+        <h3>Security Overview</h3>
+        <p>Your account protection status.</p>
+      </div>
+    </div>
+
+    <div class="security-overview-panel">
+
+      <div class="security-overview-icon">
+        <i class="fa-solid fa-shield-heart"></i>
+      </div>
+
+      <div>
+        <strong id="securityOverallStatus">
+          Security status will appear here
+        </strong>
+        <p id="securityOverallDescription">
+          Complete the available security checks to help protect your account.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- PASSWORD MANAGEMENT -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-key"></i>
+      </div>
+      <div>
+        <h3>Password & Authentication</h3>
+        <p>Manage the credentials used to access your account.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Account Password</strong>
+        <p>Change your current account password.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="changePasswordButton">
+        Change Password
+      </button>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Two-Factor Authentication</strong>
+        <p>Add another verification step when signing in.</p>
+      </div>
+
+      <span class="settings-information-tag"
+        id="twoFactorStatus">
+        Not configured
+      </span>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Enable Two-Factor Authentication</strong>
+        <p>Require an additional verification method when supported.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox" id="securityTwoFactorEnabled">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Recovery Information</strong>
+        <p>Review the recovery options available for your account.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="manageRecoveryOptions">
+        Manage
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- LOGIN ACTIVITY -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+      </div>
+      <div>
+        <h3>Login Activity</h3>
+        <p>Review recent sign-in activity on your account.</p>
+      </div>
+    </div>
+
+    <div id="securityLoginActivity"
+      class="settings-activity-container">
+
+      <div class="settings-empty-state">
+        <i class="fa-solid fa-history"></i>
+        <strong>Login activity will appear here</strong>
+        <p>
+          Your available login history will be displayed
+          when the security activity system is connected.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="settings-card-actions">
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="refreshLoginActivity">
+        <i class="fa-solid fa-rotate"></i>
+        Refresh Activity
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- DEVICES AND SESSIONS -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </div>
+      <div>
+        <h3>Devices & Active Sessions</h3>
+        <p>Review devices and sessions connected to your account.</p>
+      </div>
+    </div>
+
+    <div id="securityActiveSessions"
+      class="settings-activity-container">
+
+      <div class="settings-empty-state">
+        <i class="fa-solid fa-laptop-mobile"></i>
+        <strong>Active sessions will appear here</strong>
+        <p>
+          Connected devices and session information will
+          appear after session management is implemented.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="settings-card-actions">
+
+      <button type="button"
+        class="settings-danger-button"
+        id="logoutOtherSessions">
+        Sign Out Other Sessions
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- SECURITY ALERTS -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-bell"></i>
+      </div>
+      <div>
+        <h3>Security Alerts</h3>
+        <p>Choose which account security notifications you receive.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>New Login Alerts</strong>
+        <p>Receive an alert when a new login is detected.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="securityNewLoginAlerts" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Unusual Activity Alerts</strong>
+        <p>Receive notifications about suspicious account activity.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="securityUnusualActivityAlerts" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Password Change Alerts</strong>
+        <p>Receive a notification when your password is changed.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="securityPasswordChangeAlerts" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- SAVE SECURITY PREFERENCES -->
+  <div class="settings-save-bar">
+
+    <div>
+      <strong>Security Preferences</strong>
+      <p>Save your security notification preferences.</p>
+    </div>
+
+    <button type="button"
+      class="settings-primary-button"
+      id="saveSecurityPreferences">
+      Save Security Settings
+    </button>
+
+  </div>
+
+  <div
+    id="securitySettingsStatus"
+    class="settings-action-status"
+    aria-live="polite">
+  </div>
+
+</section>
+    
+   
+<!-- =========================================
+     SECTION 4: NOTIFICATIONS
+========================================= -->
+
+<section class="settings-page" id="page-notifications">
+
+  <div class="settings-section-intro">
+    <span class="settings-eyebrow">STAY CONNECTED</span>
+    <h3>Notifications</h3>
+    <p>
+      Personalise the updates and alerts you receive
+      from VANTAGE X COMMUNITY.
+    </p>
+  </div>
+
+
+  <!-- NOTIFICATION CHANNELS -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-paper-plane"></i>
+      </div>
+      <div>
+        <h3>Notification Channels</h3>
+        <p>Choose how you want to receive notifications.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>In-App Notifications</strong>
+        <p>Receive notifications inside your community account.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyInApp" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Push Notifications</strong>
+        <p>Receive supported notifications on your device.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyPush" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Email Notifications</strong>
+        <p>Receive selected community updates by email.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyEmail" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- SOCIAL NOTIFICATIONS -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-heart"></i>
+      </div>
+      <div>
+        <h3>Social Activity</h3>
+        <p>Choose which social interactions notify you.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Likes & Reactions</strong>
+        <p>When someone likes or reacts to your posts.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyLikes" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Comments</strong>
+        <p>When someone comments on your content.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyComments" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Comment Replies</strong>
+        <p>When someone replies to your comments.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyCommentReplies" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>New Followers</strong>
+        <p>When someone follows your account or requests to follow you.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyFollowers" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Mentions & Tags</strong>
+        <p>When someone mentions or tags your account.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyMentions" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Reposts & Shares</strong>
+        <p>When someone shares or reposts your content.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyReposts" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- MESSAGES AND COMMUNITY -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-comments"></i>
+      </div>
+      <div>
+        <h3>Messages & Community</h3>
+        <p>Manage communication and community activity alerts.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Direct Messages</strong>
+        <p>When you receive a new private message.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyMessages" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Group Activity</strong>
+        <p>Updates from groups you have joined.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyGroups" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Events & Invitations</strong>
+        <p>Event announcements, invitations and reminders.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyEvents" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- PROFESSIONAL AND MARKETPLACE ALERTS -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-briefcase"></i>
+      </div>
+      <div>
+        <h3>Professional & Marketplace Updates</h3>
+        <p>Stay informed about business and professional activities.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Marketplace Activity</strong>
+        <p>Updates about listings, enquiries and marketplace interactions.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyMarketplace" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Business & Creator Updates</strong>
+        <p>Updates related to your professional or creator account.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyBusiness" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- COMMUNITY ANNOUNCEMENTS -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-bullhorn"></i>
+      </div>
+      <div>
+        <h3>Community Announcements</h3>
+        <p>Choose whether to receive important platform updates.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Platform Announcements</strong>
+        <p>Important community news, updates and service notices.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyAnnouncements" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Product Recommendations</strong>
+        <p>Suggested accounts, communities and content.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyRecommendations">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Promotional Updates</strong>
+        <p>Optional promotional and special offer announcements.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyPromotions">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- NOTIFICATION SCHEDULE -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-moon"></i>
+      </div>
+      <div>
+        <h3>Quiet Hours</h3>
+        <p>Choose a period when non-essential notifications should be paused.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Enable Quiet Hours</strong>
+        <p>Pause supported non-essential notifications during selected hours.</p>
+      </div>
+      <label class="settings-switch">
+        <input type="checkbox" id="notifyQuietHours">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-form-grid">
+
+      <div class="settings-field">
+        <label for="notifyQuietStart">Start Time</label>
+        <input type="time" id="notifyQuietStart" value="22:00">
+      </div>
+
+      <div class="settings-field">
+        <label for="notifyQuietEnd">End Time</label>
+        <input type="time" id="notifyQuietEnd" value="07:00">
+      </div>
+
+      <div class="settings-field settings-field-full">
+        <label for="notifyQuietTimezone">Time Zone</label>
+        <select id="notifyQuietTimezone">
+          <option value="Africa/Lagos">West Africa Time (Africa/Lagos)</option>
+          <option value="UTC">Coordinated Universal Time (UTC)</option>
+        </select>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- SAVE NOTIFICATION PREFERENCES -->
+  <div class="settings-save-bar">
+
+    <div>
+      <strong>Notification Preferences</strong>
+      <p>Save your notification choices.</p>
+    </div>
+
+    <button type="button"
+      class="settings-primary-button"
+      id="saveNotificationPreferences">
+      Save Notification Settings
+    </button>
+
+  </div>
+
+  <div
+    id="notificationSettingsStatus"
+    class="settings-action-status"
+    aria-live="polite">
+  </div>
+
+</section>
+
+   
+<!-- =========================================
+     SECTION 5: CONTENT & INTERACTION
+========================================= -->
+
+<section class="settings-page" id="page-content">
+
+  <div class="settings-section-intro">
+    <span class="settings-eyebrow">YOUR COMMUNITY EXPERIENCE</span>
+    <h3>Content & Interaction</h3>
+    <p>
+      Manage your saved content, engagement preferences,
+      recommendations and the content you see across the community.
+    </p>
+  </div>
+
+
+  <!-- SAVED CONTENT -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-bookmark"></i>
+      </div>
+      <div>
+        <h3>Saved Content</h3>
+        <p>Access posts and content you have saved for later.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Saved Posts</strong>
+        <p>View posts and content saved to your account.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="viewSavedContent">
+        View Saved
+      </button>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Saved Collections</strong>
+        <p>Organise your saved content into collections.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="manageSavedCollections">
+        Manage Collections
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- ENGAGEMENT HISTORY -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-chart-line"></i>
+      </div>
+      <div>
+        <h3>Engagement History</h3>
+        <p>Review your interactions across the community.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Liked Posts</strong>
+        <p>View posts you have liked or reacted to.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="viewLikedPosts">
+        View Likes
+      </button>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Your Comments</strong>
+        <p>Review comments you have made on community posts.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="viewCommentHistory">
+        View Comments
+      </button>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Your Reposts</strong>
+        <p>Review content you have reposted or shared.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="viewRepostHistory">
+        View Reposts
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- HIDDEN CONTENT -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-eye-slash"></i>
+      </div>
+      <div>
+        <h3>Hidden Content</h3>
+        <p>Manage content and accounts you have chosen to hide.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Hidden Posts</strong>
+        <p>Review posts you have hidden from your feed.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="manageHiddenPosts">
+        Manage
+      </button>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Hidden Accounts</strong>
+        <p>Manage accounts whose content you have chosen to hide.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="manageHiddenAccounts">
+        Manage
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- FEED PREFERENCES -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-newspaper"></i>
+      </div>
+      <div>
+        <h3>Feed Preferences</h3>
+        <p>Personalise how content appears in your community feed.</p>
+      </div>
+    </div>
+
+    <div class="settings-select-row">
+      <div>
+        <strong>Default Feed Order</strong>
+        <p>Choose how posts are arranged in your feed.</p>
+      </div>
+
+      <select id="contentFeedOrder">
+        <option value="recommended">Recommended</option>
+        <option value="latest">Latest First</option>
+        <option value="following">Following First</option>
+      </select>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Show Recommended Posts</strong>
+        <p>Discover posts from accounts and topics you may enjoy.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="contentRecommendedPosts" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Personalised Recommendations</strong>
+        <p>Use your community activity to improve content suggestions.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="contentPersonalisedRecommendations" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Suggested Accounts</strong>
+        <p>Show accounts you may want to follow.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="contentSuggestedAccounts" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- CONTENT QUALITY AND SAFETY -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-shield-heart"></i>
+      </div>
+      <div>
+        <h3>Content Quality & Safety</h3>
+        <p>Manage the type of content you prefer to see.</p>
+      </div>
+    </div>
+
+    <div class="settings-select-row">
+      <div>
+        <strong>Sensitive Content</strong>
+        <p>Choose how potentially sensitive content is handled.</p>
+      </div>
+
+      <select id="contentSensitiveLevel">
+        <option value="restricted">Restrict sensitive content</option>
+        <option value="standard">Standard filtering</option>
+        <option value="expanded">Show more content where permitted</option>
+      </select>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Hide Potentially Offensive Content</strong>
+        <p>Apply additional filtering to potentially offensive material.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="contentHideOffensive" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Hide Repetitive Recommendations</strong>
+        <p>Reduce repeated recommendations in your feed.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="contentHideRepeated" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- INTERACTION PREFERENCES -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-hand-pointer"></i>
+      </div>
+      <div>
+        <h3>Interaction Preferences</h3>
+        <p>Manage how you interact with other community members.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Confirm Before Reposting</strong>
+        <p>Ask for confirmation before reposting content.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="contentConfirmRepost" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Confirm Before Deleting Comments</strong>
+        <p>Ask for confirmation before deleting your comments.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="contentConfirmDeleteComment" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- SAVE CONTENT PREFERENCES -->
+  <div class="settings-save-bar">
+
+    <div>
+      <strong>Content Preferences</strong>
+      <p>Save your feed and interaction preferences.</p>
+    </div>
+
+    <button type="button"
+      class="settings-primary-button"
+      id="saveContentPreferences">
+      Save Content Settings
+    </button>
+
+  </div>
+
+  <div
+    id="contentSettingsStatus"
+    class="settings-action-status"
+    aria-live="polite">
+  </div>
+
+  </section>
+
+    
+<!-- =========================================
+     SECTION 6: MESSAGING & COMMUNICATION
+========================================= -->
+
+<section class="settings-page" id="page-messaging">
+
+  <div class="settings-section-intro">
+    <span class="settings-eyebrow">YOUR COMMUNICATION</span>
+    <h3>Messaging & Communication</h3>
+    <p>
+      Control who can contact you, how message requests work
+      and how your communication activity appears to others.
+    </p>
+  </div>
+
+
+  <!-- MESSAGE ACCESS -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-envelope"></i>
+      </div>
+      <div>
+        <h3>Message Permissions</h3>
+        <p>Choose who can send you direct messages.</p>
+      </div>
+    </div>
+
+    <div class="settings-select-row">
+      <div>
+        <strong>Who Can Message You?</strong>
+        <p>Control who can start a conversation with you.</p>
+      </div>
+
+      <select id="messagingWhoCanMessage">
+        <option value="everyone">Everyone</option>
+        <option value="followers">Your Followers</option>
+        <option value="following">People You Follow</option>
+        <option value="mutual">Mutual Followers</option>
+        <option value="none">No One</option>
+      </select>
+    </div>
+
+    <div class="settings-select-row">
+      <div>
+        <strong>Message Requests</strong>
+        <p>Choose how messages from people you do not follow are handled.</p>
+      </div>
+
+      <select id="messagingRequestHandling">
+        <option value="requests">Send to Message Requests</option>
+        <option value="allow">Allow Directly</option>
+        <option value="reject">Do Not Receive</option>
+      </select>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Allow Message Requests</strong>
+        <p>Allow eligible members to send you message requests.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="messagingAllowRequests" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- MESSAGE PRIVACY -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-user-lock"></i>
+      </div>
+      <div>
+        <h3>Message Privacy</h3>
+        <p>Manage information visible during conversations.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Read Receipts</strong>
+        <p>Allow others to know when you have read their messages.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="messagingReadReceipts" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Typing Indicators</strong>
+        <p>Show when you are typing a message.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="messagingTypingIndicators" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Online Status in Messages</strong>
+        <p>Allow conversation participants to see when you are active.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="messagingOnlineStatus">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- GROUP COMMUNICATION -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-people-group"></i>
+      </div>
+      <div>
+        <h3>Groups & Invitations</h3>
+        <p>Control group conversations and invitations.</p>
+      </div>
+    </div>
+
+    <div class="settings-select-row">
+      <div>
+        <strong>Who Can Add You to Groups?</strong>
+        <p>Choose who can add your account to group conversations.</p>
+      </div>
+
+      <select id="messagingWhoCanAddGroups">
+        <option value="everyone">Everyone</option>
+        <option value="followers">Your Followers</option>
+        <option value="following">People You Follow</option>
+        <option value="mutual">Mutual Followers</option>
+        <option value="none">No One</option>
+      </select>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Group Invitation Requests</strong>
+        <p>Require approval before joining invited group conversations.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="messagingGroupApproval" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- MESSAGE ORGANISATION -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-inbox"></i>
+      </div>
+      <div>
+        <h3>Message Organisation</h3>
+        <p>Personalise how your conversations are organised.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Filter Unknown Senders</strong>
+        <p>Separate eligible messages from unknown accounts into requests.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="messagingFilterUnknown" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Message Notification Previews</strong>
+        <p>Show message previews in supported notifications.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="messagingNotificationPreviews" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- BLOCKED COMMUNICATION -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-ban"></i>
+      </div>
+      <div>
+        <h3>Communication Restrictions</h3>
+        <p>Manage unwanted communication and restricted contacts.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Blocked Contacts</strong>
+        <p>Review accounts that cannot contact you.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="messagingManageBlocked">
+        Manage
+      </button>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Message Requests</strong>
+        <p>Review conversations waiting for your approval.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="messagingViewRequests">
+        View Requests
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- SAVE MESSAGING PREFERENCES -->
+  <div class="settings-save-bar">
+
+    <div>
+      <strong>Communication Preferences</strong>
+      <p>Save your messaging and privacy choices.</p>
+    </div>
+
+    <button type="button"
+      class="settings-primary-button"
+      id="saveMessagingPreferences">
+      Save Messaging Settings
+    </button>
+
+  </div>
+
+  <div
+    id="messagingSettingsStatus"
+    class="settings-action-status"
+    aria-live="polite">
+  </div>
+
+  </section>
+
+    
+<!-- =========================================
+     SECTION 7: APPEARANCE & ACCESSIBILITY
+========================================= -->
+
+<section class="settings-page" id="page-appearance">
+
+  <div class="settings-section-intro">
+    <span class="settings-eyebrow">PERSONALISE YOUR EXPERIENCE</span>
+    <h3>Appearance & Accessibility</h3>
+    <p>
+      Customise the look, feel and accessibility of your
+      VANTAGE X COMMUNITY experience.
+    </p>
+  </div>
+
+
+  <!-- THEME PREFERENCES -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-palette"></i>
+      </div>
+      <div>
+        <h3>Theme & Appearance</h3>
+        <p>Choose how the community interface looks.</p>
+      </div>
+    </div>
+
+    <div class="settings-field">
+      <label for="appearanceTheme">Interface Theme</label>
+
+      <select id="appearanceTheme">
+        <option value="system">Use Device Settings</option>
+        <option value="light">Light Mode</option>
+        <option value="dark">Dark Mode</option>
+      </select>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Use Device Theme Automatically</strong>
+        <p>Match the community appearance to your device settings.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="appearanceAutoTheme" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-field">
+      <label for="appearanceAccent">Accent Colour</label>
+
+      <select id="appearanceAccent">
+        <option value="gold">VANTAGE Gold</option>
+        <option value="blue">Ocean Blue</option>
+        <option value="green">Emerald Green</option>
+        <option value="purple">Royal Purple</option>
+      </select>
+    </div>
+
+  </div>
+
+
+  <!-- DISPLAY PREFERENCES -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-display"></i>
+      </div>
+      <div>
+        <h3>Display Preferences</h3>
+        <p>Adjust how information appears on your screen.</p>
+      </div>
+    </div>
+
+    <div class="settings-field">
+      <label for="appearanceTextSize">Text Size</label>
+
+      <select id="appearanceTextSize">
+        <option value="small">Small</option>
+        <option value="medium" selected>Medium</option>
+        <option value="large">Large</option>
+        <option value="extra-large">Extra Large</option>
+      </select>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Compact Display</strong>
+        <p>Use a more compact layout where supported.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="appearanceCompactDisplay">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Show Profile Animations</strong>
+        <p>Enable supported profile and interface animations.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="appearanceAnimations" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- ACCESSIBILITY -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-universal-access"></i>
+      </div>
+      <div>
+        <h3>Accessibility</h3>
+        <p>Make the community easier and more comfortable to use.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Reduce Motion</strong>
+        <p>Reduce animations and motion effects across supported pages.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="appearanceReduceMotion">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>High Contrast</strong>
+        <p>Improve contrast between text, backgrounds and interface elements.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="appearanceHighContrast">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Underline Links</strong>
+        <p>Make links easier to identify throughout supported pages.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="appearanceUnderlineLinks">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- LANGUAGE AND REGION -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-language"></i>
+      </div>
+      <div>
+        <h3>Language & Region</h3>
+        <p>Choose your preferred language and regional format.</p>
+      </div>
+    </div>
+
+    <div class="settings-field">
+      <label for="appearanceLanguage">Display Language</label>
+
+      <select id="appearanceLanguage">
+        <option value="en">English</option>
+        <option value="ha">Hausa</option>
+        <option value="ar">Arabic</option>
+        <option value="fr">French</option>
+      </select>
+    </div>
+
+    <div class="settings-field">
+      <label for="appearanceRegion">Region</label>
+
+      <select id="appearanceRegion">
+        <option value="NG">Nigeria</option>
+        <option value="GH">Ghana</option>
+        <option value="KE">Kenya</option>
+        <option value="ZA">South Africa</option>
+        <option value="GB">United Kingdom</option>
+        <option value="US">United States</option>
+        <option value="OTHER">Other</option>
+      </select>
+    </div>
+
+    <div class="settings-field">
+      <label for="appearanceDateFormat">Date Format</label>
+
+      <select id="appearanceDateFormat">
+        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+      </select>
+    </div>
+
+  </div>
+
+
+  <!-- SAVE APPEARANCE PREFERENCES -->
+  <div class="settings-save-bar">
+
+    <div>
+      <strong>Appearance Preferences</strong>
+      <p>Save your display and accessibility choices.</p>
+    </div>
+
+    <button type="button"
+      class="settings-primary-button"
+      id="saveAppearancePreferences">
+      Save Appearance Settings
+    </button>
+
+  </div>
+
+  <div
+    id="appearanceSettingsStatus"
+    class="settings-action-status"
+    aria-live="polite">
+  </div>
+
+  </section>
+
+    
+<!-- =========================================
+     SECTION 8: DATA & ACCOUNT MANAGEMENT
+========================================= -->
+
+<section class="settings-page" id="page-data">
+
+  <div class="settings-section-intro">
+    <span class="settings-eyebrow">YOUR DATA & CONTROL</span>
+    <h3>Data & Account Management</h3>
+    <p>
+      Review your personal data, manage account activity,
+      control connected applications and exercise your data rights.
+    </p>
+  </div>
+
+
+  <!-- PERSONAL DATA -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-database"></i>
+      </div>
+      <div>
+        <h3>Personal Data</h3>
+        <p>Understand and manage information associated with your account.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Download Your Information</strong>
+        <p>Request a copy of your profile and available community data.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="requestDataDownload">
+        Request Download
+      </button>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Personal Data Overview</strong>
+        <p>Review the categories of information associated with your account.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="viewPersonalData">
+        View Overview
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- ACTIVITY MANAGEMENT -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+      </div>
+      <div>
+        <h3>Activity Management</h3>
+        <p>Review and manage selected activities from your account.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Account Activity History</strong>
+        <p>Review available actions and activity associated with your account.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="viewAccountActivity">
+        View Activity
+      </button>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Search History</strong>
+        <p>Review searches saved by the community platform.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="manageSearchHistory">
+        Manage History
+      </button>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Clear Search History</strong>
+        <p>Request removal of your stored search history.</p>
+      </div>
+
+      <button type="button"
+        class="settings-danger-button"
+        id="clearSearchHistory">
+        Clear History
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- CONNECTED APPLICATIONS -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-plug"></i>
+      </div>
+      <div>
+        <h3>Connected Applications</h3>
+        <p>Review external applications connected to your account.</p>
+      </div>
+    </div>
+
+    <div id="connectedApplicationsList"
+      class="settings-activity-container">
+
+      <div class="settings-empty-state">
+        <i class="fa-solid fa-link"></i>
+        <strong>No connected applications displayed</strong>
+        <p>
+          Connected application information will appear here
+          when the integration management system is available.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="settings-card-actions">
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="manageConnectedApplications">
+        Manage Connections
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- APP PERMISSIONS -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-fingerprint"></i>
+      </div>
+      <div>
+        <h3>Application Permissions</h3>
+        <p>Manage optional permissions used by community features.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Camera Access</strong>
+        <p>Allow supported community features to request camera access.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="dataCameraPermission" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Microphone Access</strong>
+        <p>Allow supported features to request microphone access.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="dataMicrophonePermission" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Location Access</strong>
+        <p>Allow supported features to request your device location.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="dataLocationPermission">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Photo & File Access</strong>
+        <p>Allow supported features to request access to selected media.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="dataMediaPermission" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- DATA PRIVACY -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      <div>
+        <h3>Data Privacy</h3>
+        <p>Control optional uses of your community activity.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Personalised Experience</strong>
+        <p>Use eligible account preferences to personalise your experience.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="dataPersonalisation" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Usage Analytics</strong>
+        <p>Allow optional usage analytics to help improve the platform.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="dataUsageAnalytics" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- ACCOUNT CONTROL -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-user-gear"></i>
+      </div>
+      <div>
+        <h3>Account Control</h3>
+        <p>Manage important decisions concerning your membership.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Temporarily Deactivate Account</strong>
+        <p>Temporarily suspend your account according to platform policy.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="dataDeactivateAccount">
+        Deactivate
+      </button>
+    </div>
+
+    <div class="settings-information-row danger-row">
+      <div>
+        <strong>Permanently Delete Account</strong>
+        <p>
+          Request permanent account deletion, subject to identity
+          verification and applicable data-retention requirements.
+        </p>
+      </div>
+
+      <button type="button"
+        class="settings-danger-button"
+        id="dataDeleteAccount">
+        Delete Account
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- SAVE DATA PREFERENCES -->
+  <div class="settings-save-bar">
+
+    <div>
+      <strong>Data Preferences</strong>
+      <p>Save your available data and privacy preferences.</p>
+    </div>
+
+    <button type="button"
+      class="settings-primary-button"
+      id="saveDataPreferences">
+      Save Data Settings
+    </button>
+
+  </div>
+
+  <div
+    id="dataSettingsStatus"
+    class="settings-action-status"
+    aria-live="polite">
+  </div>
+
+</section>
+    
+    
+<!-- =========================================
+     SECTION 9: CREATOR & BUSINESS SETTINGS
+========================================= -->
+
+<section class="settings-page" id="page-professional">
+
+  <div class="settings-section-intro">
+    <span class="settings-eyebrow">PROFESSIONAL CONTROL CENTRE</span>
+    <h3>Creator & Business Settings</h3>
+    <p>
+      Build your professional presence, manage business information,
+      understand your audience and access creator tools.
+    </p>
+  </div>
+
+
+  <!-- PROFESSIONAL ACCOUNT TYPE -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-briefcase"></i>
+      </div>
+      <div>
+        <h3>Professional Account</h3>
+        <p>Choose how you want to represent yourself professionally.</p>
+      </div>
+    </div>
+
+    <div class="settings-field">
+      <label for="professionalAccountType">
+        Professional Account Type
+      </label>
+
+      <select id="professionalAccountType">
+        <option value="personal">Personal Account</option>
+        <option value="creator">Content Creator</option>
+        <option value="business">Business Account</option>
+        <option value="brand">Brand or Organisation</option>
+        <option value="public_figure">Public Figure</option>
+        <option value="professional">Professional Services</option>
+      </select>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Professional Account Status</strong>
+        <p>View the current status of your professional account.</p>
+      </div>
+
+      <span class="settings-information-tag"
+        id="professionalAccountStatus">
+        Personal
+      </span>
+    </div>
+
+    <div class="settings-card-actions">
+      <button type="button"
+        class="settings-primary-button"
+        id="saveProfessionalAccountType">
+        Save Account Type
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- BUSINESS INFORMATION -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-building"></i>
+      </div>
+      <div>
+        <h3>Business Information</h3>
+        <p>Manage the information displayed on your professional profile.</p>
+      </div>
+    </div>
+
+    <div class="settings-form-grid">
+
+      <div class="settings-field">
+        <label for="professionalBusinessName">
+          Business or Brand Name
+        </label>
+        <input type="text"
+          id="professionalBusinessName"
+          placeholder="Enter business name"
+          maxlength="150">
+      </div>
+
+      <div class="settings-field">
+        <label for="professionalIndustry">
+          Industry
+        </label>
+        <select id="professionalIndustry">
+          <option value="">Select industry</option>
+          <option value="technology">Technology</option>
+          <option value="real_estate">Real Estate</option>
+          <option value="education">Education</option>
+          <option value="health">Health & Wellness</option>
+          <option value="finance">Finance & Investment</option>
+          <option value="agriculture">Agriculture</option>
+          <option value="fashion">Fashion & Beauty</option>
+          <option value="media">Media & Entertainment</option>
+          <option value="sports">Sports</option>
+          <option value="retail">Retail & Commerce</option>
+          <option value="professional_services">Professional Services</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="settings-field">
+        <label for="professionalBusinessEmail">
+          Business Email
+        </label>
+        <input type="email"
+          id="professionalBusinessEmail"
+          placeholder="business@example.com"
+          maxlength="255">
+      </div>
+
+      <div class="settings-field">
+        <label for="professionalBusinessPhone">
+          Business Phone
+        </label>
+        <input type="tel"
+          id="professionalBusinessPhone"
+          placeholder="+234..."
+          maxlength="30">
+      </div>
+
+      <div class="settings-field settings-field-full">
+        <label for="professionalBusinessAddress">
+          Business Address
+        </label>
+        <input type="text"
+          id="professionalBusinessAddress"
+          placeholder="Enter business location"
+          maxlength="255">
+      </div>
+
+      <div class="settings-field settings-field-full">
+        <label for="professionalBusinessWebsite">
+          Business Website
+        </label>
+        <input type="url"
+          id="professionalBusinessWebsite"
+          placeholder="https://example.com"
+          maxlength="255">
+      </div>
+
+      <div class="settings-field settings-field-full">
+        <label for="professionalBusinessDescription">
+          Business Description
+        </label>
+        <textarea
+          id="professionalBusinessDescription"
+          placeholder="Describe your business, services or professional activities..."
+          maxlength="1000"
+          rows="5"></textarea>
+        <small>Maximum 1,000 characters.</small>
+      </div>
+
+    </div>
+
+    <div class="settings-card-actions">
+      <button type="button"
+        class="settings-primary-button"
+        id="saveBusinessInformation">
+        Save Business Information
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- CREATOR PREFERENCES -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-video"></i>
+      </div>
+      <div>
+        <h3>Creator Preferences</h3>
+        <p>Manage your content creation and audience settings.</p>
+      </div>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Enable Creator Tools</strong>
+        <p>Access supported tools designed for content creators.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="professionalCreatorTools">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Display Professional Contact Button</strong>
+        <p>Allow visitors to contact you through your professional profile.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="professionalContactButton">
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+    <div class="settings-toggle-row">
+      <div>
+        <strong>Show Professional Category</strong>
+        <p>Display your selected professional category on your profile.</p>
+      </div>
+
+      <label class="settings-switch">
+        <input type="checkbox"
+          id="professionalShowCategory" checked>
+        <span class="settings-switch-slider"></span>
+      </label>
+    </div>
+
+  </div>
+
+
+  <!-- AUDIENCE AND INSIGHTS -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-chart-pie"></i>
+      </div>
+      <div>
+        <h3>Audience & Insights</h3>
+        <p>Understand your audience and professional performance.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Audience Insights</strong>
+        <p>Review available audience and follower statistics.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="professionalAudienceInsights">
+        View Insights
+      </button>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Content Performance</strong>
+        <p>Review engagement and performance of your published content.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="professionalContentPerformance">
+        View Performance
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- PROFESSIONAL VERIFICATION -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-certificate"></i>
+      </div>
+      <div>
+        <h3>Professional Verification</h3>
+        <p>Manage professional identity and verification requests.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Verification Status</strong>
+        <p>Check whether your professional identity has been verified.</p>
+      </div>
+
+      <span class="settings-information-tag"
+        id="professionalVerificationStatus">
+        Not verified
+      </span>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Request Verification</strong>
+        <p>Submit an application when professional verification is available.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="professionalRequestVerification">
+        Apply
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- PROFESSIONAL ACCOUNT SUPPORT -->
+  <div class="settings-card">
+
+    <div class="settings-card-heading">
+      <div class="settings-card-icon">
+        <i class="fa-solid fa-headset"></i>
+      </div>
+      <div>
+        <h3>Professional Support</h3>
+        <p>Get assistance with your creator or business account.</p>
+      </div>
+    </div>
+
+    <div class="settings-information-row">
+      <div>
+        <strong>Professional Account Help</strong>
+        <p>Get guidance about professional account features.</p>
+      </div>
+
+      <button type="button"
+        class="settings-secondary-button"
+        id="professionalAccountHelp">
+        Get Help
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- SAVE PROFESSIONAL PREFERENCES -->
+  <div class="settings-save-bar">
+
+    <div>
+      <strong>Professional Preferences</strong>
+      <p>Save your creator and business settings.</p>
+    </div>
+
+    <button type="button"
+      class="settings-primary-button"
+      id="saveProfessionalPreferences">
+      Save Professional Settings
+    </button>
+
+  </div>
+
+  <div
+    id="professionalSettingsStatus"
+    class="settings-action-status"
+    aria-live="polite">
+  </div>
+
+</section>
+
+    
+    /main>
+
+</div>
+    
+
+  </div>
+
+  <!-- SETTINGS JAVASCRIPT -->
+  <script src="settings.js"></script>
+
+</body>
+</html>
