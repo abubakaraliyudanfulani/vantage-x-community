@@ -2234,17 +2234,21 @@ document.addEventListener(
 /* =========================================
    JAVASCRIPT SECTION 5
    ACCOUNT CENTRE & PERSONAL INFORMATION
+   AUTHENTICATION-INTEGRATED VERSION
 ========================================= */
 
 const VXAccountCentre = {
 
     initialized: false,
+    loading: false,
+    saving: false,
+    loadVersion: 0,
 
     /* -------------------------------------
        INITIALIZE ACCOUNT CENTRE
     ------------------------------------- */
 
-    initialize() {
+    async initialize() {
 
         if (this.initialized) return;
 
@@ -2252,11 +2256,56 @@ const VXAccountCentre = {
 
         this.attachEvents();
 
-        this.loadAccountInformation();
+        /* Listen for future login and logout changes */
 
-        VXUtils.log(
-            "Account Centre initialized."
+        window.addEventListener(
+            "vx:auth-ready",
+            (event) => this.handleAuthReady(event.detail)
         );
+
+        /* Wait until Section 4 finishes authentication */
+
+        await VXAuth.waitUntilReady();
+
+        if (VXAuth.isAuthenticated()) {
+            await this.loadAccountInformation();
+        } else {
+            this.clearAccountInformation();
+        }
+
+        VXUtils.log("Account Centre initialized.");
+
+    },
+
+
+    /* -------------------------------------
+       HANDLE AUTHENTICATION CHANGES
+    ------------------------------------- */
+
+    async handleAuthReady(detail = {}) {
+
+        const eventType = detail.event;
+
+        if (eventType === "SIGNED_OUT") {
+
+            this.loadVersion++;
+
+            this.clearAccountInformation();
+
+            return;
+
+        }
+
+        if (
+            eventType === "SIGNED_IN" ||
+            eventType === "USER_UPDATED"
+        ) {
+
+            if (VXAuth.isAuthenticated()) {
+                await this.loadAccountInformation();
+            }
+
+        }
 
     },
 
@@ -2288,6 +2337,44 @@ const VXAccountCentre = {
 
 
     /* -------------------------------------
+       CLEAR ACCOUNT INFORMATION
+    ------------------------------------- */
+
+    clearAccountInformation() {
+
+        VXUtils.setValue("accountFullName", "");
+        VXUtils.setValue("accountUsername", "");
+        VXUtils.setValue("accountBio", "");
+
+        VXUtils.setText(
+            "accountEmailDisplay",
+            "Not signed in"
+        );
+
+        VXUtils.setText(
+            "accountPhoneDisplay",
+            "Not available"
+        );
+
+        VXUtils.setText(
+            "accountTypeDisplay",
+            "Guest"
+        );
+
+        VXUtils.setText(
+            "accountStatusDisplay",
+            "Not signed in"
+        );
+
+        VXUtils.setText(
+            "accountCreatedDisplay",
+            "Not available"
+        );
+
+    },
+
+
+    /* -------------------------------------
        LOAD ACCOUNT INFORMATION
     ------------------------------------- */
 
@@ -2297,24 +2384,49 @@ const VXAccountCentre = {
 
         if (!user) return;
 
+        if (this.loading) {
+            this.loadVersion++;
+        }
+
+        const requestVersion = ++this.loadVersion;
+        const userId = user.id;
+
         const client = VXDatabase.getClient();
 
-        if (!client) return;
+        if (!client) {
+
+            VXStatus.show(
+                "personalInformationStatus",
+                "The account service is unavailable. Please try again.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        this.loading = true;
 
         try {
 
-            const {
-                data,
-                error
-            } = await client
+            const { data, error } = await client
                 .from("profiles")
                 .select(
                     "id, full_name, username, bio, avatar_url, created_at"
                 )
-                .eq("id", user.id)
+                .eq("id", userId)
                 .maybeSingle();
 
             if (error) throw error;
+
+            /* Reject outdated results */
+
+            if (
+                requestVersion !== this.loadVersion ||
+                VXAuth.getUser()?.id !== userId
+            ) {
+                return;
+            }
 
             if (!data) {
 
@@ -2328,14 +2440,13 @@ const VXAccountCentre = {
 
             }
 
-            /* UPDATE APPLICATION PROFILE */
+            /* Update application profile */
 
             VXAuth.profile = data;
-
             VXSettings.currentProfile = data;
 
 
-            /* PERSONAL INFORMATION */
+            /* Personal information */
 
             VXUtils.setValue(
                 "accountFullName",
@@ -2353,7 +2464,7 @@ const VXAccountCentre = {
             );
 
 
-            /* CONTACT INFORMATION */
+            /* Contact information */
 
             VXUtils.setText(
                 "accountEmailDisplay",
@@ -2366,7 +2477,7 @@ const VXAccountCentre = {
             );
 
 
-            /* ACCOUNT IDENTITY */
+            /* Account identity */
 
             VXUtils.setText(
                 "accountTypeDisplay",
@@ -2381,24 +2492,24 @@ const VXAccountCentre = {
             );
 
 
-            /* REGISTRATION DATE */
+            /* Registration date */
 
             if (data.created_at) {
 
-                const createdDate = new Date(
-                    data.created_at
-                );
+                const createdDate = new Date(data.created_at);
 
                 VXUtils.setText(
                     "accountCreatedDisplay",
-                    createdDate.toLocaleDateString(
-                        undefined,
-                        {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric"
-                        }
-                    )
+                    Number.isNaN(createdDate.getTime())
+                        ? "Date unavailable"
+                        : createdDate.toLocaleDateString(
+                            undefined,
+                            {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric"
+                            }
+                        )
                 );
 
             } else {
@@ -2411,10 +2522,13 @@ const VXAccountCentre = {
             }
 
 
-            /* SIDEBAR PROFILE */
+            /* Update sidebar */
 
             VXAuth.updateSidebar();
 
+            VXStatus.clear(
+                "personalInformationStatus"
+            );
 
             VXUtils.log(
                 "Account information loaded successfully."
@@ -2432,6 +2546,12 @@ const VXAccountCentre = {
                 "Unable to load your account information. Please refresh and try again.",
                 "error"
             );
+
+        } finally {
+
+            if (requestVersion === this.loadVersion) {
+                this.loading = false;
+            }
 
         }
 
@@ -2510,15 +2630,12 @@ const VXAccountCentre = {
         }
 
         return {
-
             valid: true,
-
             data: {
                 full_name: fullName,
                 username: username,
                 bio: bio
             }
-
         };
 
     },
@@ -2530,6 +2647,8 @@ const VXAccountCentre = {
 
     async savePersonalInformation() {
 
+        if (this.saving) return;
+
         const user = this.getAuthenticatedUser();
 
         if (!user) return;
@@ -2537,7 +2656,6 @@ const VXAccountCentre = {
         const client = VXDatabase.getClient();
 
         if (!client) return;
-
 
         const validation =
             this.validatePersonalInformation();
@@ -2554,42 +2672,29 @@ const VXAccountCentre = {
 
         }
 
-
         const button = VXElements.byId(
             "savePersonalInformation"
         );
 
-        if (button) {
+        this.saving = true;
 
+        if (button) {
             button.disabled = true;
             button.textContent = "Saving...";
-
         }
-
 
         VXStatus.clear(
             "personalInformationStatus"
         );
 
-
         try {
 
-            const {
-                data,
-                error
-            } = await client
+            const { data, error } = await client
                 .from("profiles")
                 .update({
-
-                    full_name:
-                        validation.data.full_name,
-
-                    username:
-                        validation.data.username,
-
-                    bio:
-                        validation.data.bio
-
+                    full_name: validation.data.full_name,
+                    username: validation.data.username,
+                    bio: validation.data.bio
                 })
                 .eq("id", user.id)
                 .select(
@@ -2599,52 +2704,35 @@ const VXAccountCentre = {
 
             if (error) throw error;
 
+            /* Confirm the same member is still signed in */
 
-            /* UPDATE LOCAL PROFILE */
+            if (VXAuth.getUser()?.id !== user.id) {
+                return;
+            }
 
             VXAuth.profile = data;
-
             VXSettings.currentProfile = data;
-
-
-            /* UPDATE SIDEBAR */
 
             VXAuth.updateSidebar();
 
+            const location = String(
+                VXUtils.getValue("accountLocation") || ""
+            ).trim();
 
-            /* REPORT DATABASE COMPATIBILITY */
-
-            const location =
-                VXUtils.getValue("accountLocation");
-
-            const website =
-                VXUtils.getValue("accountWebsite");
+            const website = String(
+                VXUtils.getValue("accountWebsite") || ""
+            ).trim();
 
             const hasUnstoredFields =
-                Boolean(
-                    String(location || "").trim() ||
-                    String(website || "").trim()
-                );
+                Boolean(location || website);
 
-
-            if (hasUnstoredFields) {
-
-                VXStatus.show(
-                    "personalInformationStatus",
-                    "Your name, username and biography were saved. Location and website still require database fields before they can be saved.",
-                    "success"
-                );
-
-            } else {
-
-                VXStatus.show(
-                    "personalInformationStatus",
-                    "Your personal information was saved successfully.",
-                    "success"
-                );
-
-            }
-
+            VXStatus.show(
+                "personalInformationStatus",
+                hasUnstoredFields
+                    ? "Your name, username and biography were saved. Location and website still require database fields before they can be saved."
+                    : "Your personal information was saved successfully.",
+                "success"
+            );
 
             VXUtils.log(
                 "Personal information updated."
@@ -2657,10 +2745,8 @@ const VXAccountCentre = {
                 error
             );
 
-
             let message =
                 "Unable to save your information. Please try again.";
-
 
             if (
                 error.code === "23505" ||
@@ -2670,15 +2756,12 @@ const VXAccountCentre = {
                 message =
                     "That username is already in use. Please choose another.";
 
-            }
-
-            else if (error.code === "42501") {
+            } else if (error.code === "42501") {
 
                 message =
                     "Permission denied. Please check your account profile security policies.";
 
             }
-
 
             VXStatus.show(
                 "personalInformationStatus",
@@ -2688,13 +2771,11 @@ const VXAccountCentre = {
 
         } finally {
 
+            this.saving = false;
+
             if (button) {
-
                 button.disabled = false;
-
-                button.textContent =
-                    "Save Personal Information";
-
+                button.textContent = "Save Personal Information";
             }
 
         }
@@ -2722,9 +2803,7 @@ const VXAccountCentre = {
 
         if (!VXUtils.isValidEmail(email)) {
 
-            alert(
-                "Please enter a valid email address."
-            );
+            alert("Please enter a valid email address.");
 
             return;
 
@@ -2732,9 +2811,7 @@ const VXAccountCentre = {
 
         if (email === user.email?.toLowerCase()) {
 
-            alert(
-                "This is already your current email address."
-            );
+            alert("This is already your current email address.");
 
             return;
 
@@ -2748,22 +2825,15 @@ const VXAccountCentre = {
 
         if (!confirmed) return;
 
-
         try {
 
             const client = VXDatabase.getClient();
 
-            const {
-                data,
-                error
-            } = await client.auth.updateUser({
-
+            const { error } = await client.auth.updateUser({
                 email: email
-
             });
 
             if (error) throw error;
-
 
             VXStatus.show(
                 "personalInformationStatus",
@@ -2771,9 +2841,7 @@ const VXAccountCentre = {
                 "success"
             );
 
-            VXUtils.log(
-                "Email change requested."
-            );
+            VXUtils.log("Email change requested.");
 
         } catch (error) {
 
@@ -2782,9 +2850,10 @@ const VXAccountCentre = {
                 error
             );
 
-            alert(
-                error.message ||
-                "Unable to request an email change."
+            VXStatus.show(
+                "personalInformationStatus",
+                error.message || "Unable to request an email change.",
+                "error"
             );
 
         }
@@ -2799,7 +2868,7 @@ const VXAccountCentre = {
     managePhone() {
 
         alert(
-            "Phone number management is not yet connected. It will be enabled after the phone verification workflow and database configuration are completed."
+            "Phone number management is not yet connected. It requires a verified phone authentication workflow."
         );
 
     },
@@ -2812,7 +2881,7 @@ const VXAccountCentre = {
     deactivateAccount() {
 
         alert(
-            "Account deactivation is not yet available. This operation requires a secure server-side workflow to protect your account and its data."
+            "Account deactivation is not yet available. This requires a secure server-side workflow."
         );
 
     },
@@ -2825,7 +2894,7 @@ const VXAccountCentre = {
     deleteAccount() {
 
         alert(
-            "Account deletion is not yet available. Permanent deletion must be handled through a secure server-side process with identity verification and appropriate data-retention safeguards."
+            "Account deletion is not yet available. Permanent deletion requires a secure server-side process and identity verification."
         );
 
     },
@@ -2859,48 +2928,38 @@ const VXAccountCentre = {
 
 
         if (saveButton) {
-
             saveButton.addEventListener(
                 "click",
                 () => this.savePersonalInformation()
             );
-
         }
 
         if (emailButton) {
-
             emailButton.addEventListener(
                 "click",
                 () => this.changeEmail()
             );
-
         }
 
         if (phoneButton) {
-
             phoneButton.addEventListener(
                 "click",
                 () => this.managePhone()
             );
-
         }
 
         if (deactivateButton) {
-
             deactivateButton.addEventListener(
                 "click",
                 () => this.deactivateAccount()
             );
-
         }
 
         if (deleteButton) {
-
             deleteButton.addEventListener(
                 "click",
                 () => this.deleteAccount()
             );
-
         }
 
     }
@@ -2915,12 +2974,9 @@ const VXAccountCentre = {
 document.addEventListener(
     "DOMContentLoaded",
     () => {
-
         VXAccountCentre.initialize();
-
     }
 );
-
 
 
 /* =========================================
