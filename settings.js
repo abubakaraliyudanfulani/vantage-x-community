@@ -1968,6 +1968,701 @@ document.addEventListener(
 
 
 
+/* =========================================
+   JAVASCRIPT SECTION 5
+   ACCOUNT CENTRE & PERSONAL INFORMATION
+========================================= */
+
+const VXAccountCentre = {
+
+    initialized: false,
+
+    /* -------------------------------------
+       INITIALIZE ACCOUNT CENTRE
+    ------------------------------------- */
+
+    initialize() {
+
+        if (this.initialized) return;
+
+        this.initialized = true;
+
+        this.attachEvents();
+
+        this.loadAccountInformation();
+
+        VXUtils.log(
+            "Account Centre initialized."
+        );
+
+    },
+
+
+    /* -------------------------------------
+       CHECK AUTHENTICATED MEMBER
+    ------------------------------------- */
+
+    getAuthenticatedUser() {
+
+        if (
+            typeof VXAuth === "undefined" ||
+            !VXAuth.isAuthenticated()
+        ) {
+
+            VXStatus.show(
+                "personalInformationStatus",
+                "Please sign in before changing your account information.",
+                "error"
+            );
+
+            return null;
+
+        }
+
+        return VXAuth.getUser();
+
+    },
+
+
+    /* -------------------------------------
+       LOAD ACCOUNT INFORMATION
+    ------------------------------------- */
+
+    async loadAccountInformation() {
+
+        const user = this.getAuthenticatedUser();
+
+        if (!user) return;
+
+        const client = VXDatabase.getClient();
+
+        if (!client) return;
+
+        try {
+
+            const {
+                data,
+                error
+            } = await client
+                .from("profiles")
+                .select(
+                    "id, full_name, username, bio, avatar_url, created_at"
+                )
+                .eq("id", user.id)
+                .maybeSingle();
+
+            if (error) throw error;
+
+            if (!data) {
+
+                VXStatus.show(
+                    "personalInformationStatus",
+                    "Your profile record could not be found.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+            /* UPDATE APPLICATION PROFILE */
+
+            VXAuth.profile = data;
+
+            VXSettings.currentProfile = data;
+
+
+            /* PERSONAL INFORMATION */
+
+            VXUtils.setValue(
+                "accountFullName",
+                data.full_name || ""
+            );
+
+            VXUtils.setValue(
+                "accountUsername",
+                data.username || ""
+            );
+
+            VXUtils.setValue(
+                "accountBio",
+                data.bio || ""
+            );
+
+
+            /* CONTACT INFORMATION */
+
+            VXUtils.setText(
+                "accountEmailDisplay",
+                user.email || "No email address available"
+            );
+
+            VXUtils.setText(
+                "accountPhoneDisplay",
+                user.phone || "Not added"
+            );
+
+
+            /* ACCOUNT IDENTITY */
+
+            VXUtils.setText(
+                "accountTypeDisplay",
+                "Community Member"
+            );
+
+            VXUtils.setText(
+                "accountStatusDisplay",
+                user.email_confirmed_at
+                    ? "Active — Email verified"
+                    : "Active — Email verification pending"
+            );
+
+
+            /* REGISTRATION DATE */
+
+            if (data.created_at) {
+
+                const createdDate = new Date(
+                    data.created_at
+                );
+
+                VXUtils.setText(
+                    "accountCreatedDisplay",
+                    createdDate.toLocaleDateString(
+                        undefined,
+                        {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric"
+                        }
+                    )
+                );
+
+            } else {
+
+                VXUtils.setText(
+                    "accountCreatedDisplay",
+                    "Date unavailable"
+                );
+
+            }
+
+
+            /* SIDEBAR PROFILE */
+
+            VXAuth.updateSidebar();
+
+
+            VXUtils.log(
+                "Account information loaded successfully."
+            );
+
+        } catch (error) {
+
+            VXUtils.error(
+                "Account information could not be loaded.",
+                error
+            );
+
+            VXStatus.show(
+                "personalInformationStatus",
+                "Unable to load your account information. Please refresh and try again.",
+                "error"
+            );
+
+        }
+
+    },
+
+
+    /* -------------------------------------
+       VALIDATE PERSONAL INFORMATION
+    ------------------------------------- */
+
+    validatePersonalInformation() {
+
+        const fullName = String(
+            VXUtils.getValue("accountFullName") || ""
+        ).trim();
+
+        const username = String(
+            VXUtils.getValue("accountUsername") || ""
+        )
+        .trim()
+        .toLowerCase();
+
+        const bio = String(
+            VXUtils.getValue("accountBio") || ""
+        ).trim();
+
+
+        if (fullName.length < 2) {
+
+            return {
+                valid: false,
+                message: "Please enter a valid full name."
+            };
+
+        }
+
+        if (fullName.length > 100) {
+
+            return {
+                valid: false,
+                message: "Your full name is too long."
+            };
+
+        }
+
+        if (!/^[a-z0-9._]{3,30}$/.test(username)) {
+
+            return {
+                valid: false,
+                message:
+                    "Username must contain 3–30 characters using lowercase letters, numbers, dots or underscores."
+            };
+
+        }
+
+        if (
+            username.startsWith(".") ||
+            username.endsWith(".") ||
+            username.includes("..")
+        ) {
+
+            return {
+                valid: false,
+                message: "Please enter a valid username."
+            };
+
+        }
+
+        if (bio.length > 500) {
+
+            return {
+                valid: false,
+                message: "Your biography cannot exceed 500 characters."
+            };
+
+        }
+
+        return {
+
+            valid: true,
+
+            data: {
+                full_name: fullName,
+                username: username,
+                bio: bio
+            }
+
+        };
+
+    },
+
+
+    /* -------------------------------------
+       SAVE PERSONAL INFORMATION
+    ------------------------------------- */
+
+    async savePersonalInformation() {
+
+        const user = this.getAuthenticatedUser();
+
+        if (!user) return;
+
+        const client = VXDatabase.getClient();
+
+        if (!client) return;
+
+
+        const validation =
+            this.validatePersonalInformation();
+
+        if (!validation.valid) {
+
+            VXStatus.show(
+                "personalInformationStatus",
+                validation.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const button = VXElements.byId(
+            "savePersonalInformation"
+        );
+
+        if (button) {
+
+            button.disabled = true;
+            button.textContent = "Saving...";
+
+        }
+
+
+        VXStatus.clear(
+            "personalInformationStatus"
+        );
+
+
+        try {
+
+            const {
+                data,
+                error
+            } = await client
+                .from("profiles")
+                .update({
+
+                    full_name:
+                        validation.data.full_name,
+
+                    username:
+                        validation.data.username,
+
+                    bio:
+                        validation.data.bio
+
+                })
+                .eq("id", user.id)
+                .select(
+                    "id, full_name, username, bio, avatar_url, created_at"
+                )
+                .single();
+
+            if (error) throw error;
+
+
+            /* UPDATE LOCAL PROFILE */
+
+            VXAuth.profile = data;
+
+            VXSettings.currentProfile = data;
+
+
+            /* UPDATE SIDEBAR */
+
+            VXAuth.updateSidebar();
+
+
+            /* REPORT DATABASE COMPATIBILITY */
+
+            const location =
+                VXUtils.getValue("accountLocation");
+
+            const website =
+                VXUtils.getValue("accountWebsite");
+
+            const hasUnstoredFields =
+                Boolean(
+                    String(location || "").trim() ||
+                    String(website || "").trim()
+                );
+
+
+            if (hasUnstoredFields) {
+
+                VXStatus.show(
+                    "personalInformationStatus",
+                    "Your name, username and biography were saved. Location and website still require database fields before they can be saved.",
+                    "success"
+                );
+
+            } else {
+
+                VXStatus.show(
+                    "personalInformationStatus",
+                    "Your personal information was saved successfully.",
+                    "success"
+                );
+
+            }
+
+
+            VXUtils.log(
+                "Personal information updated."
+            );
+
+        } catch (error) {
+
+            VXUtils.error(
+                "Unable to save personal information.",
+                error
+            );
+
+
+            let message =
+                "Unable to save your information. Please try again.";
+
+
+            if (
+                error.code === "23505" ||
+                error.message?.toLowerCase().includes("duplicate")
+            ) {
+
+                message =
+                    "That username is already in use. Please choose another.";
+
+            }
+
+            else if (error.code === "42501") {
+
+                message =
+                    "Permission denied. Please check your account profile security policies.";
+
+            }
+
+
+            VXStatus.show(
+                "personalInformationStatus",
+                message,
+                "error"
+            );
+
+        } finally {
+
+            if (button) {
+
+                button.disabled = false;
+
+                button.textContent =
+                    "Save Personal Information";
+
+            }
+
+        }
+
+    },
+
+
+    /* -------------------------------------
+       CHANGE EMAIL ADDRESS
+    ------------------------------------- */
+
+    async changeEmail() {
+
+        const user = this.getAuthenticatedUser();
+
+        if (!user) return;
+
+        const newEmail = prompt(
+            "Enter the new email address you want to use:"
+        );
+
+        if (newEmail === null) return;
+
+        const email = newEmail.trim().toLowerCase();
+
+        if (!VXUtils.isValidEmail(email)) {
+
+            alert(
+                "Please enter a valid email address."
+            );
+
+            return;
+
+        }
+
+        if (email === user.email?.toLowerCase()) {
+
+            alert(
+                "This is already your current email address."
+            );
+
+            return;
+
+        }
+
+        const confirmed = confirm(
+            "Request an email change to " +
+            email +
+            "?\n\nSupabase may require you to confirm the change through an email sent to you."
+        );
+
+        if (!confirmed) return;
+
+
+        try {
+
+            const client = VXDatabase.getClient();
+
+            const {
+                data,
+                error
+            } = await client.auth.updateUser({
+
+                email: email
+
+            });
+
+            if (error) throw error;
+
+
+            VXStatus.show(
+                "personalInformationStatus",
+                "Email change requested. Follow the confirmation instructions sent by Supabase.",
+                "success"
+            );
+
+            VXUtils.log(
+                "Email change requested."
+            );
+
+        } catch (error) {
+
+            VXUtils.error(
+                "Email update failed.",
+                error
+            );
+
+            alert(
+                error.message ||
+                "Unable to request an email change."
+            );
+
+        }
+
+    },
+
+
+    /* -------------------------------------
+       PHONE MANAGEMENT
+    ------------------------------------- */
+
+    managePhone() {
+
+        alert(
+            "Phone number management is not yet connected. It will be enabled after the phone verification workflow and database configuration are completed."
+        );
+
+    },
+
+
+    /* -------------------------------------
+       ACCOUNT DEACTIVATION
+    ------------------------------------- */
+
+    deactivateAccount() {
+
+        alert(
+            "Account deactivation is not yet available. This operation requires a secure server-side workflow to protect your account and its data."
+        );
+
+    },
+
+
+    /* -------------------------------------
+       ACCOUNT DELETION
+    ------------------------------------- */
+
+    deleteAccount() {
+
+        alert(
+            "Account deletion is not yet available. Permanent deletion must be handled through a secure server-side process with identity verification and appropriate data-retention safeguards."
+        );
+
+    },
+
+
+    /* -------------------------------------
+       ATTACH BUTTON EVENTS
+    ------------------------------------- */
+
+    attachEvents() {
+
+        const saveButton = VXElements.byId(
+            "savePersonalInformation"
+        );
+
+        const emailButton = VXElements.byId(
+            "changeEmailButton"
+        );
+
+        const phoneButton = VXElements.byId(
+            "managePhoneButton"
+        );
+
+        const deactivateButton = VXElements.byId(
+            "deactivateAccountButton"
+        );
+
+        const deleteButton = VXElements.byId(
+            "deleteAccountButton"
+        );
+
+
+        if (saveButton) {
+
+            saveButton.addEventListener(
+                "click",
+                () => this.savePersonalInformation()
+            );
+
+        }
+
+        if (emailButton) {
+
+            emailButton.addEventListener(
+                "click",
+                () => this.changeEmail()
+            );
+
+        }
+
+        if (phoneButton) {
+
+            phoneButton.addEventListener(
+                "click",
+                () => this.managePhone()
+            );
+
+        }
+
+        if (deactivateButton) {
+
+            deactivateButton.addEventListener(
+                "click",
+                () => this.deactivateAccount()
+            );
+
+        }
+
+        if (deleteButton) {
+
+            deleteButton.addEventListener(
+                "click",
+                () => this.deleteAccount()
+            );
+
+        }
+
+    }
+
+};
+
+
+/* -----------------------------------------
+   INITIALIZE ACCOUNT CENTRE
+----------------------------------------- */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        VXAccountCentre.initialize();
+
+    }
+);
+
+
+/* =========================================
+   END OF JAVASCRIPT SECTION 5
+========================================= */
+
 
           
 
