@@ -1480,48 +1480,120 @@ document.addEventListener(
 
 
 
-/* =========================================
+/* =====================================================
+   VANTAGE X COMMUNITY
    JAVASCRIPT SECTION 4
    AUTHENTICATION & PROFILE LOADING
-========================================= */
+   REVISED INTEGRATION VERSION
+===================================================== */
 
 const VXAuth = {
 
     session: null,
+
     user: null,
+
     profile: null,
+
     accountSettings: null,
+
     initialized: false,
+
+    initializing: false,
+
     loading: false,
 
-    /* -------------------------------------
-       INITIALIZE AUTHENTICATION
-    ------------------------------------- */
+    initializationPromise: null,
+
+    readyPromise: null,
+
+    readyResolver: null,
+
+    authListenerRegistered: false,
+
+    sessionVersion: 0,
+
+
+    /* =========================================
+       1. AUTHENTICATION READY PROMISE
+    ========================================= */
+
+    waitUntilReady() {
+
+        if (!this.readyPromise) {
+
+            this.readyPromise = new Promise(resolve => {
+
+                this.readyResolver = resolve;
+
+            });
+
+        }
+
+        return this.readyPromise;
+
+    },
+
+
+    resolveReady() {
+
+        if (this.readyResolver) {
+
+            this.readyResolver(this.user);
+
+            this.readyResolver = null;
+
+        }
+
+    },
+
+
+    /* =========================================
+       2. INITIALIZE AUTHENTICATION
+    ========================================= */
 
     async initialize() {
 
-        if (this.initialized) return;
+        if (this.initializationPromise) {
 
-        this.initialized = true;
+            return this.initializationPromise;
 
-        const client = VXDatabase.getClient();
-
-        if (!client) {
-
-            VXUtils.error(
-                "Authentication unavailable: Supabase is not connected."
-            );
-
-            this.showAccessMessage(
-                "Unable to connect to the account service. Please try again later."
-            );
-
-            return;
         }
+
+        if (this.initialized) {
+
+            return this.user;
+
+        }
+
+        this.initializing = true;
+
+        this.waitUntilReady();
+
+        this.initializationPromise = this
+            .performInitialization();
+
+        return this.initializationPromise;
+
+    },
+
+
+    async performInitialization() {
 
         try {
 
-            /* GET CURRENT SESSION */
+            const client = VXDatabase.getClient();
+
+            if (!client) {
+
+                throw new Error(
+                    "Supabase is not connected."
+                );
+
+            }
+
+
+            /* GET CURRENT AUTHENTICATION SESSION */
 
             const {
                 data,
@@ -1530,14 +1602,20 @@ const VXAuth = {
 
             if (error) throw error;
 
-            this.session = data.session || null;
+            this.session = data?.session || null;
+
             this.user = this.session?.user || null;
+
+
+            /* LOAD MEMBER INFORMATION */
 
             if (this.user) {
 
                 await this.loadMemberData();
 
             } else {
+
+                this.clearMemberData();
 
                 this.showAccessMessage(
                     "Please sign in to your VANTAGE X COMMUNITY account to manage your settings."
@@ -1546,50 +1624,44 @@ const VXAuth = {
             }
 
 
-            /* LISTEN FOR LOGIN AND LOGOUT CHANGES */
+            /* REGISTER AUTHENTICATION LISTENER ONCE */
 
-            client.auth.onAuthStateChange(
-                (event, session) => {
+            if (!this.authListenerRegistered) {
 
-                    setTimeout(async () => {
+                client.auth.onAuthStateChange(
+                    (event, session) => {
 
-                        try {
+                        /*
+                         * Defer asynchronous Supabase work
+                         * outside the authentication callback.
+                         */
 
-                            this.session = session || null;
-                            this.user = session?.user || null;
+                        setTimeout(() => {
 
-                            if (this.user) {
-
-                                await this.loadMemberData();
-
-                            } else {
-
-                                this.clearMemberData();
-
-                                this.showAccessMessage(
-                                    "Your session has ended. Please sign in again to access your settings."
-                                );
-
-                            }
-
-                        } catch (error) {
-
-                            VXUtils.error(
-                                "Authentication state update failed.",
-                                error
+                            this.handleAuthStateChange(
+                                event,
+                                session
                             );
 
-                        }
+                        }, 0);
 
-                    }, 0);
+                    }
+                );
 
-                }
-            );
+                this.authListenerRegistered = true;
 
+            }
+
+
+            this.initialized = true;
+
+            VXSettings.currentUser = this.user;
 
             VXUtils.log(
                 "Authentication system initialized."
             );
+
+            return this.user;
 
         } catch (error) {
 
@@ -1598,30 +1670,168 @@ const VXAuth = {
                 error
             );
 
+            this.clearMemberData();
+
             this.showAccessMessage(
                 "We could not verify your login session. Please refresh the page and try again."
             );
+
+            return null;
+
+        } finally {
+
+            this.initializing = false;
+
+            this.resolveReady();
+
+            this.dispatchReadyEvent();
 
         }
 
     },
 
 
-    /* -------------------------------------
-       LOAD MEMBER DATA
-    ------------------------------------- */
+    /* =========================================
+       3. AUTHENTICATION STATE CHANGES
+    ========================================= */
 
-    async loadMemberData() {
+    async handleAuthStateChange(event, session) {
 
-        if (!this.user || this.loading) return;
+        const newUser = session?.user || null;
+
+        const previousUserId = this.user?.id || null;
+
+        const newUserId = newUser?.id || null;
+
+        this.sessionVersion++;
+
+        const currentVersion = this.sessionVersion;
+
+
+        this.session = session || null;
+
+        this.user = newUser;
+
+
+        /* MEMBER SIGNED OUT */
+
+        if (!newUser) {
+
+            this.clearMemberData();
+
+            this.showAccessMessage(
+                "Your session has ended. Please sign in again to access your settings."
+            );
+
+            this.dispatchReadyEvent(event);
+
+            VXUtils.log(
+                "Member signed out.",
+                event
+            );
+
+            return;
+
+        }
+
+
+        /* LOAD DATA FOR NEW OR CHANGED SESSION */
+
+        if (
+            previousUserId !== newUserId ||
+            event === "TOKEN_REFRESHED" ||
+            event === "SIGNED_IN" ||
+            event === "USER_UPDATED"
+        ) {
+
+            this.profile = null;
+
+            this.accountSettings = null;
+
+            VXSettings.currentUser = newUser;
+
+            VXSettings.currentProfile = null;
+
+            try {
+
+                await this.loadMemberData(
+                    currentVersion
+                );
+
+            } catch (error) {
+
+                VXUtils.error(
+                    "Authentication state update failed.",
+                    error
+                );
+
+            }
+
+        }
+
+        this.dispatchReadyEvent(event);
+
+    },
+
+
+    /* =========================================
+       4. NOTIFY OTHER APPLICATION MODULES
+    ========================================= */
+
+    dispatchReadyEvent(event = "INITIALIZED") {
+
+        window.dispatchEvent(
+            new CustomEvent("vx:auth-ready", {
+
+                detail: {
+
+                    user: this.user,
+
+                    session: this.session,
+
+                    authenticated: this.isAuthenticated(),
+
+                    event
+
+                }
+
+            })
+        );
+
+    },
+
+
+    /* =========================================
+       5. LOAD MEMBER DATA
+    ========================================= */
+
+    async loadMemberData(expectedVersion = this.sessionVersion) {
+
+        if (!this.user) return;
+
+        if (this.loading) return;
 
         this.loading = true;
+
+        const loadingUserId = this.user.id;
 
         try {
 
             await this.loadProfile();
 
+            if (
+                expectedVersion !== this.sessionVersion ||
+                this.user?.id !== loadingUserId
+            ) return;
+
+
             await this.loadAccountSettings();
+
+            if (
+                expectedVersion !== this.sessionVersion ||
+                this.user?.id !== loadingUserId
+            ) return;
+
 
             this.updateSidebar();
 
@@ -1651,15 +1861,17 @@ const VXAuth = {
     },
 
 
-    /* -------------------------------------
-       LOAD AUTHENTICATED PROFILE
-    ------------------------------------- */
+    /* =========================================
+       6. LOAD AUTHENTICATED PROFILE
+    ========================================= */
 
     async loadProfile() {
 
         const client = VXDatabase.getClient();
 
         if (!client || !this.user) return null;
+
+        const userId = this.user.id;
 
         const {
             data,
@@ -1669,14 +1881,21 @@ const VXAuth = {
             .select(
                 "id, full_name, username, avatar_url"
             )
-            .eq("id", this.user.id)
+            .eq("id", userId)
             .maybeSingle();
 
         if (error) throw error;
 
+        if (this.user?.id !== userId) {
+
+            return null;
+
+        }
+
         this.profile = data || null;
 
         VXSettings.currentUser = this.user;
+
         VXSettings.currentProfile = this.profile;
 
         return this.profile;
@@ -1684,15 +1903,17 @@ const VXAuth = {
     },
 
 
-    /* -------------------------------------
-       LOAD ACCOUNT PREFERENCES
-    ------------------------------------- */
+    /* =========================================
+       7. LOAD ACCOUNT PREFERENCES
+    ========================================= */
 
     async loadAccountSettings() {
 
         const client = VXDatabase.getClient();
 
         if (!client || !this.user) return null;
+
+        const userId = this.user.id;
 
         const {
             data,
@@ -1702,10 +1923,16 @@ const VXAuth = {
             .select(
                 "user_id, is_private, email_notifications, push_notifications"
             )
-            .eq("user_id", this.user.id)
+            .eq("user_id", userId)
             .maybeSingle();
 
         if (error) throw error;
+
+        if (this.user?.id !== userId) {
+
+            return null;
+
+        }
 
         this.accountSettings = data || null;
 
@@ -1714,40 +1941,24 @@ const VXAuth = {
     },
 
 
-    /* -------------------------------------
-       UPDATE SIDEBAR PROFILE
-    ------------------------------------- */
+    /* =========================================
+       8. UPDATE SIDEBAR PROFILE
+    ========================================= */
 
     updateSidebar() {
 
         const profile = this.profile;
 
-        if (!profile) {
-
-            VXUtils.setText(
-                "settingsMemberName",
-                "Community Member"
-            );
-
-            VXUtils.setText(
-                "settingsMemberUsername",
-                this.user?.email || ""
-            );
-
-            return;
-
-        }
-
         VXUtils.setText(
             "settingsMemberName",
-            profile.full_name || "Community Member"
+            profile?.full_name || "Community Member"
         );
 
         VXUtils.setText(
             "settingsMemberUsername",
-            profile.username
+            profile?.username
                 ? "@" + profile.username
-                : ""
+                : this.user?.email || ""
         );
 
 
@@ -1757,18 +1968,31 @@ const VXAuth = {
             "settingsMemberAvatar"
         );
 
-        if (avatar && profile.avatar_url) {
+        if (avatar) {
 
-            avatar.src = profile.avatar_url;
+            avatar.onerror = null;
 
-            avatar.alt =
-                profile.full_name || "Member profile picture";
+            if (profile?.avatar_url) {
 
-            avatar.onerror = () => {
+                avatar.src = profile.avatar_url;
+
+                avatar.alt =
+                    profile.full_name ||
+                    "Member profile picture";
+
+                avatar.onerror = () => {
+
+                    avatar.removeAttribute("src");
+
+                };
+
+            } else {
 
                 avatar.removeAttribute("src");
 
-            };
+                avatar.alt = "Member profile picture";
+
+            }
 
         }
 
@@ -1783,9 +2007,9 @@ const VXAuth = {
     },
 
 
-    /* -------------------------------------
-       ACCESS MESSAGE
-    ------------------------------------- */
+    /* =========================================
+       9. ACCESS MESSAGE
+    ========================================= */
 
     showAccessMessage(message) {
 
@@ -1805,17 +2029,32 @@ const VXAuth = {
 
             notice.id = "settingsAccessNotice";
 
-            notice.setAttribute("role", "status");
+            notice.setAttribute(
+                "role",
+                "status"
+            );
+
+            notice.setAttribute(
+                "aria-live",
+                "polite"
+            );
 
             Object.assign(notice.style, {
 
                 padding: "16px",
+
                 marginBottom: "20px",
+
                 borderRadius: "12px",
+
                 border: "1px solid #e5c98c",
+
                 background: "#fff8e9",
+
                 color: "#664b19",
+
                 fontSize: "14px",
+
                 lineHeight: "1.6"
 
             });
@@ -1831,9 +2070,9 @@ const VXAuth = {
     },
 
 
-    /* -------------------------------------
-       HIDE ACCESS MESSAGE
-    ------------------------------------- */
+    /* =========================================
+       10. HIDE ACCESS MESSAGE
+    ========================================= */
 
     hideAccessMessage() {
 
@@ -1850,19 +2089,24 @@ const VXAuth = {
     },
 
 
-    /* -------------------------------------
-       CLEAR MEMBER INFORMATION
-    ------------------------------------- */
+    /* =========================================
+       11. CLEAR MEMBER INFORMATION
+    ========================================= */
 
     clearMemberData() {
 
         this.session = null;
+
         this.user = null;
+
         this.profile = null;
+
         this.accountSettings = null;
 
         VXSettings.currentUser = null;
+
         VXSettings.currentProfile = null;
+
 
         VXUtils.setText(
             "settingsMemberName",
@@ -1879,6 +2123,7 @@ const VXAuth = {
             "Guest"
         );
 
+
         const avatar = VXElements.byId(
             "settingsMemberAvatar"
         );
@@ -1887,14 +2132,16 @@ const VXAuth = {
 
             avatar.removeAttribute("src");
 
+            avatar.alt = "Member profile picture";
+
         }
 
     },
 
 
-    /* -------------------------------------
-       GET AUTHENTICATED USER
-    ------------------------------------- */
+    /* =========================================
+       12. AUTHENTICATION INFORMATION
+    ========================================= */
 
     getUser() {
 
@@ -1903,20 +2150,12 @@ const VXAuth = {
     },
 
 
-    /* -------------------------------------
-       GET MEMBER PROFILE
-    ------------------------------------- */
-
     getProfile() {
 
         return this.profile;
 
     },
 
-
-    /* -------------------------------------
-       GET ACCOUNT PREFERENCES
-    ------------------------------------- */
 
     getAccountSettings() {
 
@@ -1925,24 +2164,43 @@ const VXAuth = {
     },
 
 
-    /* -------------------------------------
-       CHECK AUTHENTICATION
-    ------------------------------------- */
+    getSession() {
+
+        return this.session;
+
+    },
+
+
+    /* =========================================
+       13. AUTHENTICATION STATUS
+    ========================================= */
 
     isAuthenticated() {
 
         return Boolean(
-            this.user && this.session
+            this.user &&
+            this.session
         );
+
+    },
+
+
+    /* =========================================
+       14. INITIALIZATION STATUS
+    ========================================= */
+
+    isReady() {
+
+        return this.initialized;
 
     }
 
 };
 
 
-/* -----------------------------------------
-   INITIALIZE DATABASE AND AUTHENTICATION
------------------------------------------ */
+/* =========================================
+   15. INITIALIZE DATABASE & AUTHENTICATION
+========================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -1957,6 +2215,12 @@ document.addEventListener(
                 "The account service is currently unavailable."
             );
 
+            VXAuth.resolveReady();
+
+            VXAuth.dispatchReadyEvent(
+                "DATABASE_UNAVAILABLE"
+            );
+
             return;
 
         }
@@ -1965,7 +2229,6 @@ document.addEventListener(
 
     }
 );
-
 
 
 /* =========================================
