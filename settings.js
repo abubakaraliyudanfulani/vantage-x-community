@@ -3238,9 +3238,939 @@ document.addEventListener(
 );
 
 
+/* =====================================================
+   VANTAGE X COMMUNITY
+   JAVASCRIPT SECTION 7
+   SECURITY & LOGIN MANAGEMENT
+===================================================== */
+
+
 /* =========================================
-   END OF JAVASCRIPT SECTION 6
+   1. SECURITY MANAGEMENT CONFIGURATION
 ========================================= */
+
+const VXSecurity = {
+
+  initialized: false,
+
+  user: null,
+
+  client: null,
+
+  preferencesKey: "vx_security_preferences",
+
+  defaultPreferences: {
+    newLoginAlerts: true,
+    unusualActivityAlerts: true,
+    passwordChangeAlerts: true
+  },
+
+
+  /* =========================================
+     2. INITIALIZE SECURITY CENTRE
+  ========================================= */
+
+  async initialize() {
+
+    if (this.initialized) return;
+
+    this.client = VXDatabase.getClient();
+
+    if (!this.client) {
+      VXUtils.error("Security system cannot connect to Supabase.");
+      return;
+    }
+
+    this.initialized = true;
+
+    await this.loadAuthenticatedUser();
+
+    if (!this.user) {
+
+      this.setOverview(
+        "Sign-in required",
+        "Sign in to manage your account security."
+      );
+
+      return;
+
+    }
+
+    await this.loadTwoFactorStatus();
+
+    this.loadSecurityPreferences();
+
+    await this.refreshLoginActivity();
+
+    this.attachEvents();
+
+    VXUtils.log("Security management initialized.");
+
+  },
+
+
+  /* =========================================
+     3. GET AUTHENTICATED USER
+  ========================================= */
+
+  async loadAuthenticatedUser() {
+
+    try {
+
+      const {
+        data,
+        error
+      } = await this.client.auth.getUser();
+
+      if (error) throw error;
+
+      this.user = data.user || null;
+
+      return this.user;
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to retrieve authenticated user.",
+        error
+      );
+
+      this.user = null;
+
+      return null;
+
+    }
+
+  },
+
+
+  /* =========================================
+     4. SECURITY OVERVIEW
+  ========================================= */
+
+  setOverview(title, description) {
+
+    VXUtils.setText(
+      "securityOverallStatus",
+      title
+    );
+
+    VXUtils.setText(
+      "securityOverallDescription",
+      description
+    );
+
+  },
+
+
+  updateOverview() {
+
+    const twoFactor =
+      VXElements.byId("securityTwoFactorEnabled");
+
+    if (twoFactor && twoFactor.checked) {
+
+      this.setOverview(
+        "Additional authentication enabled",
+        "Two-factor authentication is configured for your account."
+      );
+
+    } else {
+
+      this.setOverview(
+        "Basic account protection",
+        "Your account uses its existing authentication method. Consider enabling additional protection."
+      );
+
+    }
+
+  },
+
+
+  /* =========================================
+     5. PASSWORD MANAGEMENT
+  ========================================= */
+
+  async changePassword() {
+
+    if (!this.user) {
+
+      alert("Please sign in before changing your password.");
+
+      return;
+
+    }
+
+    const newPassword = prompt(
+      "Enter your new password.\n\nUse at least 8 characters."
+    );
+
+    if (newPassword === null) return;
+
+    if (newPassword.length < 8) {
+
+      alert("Your password must contain at least 8 characters.");
+
+      return;
+
+    }
+
+    const confirmation = prompt(
+      "Enter your new password again to confirm."
+    );
+
+    if (confirmation === null) return;
+
+    if (newPassword !== confirmation) {
+
+      alert("The passwords do not match.");
+
+      return;
+
+    }
+
+    try {
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        "Updating your password...",
+        "info"
+      );
+
+      const {
+        data,
+        error
+      } = await this.client.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) throw error;
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        "Your password was updated successfully.",
+        "success"
+      );
+
+      VXUtils.log("Account password updated.");
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Password update failed.",
+        error
+      );
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        error.message || "Unable to update your password.",
+        "error"
+      );
+
+    }
+
+  },
+
+
+  /* =========================================
+     6. TWO-FACTOR AUTHENTICATION STATUS
+  ========================================= */
+
+  async loadTwoFactorStatus() {
+
+    const toggle = VXElements.byId(
+      "securityTwoFactorEnabled"
+    );
+
+    const status = VXElements.byId(
+      "twoFactorStatus"
+    );
+
+    try {
+
+      const {
+        data,
+        error
+      } = await this.client.auth.mfa.listFactors();
+
+      if (error) throw error;
+
+      const verifiedFactors =
+        data.totp.filter(
+          factor => factor.status === "verified"
+        );
+
+      const enabled = verifiedFactors.length > 0;
+
+      if (toggle) {
+        toggle.checked = enabled;
+      }
+
+      if (status) {
+
+        status.textContent = enabled
+          ? "Enabled"
+          : "Not configured";
+
+      }
+
+      this.updateOverview();
+
+      return enabled;
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to check two-factor authentication.",
+        error
+      );
+
+      if (status) {
+        status.textContent = "Status unavailable";
+      }
+
+      return false;
+
+    }
+
+  },
+
+
+  /* =========================================
+     7. ENABLE TWO-FACTOR AUTHENTICATION
+  ========================================= */
+
+  async enableTwoFactor() {
+
+    if (!this.user) {
+
+      alert("Please sign in first.");
+
+      return false;
+
+    }
+
+    let factorId = null;
+
+    try {
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        "Preparing two-factor authentication...",
+        "info"
+      );
+
+      const {
+        data,
+        error
+      } = await this.client.auth.mfa.enroll({
+        factorType: "totp",
+        friendlyName: "VANTAGE X Authenticator"
+      });
+
+      if (error) throw error;
+
+      factorId = data.id;
+
+      const secret = data.totp.secret;
+
+      const qrCode = data.totp.qr_code;
+
+      alert(
+        "Your authenticator setup has started.\n\n" +
+        "Add this secret to a compatible authenticator app:\n\n" +
+        secret +
+        "\n\nKeep this secret private. Do not share it with anyone."
+      );
+
+      const verificationCode = prompt(
+        "Enter the verification code generated by your authenticator app."
+      );
+
+      if (!verificationCode) {
+
+        await this.client.auth.mfa.unenroll({
+          factorId
+        });
+
+        throw new Error(
+          "Two-factor setup was cancelled."
+        );
+
+      }
+
+      const {
+        data: challengeData,
+        error: challengeError
+      } = await this.client.auth.mfa.challenge({
+        factorId
+      });
+
+      if (challengeError) throw challengeError;
+
+      const {
+        error: verifyError
+      } = await this.client.auth.mfa.verify({
+
+        factorId,
+
+        challengeId: challengeData.id,
+
+        code: verificationCode.trim()
+
+      });
+
+      if (verifyError) throw verifyError;
+
+      await this.loadTwoFactorStatus();
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        "Two-factor authentication is now enabled.",
+        "success"
+      );
+
+      return true;
+
+    } catch (error) {
+
+      if (factorId) {
+
+        try {
+
+          await this.client.auth.mfa.unenroll({
+            factorId
+          });
+
+        } catch (cleanupError) {
+
+          VXUtils.error(
+            "Could not clean up incomplete MFA setup.",
+            cleanupError
+          );
+
+        }
+
+      }
+
+      VXUtils.error(
+        "Two-factor setup failed.",
+        error
+      );
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        error.message || "Unable to enable two-factor authentication.",
+        "error"
+      );
+
+      await this.loadTwoFactorStatus();
+
+      return false;
+
+    }
+
+  },
+
+
+  /* =========================================
+     8. DISABLE TWO-FACTOR AUTHENTICATION
+  ========================================= */
+
+  async disableTwoFactor() {
+
+    const confirmed = confirm(
+      "Are you sure you want to disable two-factor authentication?\n\nThis will reduce your account protection."
+    );
+
+    if (!confirmed) {
+
+      await this.loadTwoFactorStatus();
+
+      return;
+
+    }
+
+    try {
+
+      const {
+        data,
+        error
+      } = await this.client.auth.mfa.listFactors();
+
+      if (error) throw error;
+
+      const verifiedFactors =
+        data.totp.filter(
+          factor => factor.status === "verified"
+        );
+
+      for (const factor of verifiedFactors) {
+
+        const {
+          error: unenrollError
+        } = await this.client.auth.mfa.unenroll({
+          factorId: factor.id
+        });
+
+        if (unenrollError) throw unenrollError;
+
+      }
+
+      await this.loadTwoFactorStatus();
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        "Two-factor authentication has been disabled.",
+        "success"
+      );
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to disable two-factor authentication.",
+        error
+      );
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        error.message || "Unable to disable two-factor authentication.",
+        "error"
+      );
+
+      await this.loadTwoFactorStatus();
+
+    }
+
+  },
+
+
+  /* =========================================
+     9. RECOVERY INFORMATION
+  ========================================= */
+
+  manageRecoveryOptions() {
+
+    if (!this.user) {
+
+      alert("Please sign in first.");
+
+      return;
+
+    }
+
+    const email =
+      this.user.email || "No email available";
+
+    alert(
+      "ACCOUNT RECOVERY INFORMATION\n\n" +
+      "Account email: " + email +
+      "\n\n" +
+      "You can use your registered email to access the password recovery process.\n\n" +
+      "Additional recovery methods will be added when the recovery management system is implemented."
+    );
+
+  },
+
+
+  /* =========================================
+     10. LOGIN ACTIVITY
+  ========================================= */
+
+  async refreshLoginActivity() {
+
+    const container = VXElements.byId(
+      "securityLoginActivity"
+    );
+
+    if (!container) return;
+
+    if (!this.user) {
+
+      container.textContent =
+        "Sign in to view available account information.";
+
+      return;
+
+    }
+
+    try {
+
+      const {
+        data,
+        error
+      } = await this.client.auth.getSession();
+
+      if (error) throw error;
+
+      const session = data.session;
+
+      if (!session) {
+
+        container.textContent =
+          "No active session was found.";
+
+        return;
+
+      }
+
+      const lastSignIn =
+        this.user.last_sign_in_at
+          ? new Date(
+              this.user.last_sign_in_at
+            ).toLocaleString()
+          : "Not available";
+
+      const device =
+        navigator.userAgent || "Unknown device";
+
+      container.replaceChildren();
+
+      const activityCard =
+        document.createElement("div");
+
+      activityCard.className =
+        "settings-security-activity-item";
+
+      const heading =
+        document.createElement("strong");
+
+      heading.textContent =
+        "Current signed-in session";
+
+      const details =
+        document.createElement("p");
+
+      details.textContent =
+        "Last sign-in recorded: " +
+        lastSignIn;
+
+      const deviceInfo =
+        document.createElement("p");
+
+      deviceInfo.textContent =
+        "Current browser/device: " + device;
+
+      const note =
+        document.createElement("p");
+
+      note.textContent =
+        "This is information about your current session, not a complete login history.";
+
+      activityCard.append(
+        heading,
+        details,
+        deviceInfo,
+        note
+      );
+
+      container.appendChild(activityCard);
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to refresh login information.",
+        error
+      );
+
+      container.textContent =
+        "Unable to retrieve current session information.";
+
+    }
+
+  },
+
+
+  /* =========================================
+     11. ACTIVE SESSION MANAGEMENT
+  ========================================= */
+
+  async signOutOtherSessions() {
+
+    if (!this.user) {
+
+      alert("Please sign in first.");
+
+      return;
+
+    }
+
+    const confirmed = confirm(
+      "Sign out other sessions connected to your account?\n\nYour current session should remain active."
+    );
+
+    if (!confirmed) return;
+
+    try {
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        "Signing out other sessions...",
+        "info"
+      );
+
+      const {
+        error
+      } = await this.client.auth.signOut({
+        scope: "others"
+      });
+
+      if (error) throw error;
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        "The request to sign out other sessions was completed.",
+        "success"
+      );
+
+      await this.refreshLoginActivity();
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to sign out other sessions.",
+        error
+      );
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        error.message || "Unable to sign out other sessions.",
+        "error"
+      );
+
+    }
+
+  },
+
+
+  /* =========================================
+     12. SECURITY PREFERENCES
+  ========================================= */
+
+  getPreferences() {
+
+    try {
+
+      const stored = localStorage.getItem(
+        this.preferencesKey
+      );
+
+      if (!stored) {
+        return { ...this.defaultPreferences };
+      }
+
+      return {
+        ...this.defaultPreferences,
+        ...JSON.parse(stored)
+      };
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to read local security preferences.",
+        error
+      );
+
+      return { ...this.defaultPreferences };
+
+    }
+
+  },
+
+
+  loadSecurityPreferences() {
+
+    const preferences = this.getPreferences();
+
+    VXUtils.setValue(
+      "securityNewLoginAlerts",
+      preferences.newLoginAlerts
+    );
+
+    VXUtils.setValue(
+      "securityUnusualActivityAlerts",
+      preferences.unusualActivityAlerts
+    );
+
+    VXUtils.setValue(
+      "securityPasswordChangeAlerts",
+      preferences.passwordChangeAlerts
+    );
+
+  },
+
+
+  saveSecurityPreferences() {
+
+    const preferences = {
+
+      newLoginAlerts:
+        VXUtils.getValue("securityNewLoginAlerts"),
+
+      unusualActivityAlerts:
+        VXUtils.getValue("securityUnusualActivityAlerts"),
+
+      passwordChangeAlerts:
+        VXUtils.getValue("securityPasswordChangeAlerts")
+
+    };
+
+    try {
+
+      localStorage.setItem(
+        this.preferencesKey,
+        JSON.stringify(preferences)
+      );
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        "Preferences saved on this device. They are not yet synchronised across devices or connected to notification delivery.",
+        "success"
+      );
+
+      VXUtils.log(
+        "Local security preferences saved.",
+        preferences
+      );
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to save security preferences.",
+        error
+      );
+
+      VXStatus.show(
+        "securitySettingsStatus",
+        "Unable to save preferences on this device.",
+        "error"
+      );
+
+    }
+
+  },
+
+
+  /* =========================================
+     13. CONNECT SECURITY BUTTONS
+  ========================================= */
+
+  attachEvents() {
+
+    const passwordButton =
+      VXElements.byId("changePasswordButton");
+
+    const recoveryButton =
+      VXElements.byId("manageRecoveryOptions");
+
+    const twoFactorToggle =
+      VXElements.byId("securityTwoFactorEnabled");
+
+    const refreshButton =
+      VXElements.byId("refreshLoginActivity");
+
+    const logoutButton =
+      VXElements.byId("logoutOtherSessions");
+
+    const saveButton =
+      VXElements.byId("saveSecurityPreferences");
+
+
+    if (passwordButton) {
+
+      passwordButton.addEventListener(
+        "click",
+        () => this.changePassword()
+      );
+
+    }
+
+
+    if (recoveryButton) {
+
+      recoveryButton.addEventListener(
+        "click",
+        () => this.manageRecoveryOptions()
+      );
+
+    }
+
+
+    if (twoFactorToggle) {
+
+      twoFactorToggle.addEventListener(
+        "change",
+        async () => {
+
+          if (twoFactorToggle.checked) {
+
+            await this.enableTwoFactor();
+
+          } else {
+
+            await this.disableTwoFactor();
+
+          }
+
+        }
+      );
+
+    }
+
+
+    if (refreshButton) {
+
+      refreshButton.addEventListener(
+        "click",
+        () => this.refreshLoginActivity()
+      );
+
+    }
+
+
+    if (logoutButton) {
+
+      logoutButton.addEventListener(
+        "click",
+        () => this.signOutOtherSessions()
+      );
+
+    }
+
+
+    if (saveButton) {
+
+      saveButton.addEventListener(
+        "click",
+        () => this.saveSecurityPreferences()
+      );
+
+    }
+
+  }
+
+};
+
+
+/* =========================================
+   14. INITIALIZE SECURITY MANAGEMENT
+========================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    VXSecurity.initialize();
+
+  }
+);
+
+
+/* =====================================================
+   END OF JAVASCRIPT SECTION 7
+===================================================== */
+
+
 
 
 
