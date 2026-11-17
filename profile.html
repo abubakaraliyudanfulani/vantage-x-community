@@ -1263,6 +1263,22 @@ button {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 <script src="supabase-config.js"></script>
+  <script>
+window.addEventListener("error", function(event) {
+  console.error("PROFILE ERROR:", event.message, event.filename, event.lineno);
+  alert(
+    "Profile JavaScript Error: " +
+    event.message +
+    "\nLine: " +
+    event.lineno
+  );
+});
+
+window.addEventListener("unhandledrejection", function(event) {
+  console.error("PROFILE PROMISE ERROR:", event.reason);
+  alert("Profile loading error: " + event.reason);
+});
+  </script>
 
 <script>
 "use strict";
