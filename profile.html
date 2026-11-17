@@ -2584,8 +2584,79 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-// Connect the Edit Profile menu option.
+/* =====================================
+   PROFILE MENU ACTIONS
+===================================== */
+
 document.querySelectorAll("[data-profile-action]").forEach((button) => {
+
+  button.addEventListener("click", async () => {
+
+    const action = button.dataset.profileAction;
+
+    closeProfileMenu();
+
+    const profileURL =
+      window.location.origin +
+      window.location.pathname +
+      "?id=" + encodeURIComponent(currentProfile.id);
+
+    // EDIT PROFILE
+    if (action === "edit") {
+      document.getElementById("editProfileButton").click();
+      return;
+    }
+
+    // COPY PROFILE LINK
+    if (action === "copy") {
+      try {
+        await navigator.clipboard.writeText(profileURL);
+        alert("Profile link copied successfully!");
+      } catch (error) {
+        alert("Unable to copy the link. Please copy it from your browser address bar.");
+      }
+      return;
+    }
+
+    // SHARE PROFILE
+    if (action === "share") {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "VANTAGE X COMMUNITY",
+            text: "Connect with me on VANTAGE X COMMUNITY.",
+            url: profileURL
+          });
+        } catch (error) {
+          if (error.name !== "AbortError") {
+            alert("Unable to share this profile right now.");
+          }
+        }
+      } else {
+        try {
+          await navigator.clipboard.writeText(profileURL);
+          alert("Your profile link has been copied. You can share it anywhere.");
+        } catch (error) {
+          alert("Unable to share this profile right now.");
+        }
+      }
+      return;
+    }
+
+    // SETTINGS TO BE IMPLEMENTED
+    if (action === "privacy") {
+      alert("Privacy Settings will be configured in the next development step.");
+      return;
+    }
+
+    if (action === "blocked") {
+      alert("Blocked Accounts management will be configured in a later step.");
+      return;
+    }
+
+  });
+
+});
   button.addEventListener("click", () => {
     const action = button.dataset.profileAction;
 
