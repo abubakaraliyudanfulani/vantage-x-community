@@ -2659,9 +2659,589 @@ document.addEventListener(
 );
 
 
+
 /* =========================================
-   END OF JAVASCRIPT SECTION 5
+   JAVASCRIPT SECTION 6
+   PRIVACY & AUDIENCE MANAGEMENT
 ========================================= */
+
+const VXPrivacy = {
+
+    initialized: false,
+
+    loading: false,
+
+    saving: false,
+
+    settings: {},
+
+    /* -------------------------------------
+       PRIVACY CONTROL DEFINITIONS
+    ------------------------------------- */
+
+    controls: {
+
+        toggles: [
+            "privacyPrivateAccount",
+            "privacySearchVisibility",
+            "privacyProfileDiscovery",
+            "privacyActivityStatus",
+            "privacyShowFollowers",
+            "privacyShowFollowing",
+            "privacyAllowReposts",
+            "privacyManualTagApproval",
+            "privacyProfileVisitHistory",
+            "privacyShowLikes"
+        ],
+
+        selects: {
+
+            privacyWhoCanFollow: [
+                "everyone",
+                "approved"
+            ],
+
+            privacyDefaultAudience: [
+                "public",
+                "followers",
+                "private"
+            ],
+
+            privacyWhoCanComment: [
+                "everyone",
+                "followers",
+                "following",
+                "none"
+            ],
+
+            privacyWhoCanShare: [
+                "everyone",
+                "followers",
+                "none"
+            ],
+
+            privacyWhoCanMention: [
+                "everyone",
+                "followers",
+                "following",
+                "none"
+            ],
+
+            privacyWhoCanTag: [
+                "everyone",
+                "followers",
+                "following",
+                "none"
+            ]
+
+        }
+
+    },
+
+
+    /* -------------------------------------
+       INITIALIZE PRIVACY SYSTEM
+    ------------------------------------- */
+
+    initialize() {
+
+        if (this.initialized) return;
+
+        this.initialized = true;
+
+        this.attachEvents();
+
+        this.loadPrivacyPreferences();
+
+        VXUtils.log(
+            "Privacy and Audience system initialized."
+        );
+
+    },
+
+
+    /* -------------------------------------
+       GET AUTHENTICATED MEMBER
+    ------------------------------------- */
+
+    getUser() {
+
+        if (
+            typeof VXAuth === "undefined" ||
+            !VXAuth.isAuthenticated()
+        ) {
+
+            return null;
+
+        }
+
+        return VXAuth.getUser();
+
+    },
+
+
+    /* -------------------------------------
+       READ PRIVACY CONTROLS
+    ------------------------------------- */
+
+    collectPreferences() {
+
+        const preferences = {};
+
+        this.controls.toggles.forEach(id => {
+
+            const element = VXElements.byId(id);
+
+            if (element) {
+
+                preferences[id] = element.checked;
+
+            }
+
+        });
+
+
+        Object.keys(this.controls.selects).forEach(id => {
+
+            const element = VXElements.byId(id);
+
+            if (element) {
+
+                preferences[id] = element.value;
+
+            }
+
+        });
+
+        return preferences;
+
+    },
+
+
+    /* -------------------------------------
+       VALIDATE PRIVACY CONTROLS
+    ------------------------------------- */
+
+    validatePreferences(preferences) {
+
+        for (const id of this.controls.toggles) {
+
+            if (typeof preferences[id] !== "boolean") {
+
+                return {
+                    valid: false,
+                    message: "A privacy switch contains an invalid value."
+                };
+
+            }
+
+        }
+
+
+        for (
+            const [id, allowedValues]
+            of Object.entries(this.controls.selects)
+        ) {
+
+            if (!allowedValues.includes(preferences[id])) {
+
+                return {
+                    valid: false,
+                    message: "Please select a valid option for " + id + "."
+                };
+
+            }
+
+        }
+
+
+        return {
+            valid: true
+        };
+
+    },
+
+
+    /* -------------------------------------
+       LOAD PRIVACY PREFERENCES
+    ------------------------------------- */
+
+    async loadPrivacyPreferences() {
+
+        if (this.loading) return;
+
+        this.loading = true;
+
+        try {
+
+            /* ENSURE DATABASE IS AVAILABLE */
+
+            const connected =
+                await VXDatabase.initialize();
+
+            if (!connected) {
+
+                throw new Error(
+                    "The database connection is unavailable."
+                );
+
+            }
+
+
+            const client = VXDatabase.getClient();
+
+            /* GET CURRENT AUTHENTICATED SESSION */
+
+            const {
+                data: sessionData,
+                error: sessionError
+            } = await client.auth.getSession();
+
+            if (sessionError) throw sessionError;
+
+            const user = sessionData.session?.user;
+
+            if (!user) {
+
+                VXStatus.show(
+                    "privacySettingsStatus",
+                    "Please sign in to load your privacy preferences.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            /* LOAD CONFIRMED DATABASE COLUMN */
+
+            const {
+                data,
+                error
+            } = await client
+                .from("account_settings")
+                .select(
+                    "user_id, is_private"
+                )
+                .eq("user_id", user.id)
+                .maybeSingle();
+
+            if (error) throw error;
+
+            if (data) {
+
+                this.settings.is_private =
+                    Boolean(data.is_private);
+
+                VXUtils.setValue(
+                    "privacyPrivateAccount",
+                    data.is_private
+                );
+
+            }
+
+            this.settings.user_id = user.id;
+
+            VXUtils.log(
+                "Privacy preferences loaded."
+            );
+
+
+            /* CLEAR PREVIOUS STATUS */
+
+            VXStatus.clear(
+                "privacySettingsStatus"
+            );
+
+        } catch (error) {
+
+            VXUtils.error(
+                "Privacy preferences could not be loaded.",
+                error
+            );
+
+            VXStatus.show(
+                "privacySettingsStatus",
+                "Unable to load saved privacy preferences. Please try again.",
+                "error"
+            );
+
+        } finally {
+
+            this.loading = false;
+
+        }
+
+    },
+
+
+    /* -------------------------------------
+       SAVE PRIVACY PREFERENCES
+    ------------------------------------- */
+
+    async savePrivacyPreferences() {
+
+        if (this.saving) return;
+
+        const user = this.getUser();
+
+        if (!user) {
+
+            VXStatus.show(
+                "privacySettingsStatus",
+                "Please sign in before saving privacy settings.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const preferences =
+            this.collectPreferences();
+
+        const validation =
+            this.validatePreferences(preferences);
+
+        if (!validation.valid) {
+
+            VXStatus.show(
+                "privacySettingsStatus",
+                validation.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const button = VXElements.byId(
+            "savePrivacyPreferences"
+        );
+
+        this.saving = true;
+
+        if (button) {
+
+            button.disabled = true;
+
+            button.textContent = "Saving...";
+
+        }
+
+
+        try {
+
+            const client = VXDatabase.getClient();
+
+            if (!client) {
+
+                throw new Error(
+                    "Database connection unavailable."
+                );
+
+            }
+
+
+            /*
+              CURRENTLY CONFIRMED DATABASE FIELD:
+
+              account_settings.is_private
+
+              Other privacy preferences will be
+              connected after their database schema
+              and enforcement policies are created.
+            */
+
+            const {
+                data,
+                error
+            } = await client
+                .from("account_settings")
+                .update({
+
+                    is_private:
+                        preferences.privacyPrivateAccount
+
+                })
+                .eq("user_id", user.id)
+                .select("user_id, is_private")
+                .maybeSingle();
+
+            if (error) throw error;
+
+            if (!data) {
+
+                throw new Error(
+                    "No existing account settings record was updated. Please check that your account has an account_settings record and the required Supabase permissions."
+                );
+
+            }
+
+
+            /* UPDATE LOCAL SETTINGS */
+
+            this.settings.is_private =
+                data.is_private;
+
+            this.settings.user_id =
+                data.user_id;
+
+
+            /*
+              DO NOT CLAIM ALL SETTINGS ARE SAVED.
+
+              Only is_private is currently confirmed
+              in the existing database schema.
+            */
+
+            VXStatus.show(
+                "privacySettingsStatus",
+                "Private account preference saved successfully. Other privacy preferences are displayed but require additional database configuration before they can be permanently saved.",
+                "success"
+            );
+
+
+            VXUtils.log(
+                "Private account preference saved."
+            );
+
+        } catch (error) {
+
+            VXUtils.error(
+                "Privacy settings could not be saved.",
+                error
+            );
+
+            VXStatus.show(
+                "privacySettingsStatus",
+                error.message ||
+                "Unable to save privacy settings.",
+                "error"
+            );
+
+        } finally {
+
+            this.saving = false;
+
+            if (button) {
+
+                button.disabled = false;
+
+                button.textContent =
+                    "Save Privacy Settings";
+
+            }
+
+        }
+
+    },
+
+
+    /* -------------------------------------
+       BLOCKED ACCOUNTS
+    ------------------------------------- */
+
+    manageBlockedAccounts() {
+
+        VXStatus.show(
+            "privacySettingsStatus",
+            "Blocked account management will be connected to the community blocking system.",
+            "info"
+        );
+
+    },
+
+
+    /* -------------------------------------
+       RESTRICTED ACCOUNTS
+    ------------------------------------- */
+
+    manageRestrictedAccounts() {
+
+        VXStatus.show(
+            "privacySettingsStatus",
+            "Restricted account management will be connected to the community restriction system.",
+            "info"
+        );
+
+    },
+
+
+    /* -------------------------------------
+       ATTACH PRIVACY EVENTS
+    ------------------------------------- */
+
+    attachEvents() {
+
+        const saveButton = VXElements.byId(
+            "savePrivacyPreferences"
+        );
+
+        const blockedButton = VXElements.byId(
+            "manageBlockedAccounts"
+        );
+
+        const restrictedButton = VXElements.byId(
+            "manageRestrictedAccounts"
+        );
+
+
+        if (saveButton) {
+
+            saveButton.addEventListener(
+                "click",
+                () => this.savePrivacyPreferences()
+            );
+
+        }
+
+
+        if (blockedButton) {
+
+            blockedButton.addEventListener(
+                "click",
+                () => this.manageBlockedAccounts()
+            );
+
+        }
+
+
+        if (restrictedButton) {
+
+            restrictedButton.addEventListener(
+                "click",
+                () => this.manageRestrictedAccounts()
+            );
+
+        }
+
+    }
+
+};
+
+
+/* -----------------------------------------
+   INITIALIZE PRIVACY SYSTEM
+----------------------------------------- */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        VXPrivacy.initialize();
+
+    }
+);
+
+
+/* =========================================
+   END OF JAVASCRIPT SECTION 6
+========================================= */
+
 
 
           
