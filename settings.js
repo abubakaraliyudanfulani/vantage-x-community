@@ -5666,8 +5666,577 @@ document.addEventListener(
 
 
 /* =====================================================
-   END OF JAVASCRIPT SECTION 9
+   VANTAGE X COMMUNITY
+   JAVASCRIPT SECTION 10
+   MESSAGING & COMMUNICATION MANAGEMENT
 ===================================================== */
+
+
+/* =========================================
+   1. MESSAGING SETTINGS CONTROLLER
+========================================= */
+
+const VXMessaging = {
+
+  initialized: false,
+
+  user: null,
+
+  preferences: {},
+
+  storageKey: null,
+
+
+  /* =========================================
+     2. DEFAULT MESSAGING PREFERENCES
+  ========================================= */
+
+  defaults: {
+
+    messagingWhoCanMessage: "everyone",
+
+    messagingRequestHandling: "requests",
+
+    messagingAllowRequests: true,
+
+    messagingReadReceipts: true,
+
+    messagingTypingIndicators: true,
+
+    messagingOnlineStatus: false,
+
+    messagingWhoCanAddGroups: "everyone",
+
+    messagingGroupApproval: true,
+
+    messagingFilterUnknown: true,
+
+    messagingNotificationPreviews: true
+
+  },
+
+
+  /* =========================================
+     3. SETTINGS ELEMENT CONFIGURATION
+  ========================================= */
+
+  selectFields: [
+
+    "messagingWhoCanMessage",
+
+    "messagingRequestHandling",
+
+    "messagingWhoCanAddGroups"
+
+  ],
+
+  toggleFields: [
+
+    "messagingAllowRequests",
+
+    "messagingReadReceipts",
+
+    "messagingTypingIndicators",
+
+    "messagingOnlineStatus",
+
+    "messagingGroupApproval",
+
+    "messagingFilterUnknown",
+
+    "messagingNotificationPreviews"
+
+  ],
+
+
+  /* =========================================
+     4. INITIALIZE MESSAGING SETTINGS
+  ========================================= */
+
+  async initialize() {
+
+    if (this.initialized) return;
+
+    try {
+
+      const client = VXDatabase.getClient();
+
+      if (!client) {
+
+        VXUtils.error(
+          "Messaging settings could not access Supabase."
+        );
+
+        return;
+
+      }
+
+      const { data, error } =
+        await client.auth.getSession();
+
+      if (error) throw error;
+
+      this.user = data.session?.user || null;
+
+      this.storageKey = this.user
+        ? `vx_messaging_preferences_${this.user.id}`
+        : "vx_messaging_preferences_guest";
+
+
+      this.loadPreferences();
+
+      this.attachEvents();
+
+      this.initialized = true;
+
+      VXUtils.log(
+        "Messaging settings initialized."
+      );
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Messaging settings initialization failed.",
+        error
+      );
+
+      this.showStatus(
+        "Unable to initialise messaging preferences. Please refresh and try again.",
+        "error"
+      );
+
+    }
+
+  },
+
+
+  /* =========================================
+     5. COLLECT CURRENT FORM VALUES
+  ========================================= */
+
+  collectPreferences() {
+
+    const preferences = {};
+
+    this.selectFields.forEach(id => {
+
+      const element = VXElements.byId(id);
+
+      if (element) {
+
+        preferences[id] = element.value;
+
+      }
+
+    });
+
+
+    this.toggleFields.forEach(id => {
+
+      const element = VXElements.byId(id);
+
+      if (element) {
+
+        preferences[id] = element.checked;
+
+      }
+
+    });
+
+    return preferences;
+
+  },
+
+
+  /* =========================================
+     6. VALIDATE PREFERENCES
+  ========================================= */
+
+  validatePreferences(preferences) {
+
+    const allowedValues = {
+
+      messagingWhoCanMessage: [
+        "everyone",
+        "followers",
+        "following",
+        "mutual",
+        "none"
+      ],
+
+      messagingRequestHandling: [
+        "requests",
+        "allow",
+        "reject"
+      ],
+
+      messagingWhoCanAddGroups: [
+        "everyone",
+        "followers",
+        "following",
+        "mutual",
+        "none"
+      ]
+
+    };
+
+
+    for (const field of this.selectFields) {
+
+      if (
+        !allowedValues[field].includes(
+          preferences[field]
+        )
+      ) {
+
+        return {
+          valid: false,
+          message: "One of your messaging selections is invalid."
+        };
+
+      }
+
+    }
+
+
+    for (const field of this.toggleFields) {
+
+      if (
+        typeof preferences[field] !== "boolean"
+      ) {
+
+        return {
+          valid: false,
+          message: "One of your messaging preferences is invalid."
+        };
+
+      }
+
+    }
+
+
+    return {
+      valid: true,
+      message: "Messaging preferences are valid."
+    };
+
+  },
+
+
+  /* =========================================
+     7. APPLY PREFERENCES TO THE INTERFACE
+  ========================================= */
+
+  applyPreferences(preferences) {
+
+    Object.entries(preferences).forEach(
+      ([id, value]) => {
+
+        const element = VXElements.byId(id);
+
+        if (!element) return;
+
+        if (element.type === "checkbox") {
+
+          element.checked = Boolean(value);
+
+        } else {
+
+          element.value = value;
+
+        }
+
+      }
+    );
+
+  },
+
+
+  /* =========================================
+     8. LOAD SAVED PREFERENCES
+  ========================================= */
+
+  loadPreferences() {
+
+    let savedPreferences = {};
+
+    try {
+
+      const stored = localStorage.getItem(
+        this.storageKey
+      );
+
+      if (stored) {
+
+        savedPreferences = JSON.parse(stored);
+
+      }
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Could not read saved messaging preferences.",
+        error
+      );
+
+    }
+
+
+    const combinedPreferences = {
+
+      ...this.defaults,
+
+      ...savedPreferences
+
+    };
+
+
+    const validation =
+      this.validatePreferences(
+        combinedPreferences
+      );
+
+    this.preferences = validation.valid
+      ? combinedPreferences
+      : { ...this.defaults };
+
+
+    this.applyPreferences(
+      this.preferences
+    );
+
+    VXUtils.log(
+      "Messaging preferences loaded."
+    );
+
+  },
+
+
+  /* =========================================
+     9. SAVE PREFERENCES LOCALLY
+  ========================================= */
+
+  savePreferences() {
+
+    const preferences =
+      this.collectPreferences();
+
+
+    const validation =
+      this.validatePreferences(preferences);
+
+
+    if (!validation.valid) {
+
+      this.showStatus(
+        validation.message,
+        "error"
+      );
+
+      return false;
+
+    }
+
+
+    try {
+
+      localStorage.setItem(
+        this.storageKey,
+        JSON.stringify(preferences)
+      );
+
+
+      this.preferences = preferences;
+
+
+      this.showStatus(
+        "Your messaging preferences have been saved on this device. Server synchronisation and message enforcement will be added with the messaging backend.",
+        "success"
+      );
+
+
+      VXUtils.log(
+        "Messaging preferences saved locally.",
+        preferences
+      );
+
+      return true;
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to save messaging preferences.",
+        error
+      );
+
+      this.showStatus(
+        "Your preferences could not be saved. Check your browser storage and try again.",
+        "error"
+      );
+
+      return false;
+
+    }
+
+  },
+
+
+  /* =========================================
+     10. DISPLAY STATUS MESSAGES
+  ========================================= */
+
+  showStatus(message, type = "info") {
+
+    const element = VXElements.byId(
+      "messagingSettingsStatus"
+    );
+
+    if (!element) return;
+
+    element.textContent = message;
+
+    element.classList.remove(
+      "success",
+      "error",
+      "info"
+    );
+
+    element.classList.add(type);
+
+    element.setAttribute(
+      "role",
+      type === "error" ? "alert" : "status"
+    );
+
+  },
+
+
+  /* =========================================
+     11. MANAGE BLOCKED CONTACTS
+  ========================================= */
+
+  manageBlockedContacts() {
+
+    this.showStatus(
+      "Blocked-contact management will be connected to the Community blocking system. Blocking must also be enforced by the messaging backend.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     12. VIEW MESSAGE REQUESTS
+  ========================================= */
+
+  viewMessageRequests() {
+
+    this.showStatus(
+      "Your message request inbox will appear here once the Community messaging and message-request modules are connected.",
+      "info"
+    );
+
+  },
+
+
+  /* =========================================
+     13. ATTACH BUTTON EVENTS
+  ========================================= */
+
+  attachEvents() {
+
+    const saveButton = VXElements.byId(
+      "saveMessagingPreferences"
+    );
+
+    const blockedButton = VXElements.byId(
+      "messagingManageBlocked"
+    );
+
+    const requestsButton = VXElements.byId(
+      "messagingViewRequests"
+    );
+
+
+    if (saveButton) {
+
+      saveButton.addEventListener(
+        "click",
+        () => this.savePreferences()
+      );
+
+    }
+
+
+    if (blockedButton) {
+
+      blockedButton.addEventListener(
+        "click",
+        () => this.manageBlockedContacts()
+      );
+
+    }
+
+
+    if (requestsButton) {
+
+      requestsButton.addEventListener(
+        "click",
+        () => this.viewMessageRequests()
+      );
+
+    }
+
+
+    /* =====================================
+       LIVE PREFERENCE CHANGE DETECTION
+    ===================================== */
+
+    [...this.selectFields, ...this.toggleFields]
+      .forEach(id => {
+
+        const element = VXElements.byId(id);
+
+        if (!element) return;
+
+        element.addEventListener(
+          "change",
+          () => {
+
+            this.showStatus(
+              "You have unsaved messaging changes.",
+              "info"
+            );
+
+          }
+        );
+
+      });
+
+  }
+
+};
+
+
+/* =========================================
+   14. INITIALIZE MESSAGING MODULE
+========================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    VXMessaging.initialize();
+
+  }
+);
+
+
+/* =========================================
+   END OF JAVASCRIPT SECTION 10
+========================================= */
+
+
 
 
 
