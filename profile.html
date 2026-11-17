@@ -917,7 +917,56 @@ button {
 
 </section>
 
+<!-- =====================================
+     VANTAGE X PRIVACY SETTINGS
+===================================== -->
 
+<section class="card hidden" id="privacySettingsPanel">
+
+  <div class="posts-title">
+    Privacy & Account Settings
+  </div>
+
+  <div class="privacy-settings-content">
+
+    <div class="privacy-setting-item">
+      <div>
+        <strong>Private Account</strong>
+        <p>Control who can view your profile and content.</p>
+      </div>
+      <input type="checkbox" id="privateAccountToggle">
+    </div>
+
+    <div class="privacy-setting-item">
+      <div>
+        <strong>Email Notifications</strong>
+        <p>Receive important community updates by email.</p>
+      </div>
+      <input type="checkbox" id="emailNotificationsToggle">
+    </div>
+
+    <div class="privacy-setting-item">
+      <div>
+        <strong>Push Notifications</strong>
+        <p>Receive notifications about community activity.</p>
+      </div>
+      <input type="checkbox" id="pushNotificationsToggle">
+    </div>
+
+    <button
+      type="button"
+      id="savePrivacySettings"
+      class="gold-button"
+    >
+      Save Privacy Settings
+    </button>
+
+    <div id="privacySettingsMessage" class="status"></div>
+
+  </div>
+
+</section>
+  
 <!-- =====================================
      IMAGE UPLOAD PREVIEW
 ===================================== -->
