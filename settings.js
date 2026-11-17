@@ -4167,8 +4167,816 @@ document.addEventListener(
 
 
 /* =====================================================
-   END OF JAVASCRIPT SECTION 7
+   VANTAGE X COMMUNITY
+   JAVASCRIPT SECTION 8
+   NOTIFICATIONS MANAGEMENT
 ===================================================== */
+
+
+/* =========================================
+   1. NOTIFICATION CONFIGURATION
+========================================= */
+
+const VXNotifications = {
+
+  initialized: false,
+
+  client: null,
+
+  user: null,
+
+  storageKey: "vx_notification_preferences",
+
+  controls: [
+
+    "notifyInApp",
+    "notifyPush",
+    "notifyEmail",
+
+    "notifyLikes",
+    "notifyComments",
+    "notifyCommentReplies",
+    "notifyFollowers",
+    "notifyMentions",
+    "notifyReposts",
+
+    "notifyMessages",
+    "notifyGroups",
+    "notifyEvents",
+
+    "notifyMarketplace",
+    "notifyBusiness",
+
+    "notifyAnnouncements",
+    "notifyRecommendations",
+    "notifyPromotions",
+
+    "notifyQuietHours",
+    "notifyQuietStart",
+    "notifyQuietEnd",
+    "notifyQuietTimezone"
+
+  ],
+
+
+  /* =========================================
+     2. DEFAULT PREFERENCES
+  ========================================= */
+
+  defaults: {
+
+    notifyInApp: true,
+    notifyPush: true,
+    notifyEmail: true,
+
+    notifyLikes: true,
+    notifyComments: true,
+    notifyCommentReplies: true,
+    notifyFollowers: true,
+    notifyMentions: true,
+    notifyReposts: true,
+
+    notifyMessages: true,
+    notifyGroups: true,
+    notifyEvents: true,
+
+    notifyMarketplace: true,
+    notifyBusiness: true,
+
+    notifyAnnouncements: true,
+    notifyRecommendations: false,
+    notifyPromotions: false,
+
+    notifyQuietHours: false,
+    notifyQuietStart: "22:00",
+    notifyQuietEnd: "07:00",
+    notifyQuietTimezone: "Africa/Lagos"
+
+  },
+
+
+  /* =========================================
+     3. INITIALIZE NOTIFICATION CENTRE
+  ========================================= */
+
+  async initialize() {
+
+    if (this.initialized) return;
+
+    this.client = VXDatabase.getClient();
+
+    if (!this.client) {
+
+      VXUtils.error(
+        "Notification system cannot connect to Supabase."
+      );
+
+      return;
+
+    }
+
+    this.initialized = true;
+
+    await this.loadAuthenticatedUser();
+
+    this.loadLocalPreferences();
+
+    if (this.user) {
+
+      await this.loadDatabasePreferences();
+
+    }
+
+    this.attachEvents();
+
+    VXUtils.log(
+      "Notification management initialized."
+    );
+
+  },
+
+
+  /* =========================================
+     4. GET AUTHENTICATED USER
+  ========================================= */
+
+  async loadAuthenticatedUser() {
+
+    try {
+
+      const {
+        data,
+        error
+      } = await this.client.auth.getUser();
+
+      if (error) throw error;
+
+      this.user = data.user || null;
+
+      return this.user;
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to identify notification account.",
+        error
+      );
+
+      this.user = null;
+
+      return null;
+
+    }
+
+  },
+
+
+  /* =========================================
+     5. GET USER-SPECIFIC STORAGE KEY
+  ========================================= */
+
+  getStorageKey() {
+
+    if (!this.user) {
+
+      return this.storageKey + "_guest";
+
+    }
+
+    return (
+      this.storageKey +
+      "_" +
+      this.user.id
+    );
+
+  },
+
+
+  /* =========================================
+     6. COLLECT CURRENT PREFERENCES
+  ========================================= */
+
+  collectPreferences() {
+
+    const preferences = {};
+
+    this.controls.forEach(id => {
+
+      const element = VXElements.byId(id);
+
+      if (!element) return;
+
+      if (element.type === "checkbox") {
+
+        preferences[id] = element.checked;
+
+      } else {
+
+        preferences[id] = element.value;
+
+      }
+
+    });
+
+    return preferences;
+
+  },
+
+
+  /* =========================================
+     7. LOAD LOCAL PREFERENCES
+  ========================================= */
+
+  loadLocalPreferences() {
+
+    let savedPreferences = {};
+
+    try {
+
+      const stored = localStorage.getItem(
+        this.getStorageKey()
+      );
+
+      if (stored) {
+
+        savedPreferences = JSON.parse(stored);
+
+      }
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to load saved notification preferences.",
+        error
+      );
+
+    }
+
+    const preferences = {
+
+      ...this.defaults,
+
+      ...savedPreferences
+
+    };
+
+    this.controls.forEach(id => {
+
+      if (
+        preferences[id] === undefined ||
+        preferences[id] === null
+      ) {
+        return;
+      }
+
+      VXUtils.setValue(
+        id,
+        preferences[id]
+      );
+
+    });
+
+  },
+
+
+  /* =========================================
+     8. SAVE LOCAL PREFERENCES
+  ========================================= */
+
+  saveLocalPreferences(preferences) {
+
+    try {
+
+      localStorage.setItem(
+        this.getStorageKey(),
+        JSON.stringify(preferences)
+      );
+
+      return true;
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to save notification preferences locally.",
+        error
+      );
+
+      return false;
+
+    }
+
+  },
+
+
+  /* =========================================
+     9. LOAD SUPABASE PREFERENCES
+  ========================================= */
+
+  async loadDatabasePreferences() {
+
+    if (!this.user) return;
+
+    try {
+
+      const {
+        data,
+        error
+      } = await this.client
+        .from("account_settings")
+        .select(
+          "email_notifications, push_notifications"
+        )
+        .eq("user_id", this.user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (!data) {
+
+        VXUtils.log(
+          "No account notification settings record was found."
+        );
+
+        return;
+
+      }
+
+      if (typeof data.email_notifications === "boolean") {
+
+        VXUtils.setValue(
+          "notifyEmail",
+          data.email_notifications
+        );
+
+      }
+
+      if (typeof data.push_notifications === "boolean") {
+
+        VXUtils.setValue(
+          "notifyPush",
+          data.push_notifications
+        );
+
+      }
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to load database notification settings.",
+        error
+      );
+
+    }
+
+  },
+
+
+  /* =========================================
+     10. VALIDATE PREFERENCES
+  ========================================= */
+
+  validatePreferences(preferences) {
+
+    const start = preferences.notifyQuietStart;
+
+    const end = preferences.notifyQuietEnd;
+
+    if (
+      !/^\d{2}:\d{2}$/.test(start) ||
+      !/^\d{2}:\d{2}$/.test(end)
+    ) {
+
+      return {
+        valid: false,
+        message: "Please enter valid quiet-hour times."
+      };
+
+    }
+
+    const timezone = preferences.notifyQuietTimezone;
+
+    if (
+      ![
+        "Africa/Lagos",
+        "UTC"
+      ].includes(timezone)
+    ) {
+
+      return {
+        valid: false,
+        message: "Please select a supported time zone."
+      };
+
+    }
+
+    return {
+      valid: true
+    };
+
+  },
+
+
+  /* =========================================
+     11. SAVE DATABASE CHANNEL PREFERENCES
+  ========================================= */
+
+  async saveDatabasePreferences(preferences) {
+
+    if (!this.user) {
+
+      return {
+        success: false,
+        message: "Sign in to synchronise account preferences."
+      };
+
+    }
+
+    try {
+
+      const {
+        data,
+        error
+      } = await this.client
+        .from("account_settings")
+        .update({
+
+          email_notifications:
+            preferences.notifyEmail,
+
+          push_notifications:
+            preferences.notifyPush
+
+        })
+        .eq("user_id", this.user.id)
+        .select("user_id")
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (!data) {
+
+        return {
+          success: false,
+          message:
+            "Local preferences were saved, but no existing account settings record was found for synchronisation."
+        };
+
+      }
+
+      return {
+        success: true,
+        message: "Account notification channels synchronised."
+      };
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Database notification update failed.",
+        error
+      );
+
+      return {
+        success: false,
+        message:
+          error.message ||
+          "Unable to synchronise notification channels."
+      };
+
+    }
+
+  },
+
+
+  /* =========================================
+     12. HANDLE PUSH NOTIFICATION PERMISSION
+  ========================================= */
+
+  async handlePushPermission() {
+
+    const toggle = VXElements.byId(
+      "notifyPush"
+    );
+
+    if (!toggle || !toggle.checked) return;
+
+    if (!("Notification" in window)) {
+
+      VXStatus.show(
+        "notificationSettingsStatus",
+        "This browser does not support web notification permissions.",
+        "error"
+      );
+
+      toggle.checked = false;
+
+      return;
+
+    }
+
+    if (Notification.permission === "denied") {
+
+      VXStatus.show(
+        "notificationSettingsStatus",
+        "Notifications are blocked in your browser settings. Change browser permissions before enabling them.",
+        "error"
+      );
+
+      toggle.checked = false;
+
+      return;
+
+    }
+
+    if (Notification.permission === "default") {
+
+      try {
+
+        const permission =
+          await Notification.requestPermission();
+
+        if (permission !== "granted") {
+
+          toggle.checked = false;
+
+          VXStatus.show(
+            "notificationSettingsStatus",
+            "Browser notification permission was not granted.",
+            "info"
+          );
+
+        }
+
+      } catch (error) {
+
+        VXUtils.error(
+          "Push permission request failed.",
+          error
+        );
+
+        toggle.checked = false;
+
+      }
+
+    }
+
+  },
+
+
+  /* =========================================
+     13. SAVE ALL NOTIFICATION PREFERENCES
+  ========================================= */
+
+  async savePreferences() {
+
+    const saveButton = VXElements.byId(
+      "saveNotificationPreferences"
+    );
+
+    if (saveButton) {
+
+      saveButton.disabled = true;
+
+      saveButton.textContent = "Saving...";
+
+    }
+
+    try {
+
+      const preferences =
+        this.collectPreferences();
+
+      const validation =
+        this.validatePreferences(preferences);
+
+      if (!validation.valid) {
+
+        VXStatus.show(
+          "notificationSettingsStatus",
+          validation.message,
+          "error"
+        );
+
+        return;
+
+      }
+
+      const localSaved =
+        this.saveLocalPreferences(preferences);
+
+      if (!localSaved) {
+
+        VXStatus.show(
+          "notificationSettingsStatus",
+          "Unable to save preferences on this device.",
+          "error"
+        );
+
+        return;
+
+      }
+
+      if (this.user) {
+
+        const databaseResult =
+          await this.saveDatabasePreferences(
+            preferences
+          );
+
+        if (databaseResult.success) {
+
+          VXStatus.show(
+            "notificationSettingsStatus",
+            "Preferences saved on this device and notification channels synchronised with your account. Actual delivery requires the notification service.",
+            "success"
+          );
+
+        } else {
+
+          VXStatus.show(
+            "notificationSettingsStatus",
+            databaseResult.message,
+            "info"
+          );
+
+        }
+
+      } else {
+
+        VXStatus.show(
+          "notificationSettingsStatus",
+          "Preferences saved on this device. Sign in to synchronise supported account settings.",
+          "success"
+        );
+
+      }
+
+      VXUtils.log(
+        "Notification preferences saved.",
+        preferences
+      );
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to save notification preferences.",
+        error
+      );
+
+      VXStatus.show(
+        "notificationSettingsStatus",
+        error.message ||
+        "An error occurred while saving notification preferences.",
+        "error"
+      );
+
+    } finally {
+
+      if (saveButton) {
+
+        saveButton.disabled = false;
+
+        saveButton.textContent =
+          "Save Notification Settings";
+
+      }
+
+    }
+
+  },
+
+
+  /* =========================================
+     14. QUIET HOURS CHECK
+  ========================================= */
+
+  isQuietHoursActive() {
+
+    const preferences =
+      this.collectPreferences();
+
+    if (!preferences.notifyQuietHours) {
+
+      return false;
+
+    }
+
+    try {
+
+      const timezone =
+        preferences.notifyQuietTimezone;
+
+      const currentTime =
+        new Intl.DateTimeFormat("en-GB", {
+
+          timeZone: timezone,
+
+          hour: "2-digit",
+
+          minute: "2-digit",
+
+          hourCycle: "h23"
+
+        }).format(new Date());
+
+      const toMinutes = time => {
+
+        const parts = time.split(":").map(Number);
+
+        return parts[0] * 60 + parts[1];
+
+      };
+
+      const current =
+        toMinutes(currentTime);
+
+      const start =
+        toMinutes(preferences.notifyQuietStart);
+
+      const end =
+        toMinutes(preferences.notifyQuietEnd);
+
+      if (start === end) return true;
+
+      if (start < end) {
+
+        return current >= start && current < end;
+
+      }
+
+      return current >= start || current < end;
+
+    } catch (error) {
+
+      VXUtils.error(
+        "Unable to calculate quiet hours.",
+        error
+      );
+
+      return false;
+
+    }
+
+  },
+
+
+  /* =========================================
+     15. CONNECT EVENT LISTENERS
+  ========================================= */
+
+  attachEvents() {
+
+    const saveButton = VXElements.byId(
+      "saveNotificationPreferences"
+    );
+
+    const pushToggle = VXElements.byId(
+      "notifyPush"
+    );
+
+
+    if (saveButton) {
+
+      saveButton.addEventListener(
+        "click",
+        () => this.savePreferences()
+      );
+
+    }
+
+
+    if (pushToggle) {
+
+      pushToggle.addEventListener(
+        "change",
+        () => this.handlePushPermission()
+      );
+
+    }
+
+  }
+
+};
+
+
+/* =========================================
+   16. INITIALIZE NOTIFICATION CENTRE
+========================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    VXNotifications.initialize();
+
+  }
+);
+
+
+/* =====================================================
+   END OF JAVASCRIPT SECTION 8
+===================================================== */
+
+
 
 
 
