@@ -5510,7 +5510,19 @@ const VXNotifications = {
 
         } finally {
 
-            this.saving 
+    this.saving = false;
+
+    if (saveButton) {
+
+        saveButton.disabled = false;
+
+        saveButton.textContent = "Save Preferences";
+
+    }
+
+    }
+
+};
                                  
 /* =====================================================
    VANTAGE X COMMUNITY
