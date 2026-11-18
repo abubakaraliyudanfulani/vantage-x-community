@@ -5641,6 +5641,17 @@ const VXContent = {
      4. AUTHENTICATED USER
   ========================================= */
 
+     handleAuthReady(detail) {
+
+    this.user = detail.user || null;
+
+    this.loadPreferences();
+
+    VXUtils.log(
+      "Content preferences updated for current account."
+    );
+
+  },
   async loadAuthenticatedUser() {
 
     try {
