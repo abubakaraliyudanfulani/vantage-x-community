@@ -2987,16 +2987,11 @@ document.addEventListener(
 const VXPrivacy = {
 
     initialized: false,
-
     loading: false,
-
     saving: false,
 
     settings: {},
-
-    /* -------------------------------------
-       PRIVACY CONTROL DEFINITIONS
-    ------------------------------------- */
+    loadVersion: 0,
 
     controls: {
 
@@ -3070,11 +3065,52 @@ const VXPrivacy = {
 
         this.attachEvents();
 
-        this.loadPrivacyPreferences();
+        document.addEventListener(
+            "vx:auth-ready",
+            event => this.handleAuthReady(event.detail || {})
+        );
+
+        VXAuth.waitUntilReady().then(user => {
+
+            if (user) {
+                this.loadPrivacyPreferences(user);
+            } else {
+                this.clearMemberData();
+            }
+
+        }).catch(error => {
+
+            VXUtils.error(
+                "Privacy authentication initialization failed.",
+                error
+            );
+
+        });
 
         VXUtils.log(
             "Privacy and Audience system initialized."
         );
+
+    },
+
+
+    /* -------------------------------------
+       HANDLE AUTHENTICATION CHANGES
+    ------------------------------------- */
+
+    handleAuthReady(detail) {
+
+        const user = detail.user || null;
+
+        if (!user) {
+
+            this.clearMemberData();
+
+            return;
+
+        }
+
+        this.loadPrivacyPreferences(user);
 
     },
 
@@ -3089,9 +3125,7 @@ const VXPrivacy = {
             typeof VXAuth === "undefined" ||
             !VXAuth.isAuthenticated()
         ) {
-
             return null;
-
         }
 
         return VXAuth.getUser();
@@ -3100,7 +3134,31 @@ const VXPrivacy = {
 
 
     /* -------------------------------------
-       READ PRIVACY CONTROLS
+       CLEAR PREVIOUS MEMBER DATA
+    ------------------------------------- */
+
+    clearMemberData() {
+
+        this.loadVersion++;
+
+        this.loading = false;
+
+        this.settings = {};
+
+        VXUtils.setValue(
+            "privacyPrivateAccount",
+            false
+        );
+
+        VXStatus.clear(
+            "privacySettingsStatus"
+        );
+
+    },
+
+
+    /* -------------------------------------
+       COLLECT PRIVACY PREFERENCES
     ------------------------------------- */
 
     collectPreferences() {
@@ -3112,9 +3170,7 @@ const VXPrivacy = {
             const element = VXElements.byId(id);
 
             if (element) {
-
                 preferences[id] = element.checked;
-
             }
 
         });
@@ -3125,9 +3181,7 @@ const VXPrivacy = {
             const element = VXElements.byId(id);
 
             if (element) {
-
                 preferences[id] = element.value;
-
             }
 
         });
@@ -3138,7 +3192,7 @@ const VXPrivacy = {
 
 
     /* -------------------------------------
-       VALIDATE PRIVACY CONTROLS
+       VALIDATE PRIVACY PREFERENCES
     ------------------------------------- */
 
     validatePreferences(preferences) {
@@ -3185,15 +3239,21 @@ const VXPrivacy = {
        LOAD PRIVACY PREFERENCES
     ------------------------------------- */
 
-    async loadPrivacyPreferences() {
+    async loadPrivacyPreferences(user = this.getUser()) {
 
-        if (this.loading) return;
+        if (!user) {
+
+            this.clearMemberData();
+
+            return;
+
+        }
+
+        const requestVersion = ++this.loadVersion;
 
         this.loading = true;
 
         try {
-
-            /* ENSURE DATABASE IS AVAILABLE */
 
             const connected =
                 await VXDatabase.initialize();
@@ -3201,79 +3261,96 @@ const VXPrivacy = {
             if (!connected) {
 
                 throw new Error(
-                    "The database connection is unavailable."
+                    "Database connection unavailable."
                 );
 
             }
 
+
+            if (requestVersion !== this.loadVersion) return;
 
             const client = VXDatabase.getClient();
 
-            /* GET CURRENT AUTHENTICATED SESSION */
+            if (!client) {
 
-            const {
-                data: sessionData,
-                error: sessionError
-            } = await client.auth.getSession();
-
-            if (sessionError) throw sessionError;
-
-            const user = sessionData.session?.user;
-
-            if (!user) {
-
-                VXStatus.show(
-                    "privacySettingsStatus",
-                    "Please sign in to load your privacy preferences.",
-                    "error"
+                throw new Error(
+                    "Supabase client unavailable."
                 );
-
-                return;
 
             }
 
 
-            /* LOAD CONFIRMED DATABASE COLUMN */
+            const currentUser = this.getUser();
+
+            if (
+                !currentUser ||
+                currentUser.id !== user.id
+            ) {
+                return;
+            }
+
 
             const {
                 data,
                 error
             } = await client
                 .from("account_settings")
-                .select(
-                    "user_id, is_private"
-                )
+                .select("user_id, is_private")
                 .eq("user_id", user.id)
                 .maybeSingle();
 
             if (error) throw error;
 
+            if (requestVersion !== this.loadVersion) return;
+
+
+            const latestUser = this.getUser();
+
+            if (
+                !latestUser ||
+                latestUser.id !== user.id
+            ) {
+                return;
+            }
+
+
             if (data) {
 
-                this.settings.is_private =
-                    Boolean(data.is_private);
+                this.settings = {
+                    user_id: data.user_id,
+                    is_private: Boolean(data.is_private)
+                };
 
                 VXUtils.setValue(
                     "privacyPrivateAccount",
                     data.is_private
                 );
 
+            } else {
+
+                this.settings = {
+                    user_id: user.id
+                };
+
+                VXUtils.setValue(
+                    "privacyPrivateAccount",
+                    false
+                );
+
             }
 
-            this.settings.user_id = user.id;
-
-            VXUtils.log(
-                "Privacy preferences loaded."
-            );
-
-
-            /* CLEAR PREVIOUS STATUS */
 
             VXStatus.clear(
                 "privacySettingsStatus"
             );
 
+            VXUtils.log(
+                "Privacy preferences loaded."
+            );
+
         } catch (error) {
+
+            if (requestVersion !== this.loadVersion) return;
 
             VXUtils.error(
                 "Privacy preferences could not be loaded.",
@@ -3288,7 +3365,9 @@ const VXPrivacy = {
 
         } finally {
 
-            this.loading = false;
+            if (requestVersion === this.loadVersion) {
+                this.loading = false;
+            }
 
         }
 
@@ -3318,8 +3397,7 @@ const VXPrivacy = {
         }
 
 
-        const preferences =
-            this.collectPreferences();
+        const preferences = this.collectPreferences();
 
         const validation =
             this.validatePreferences(preferences);
@@ -3346,7 +3424,6 @@ const VXPrivacy = {
         if (button) {
 
             button.disabled = true;
-
             button.textContent = "Saving...";
 
         }
@@ -3354,9 +3431,10 @@ const VXPrivacy = {
 
         try {
 
-            const client = VXDatabase.getClient();
+            const connected =
+                await VXDatabase.initialize();
 
-            if (!client) {
+            if (!connected) {
 
                 throw new Error(
                     "Database connection unavailable."
@@ -3365,14 +3443,39 @@ const VXPrivacy = {
             }
 
 
+            const client = VXDatabase.getClient();
+
+            if (!client) {
+
+                throw new Error(
+                    "Supabase client unavailable."
+                );
+
+            }
+
+
+            const currentUser = this.getUser();
+
+            if (
+                !currentUser ||
+                currentUser.id !== user.id
+            ) {
+
+                throw new Error(
+                    "Your account session changed. Please try again."
+                );
+
+            }
+
+
             /*
-              CURRENTLY CONFIRMED DATABASE FIELD:
+              ONLY THIS FIELD IS CURRENTLY
+              CONFIRMED IN THE DATABASE:
 
               account_settings.is_private
 
-              Other privacy preferences will be
-              connected after their database schema
-              and enforcement policies are created.
+              Other privacy controls still need
+              database columns and enforcement.
             */
 
             const {
@@ -3381,10 +3484,8 @@ const VXPrivacy = {
             } = await client
                 .from("account_settings")
                 .update({
-
                     is_private:
                         preferences.privacyPrivateAccount
-
                 })
                 .eq("user_id", user.id)
                 .select("user_id, is_private")
@@ -3395,31 +3496,31 @@ const VXPrivacy = {
             if (!data) {
 
                 throw new Error(
-                    "No existing account settings record was updated. Please check that your account has an account_settings record and the required Supabase permissions."
+                    "No account settings record was updated. Your account may not have an account_settings record yet, or the database permissions may prevent this update."
                 );
 
             }
 
 
-            /* UPDATE LOCAL SETTINGS */
+            const latestUser = this.getUser();
 
-            this.settings.is_private =
-                data.is_private;
+            if (
+                !latestUser ||
+                latestUser.id !== user.id
+            ) {
+                return;
+            }
 
-            this.settings.user_id =
-                data.user_id;
 
+            this.settings = {
+                user_id: data.user_id,
+                is_private: Boolean(data.is_private)
+            };
 
-            /*
-              DO NOT CLAIM ALL SETTINGS ARE SAVED.
-
-              Only is_private is currently confirmed
-              in the existing database schema.
-            */
 
             VXStatus.show(
                 "privacySettingsStatus",
-                "Private account preference saved successfully. Other privacy preferences are displayed but require additional database configuration before they can be permanently saved.",
+                "Private account preference saved successfully. Other privacy preferences are not yet permanently saved or enforced.",
                 "success"
             );
 
@@ -3556,8 +3657,7 @@ document.addEventListener(
     }
 );
 
-
-
+   
 /* =====================================================
    VANTAGE X COMMUNITY
    JAVASCRIPT SECTION 7
