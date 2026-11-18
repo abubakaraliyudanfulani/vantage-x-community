@@ -5617,7 +5617,14 @@ const VXContent = {
 
     this.initialized = true;
 
-    await this.loadAuthenticatedUser();
+        document.addEventListener(
+      "vx:auth-ready",
+      event => this.handleAuthReady(
+        event.detail || {}
+      )
+    );
+
+    this.user = await VXAuth.waitUntilReady();
 
     this.loadPreferences();
 
